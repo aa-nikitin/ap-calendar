@@ -1,0 +1,25 @@
+{
+  "name": "calendar-ap",
+  "version": "1.0.0",
+  "description": "calendar admin panel",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "server": "nodemon app.js"
+  },
+  "keywords": [
+    "calendar",
+    "react"
+  ],
+  "author": "Alexander Nikitin <a.nikitin91@mail.ru>",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.6",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^6.2.1",
+    "nodemon": "^2.0.12"
+  }
+}
