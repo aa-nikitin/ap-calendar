@@ -14,9 +14,14 @@
   "author": "Alexander Nikitin <a.nikitin91@mail.ru>",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "config": "^3.3.6",
     "express": "^4.17.1",
-    "mongoose": "^6.0.0"
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.0",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "concurrently": "^6.2.1",

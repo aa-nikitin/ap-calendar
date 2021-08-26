@@ -1,4 +1,6 @@
 {
   "port": 5000,
-  "mongoUri": "mongodb://localhost:27017/calendarApp"
+  "mongoUri": "mongodb://localhost:27017/calendarApp",
+  "secret": "asdasd",
+  "salt": "13sdcsd"
 }
