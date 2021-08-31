@@ -14,8 +14,8 @@ module.exports.login = (req, res, next) =>
   passport.authenticate('local', { session: false }, async (_, user) => {
     try {
       if (!user) {
-        return res.json({
-          err: true,
+        return res.status(400).json({
+          error: true,
           message: 'Укажите правильный логин и пароль'
         });
       }
@@ -33,7 +33,8 @@ module.exports.authFromToken = (req, res, next) =>
     try {
       if (!user) {
         return res.status(400).json({
-          error: `Пользователь с таким токеном не найден`
+          error: true,
+          message: ``
         });
       }
       if (user) {
@@ -41,10 +42,11 @@ module.exports.authFromToken = (req, res, next) =>
         try {
           const userAuth = await Users.findOne({ _id: user.id }).populate('permission');
 
-          output = res.status(200).json(userAuth);
+          output = res.status(200).json({ error: false, id: userAuth._id });
         } catch (e) {
           output = res.status(400).json({
-            error: `Произошла ошибка: ${e.message}`
+            error: true,
+            message: `Произошла ошибка: ${e.message}`
           });
         }
 

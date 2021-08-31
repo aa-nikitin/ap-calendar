@@ -1,0 +1,17 @@
+.login {
+  max-width: 300px;
+  margin: 40px auto;
+  &__wrap {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  &__item {
+    margin-bottom: 15px;
+  }
+  &__alert {
+  }
+}
