@@ -17,7 +17,7 @@ const loginFetch = handleActions(
     [loginFetchFromToken]: (_state) => true,
     [logoutFetchFromToken]: (_state) => false
   },
-  false
+  true
 );
 const login = handleActions(
   {

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Redirect } from 'react-router';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
@@ -27,7 +26,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 const Login = () => {
-  const { loginFetch, loginCheck, resultFetch } = useSelector((state) => getLogin(state));
+  const { loginFetch, resultFetch } = useSelector((state) => getLogin(state));
   const classes = useStyles();
   const [values, setValues] = React.useState({
     login: '',
@@ -51,9 +50,8 @@ const Login = () => {
 
     dispatch(loginFetchRequest({ login: login, pass: password, loginFetch: true }));
   };
-  return loginCheck ? (
-    <Redirect to="/" />
-  ) : (
+
+  return (
     <div className="login">
       <div className="login__wrap">
         <div className="login__item">
