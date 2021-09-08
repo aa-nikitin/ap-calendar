@@ -1,5 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
 const MenuItem = ({ Icon, linkTo, nameItem, ...props }) => {
   return (
     <div className="menu__item">
@@ -20,6 +22,17 @@ const MenuItem = ({ Icon, linkTo, nameItem, ...props }) => {
       )}
     </div>
   );
+};
+
+MenuItem.propTypes = {
+  Icon: PropTypes.object,
+  linkTo: PropTypes.string,
+  nameItem: PropTypes.string
+};
+MenuItem.defaultProps = {
+  Icon: {},
+  linkTo: '',
+  nameItem: ''
 };
 
 export { MenuItem };

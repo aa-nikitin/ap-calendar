@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route } from 'react-router-dom';
 import { loginFetchFromToken } from './redux/actions';
-import { Home, Plan, Clients, Finance, Discount, Company } from './pages';
+import { Home, Plan, Clients, Client, Finance, Discount, Halls } from './pages';
 import { Menu, Login, Loading } from './componetns';
 import { getLogin } from './redux/reducers';
 
@@ -31,9 +31,10 @@ function App() {
         <Route path="/" component={Home} exact />
         <Route path="/plan" component={Plan} exact />
         <Route path="/clients" component={Clients} exact />
+        <Route path="/clients/:id" component={Client} exact />
         <Route path="/finance" component={Finance} exact />
         <Route path="/discount" component={Discount} exact />
-        <Route path="/company" component={Company} exact />
+        <Route path="/company" component={Halls} exact />
       </div>
     </div>
   );

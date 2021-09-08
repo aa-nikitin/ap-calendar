@@ -1,0 +1,12 @@
+.client-contacts {
+  &__item {
+    display: flex;
+    padding-bottom: 10px;
+  }
+  &__name {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  &__value {
+  }
+}

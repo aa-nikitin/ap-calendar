@@ -8,8 +8,7 @@ import {
   logoutFetchFromToken
 } from '../redux/actions';
 import { getLogin } from '../redux/reducers';
-
-const storageName = 'userData';
+import { storageName } from '../config';
 
 export function* loginAdmin() {
   try {

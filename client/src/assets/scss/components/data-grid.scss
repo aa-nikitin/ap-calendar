@@ -1,0 +1,11 @@
+.data-grid {
+  &-link {
+    color: $cl-main2;
+    transition-property: all;
+    transition-duration: 0.5s;
+    &:hover {
+      color: $cl-main;
+      text-decoration: none;
+    }
+  }
+}

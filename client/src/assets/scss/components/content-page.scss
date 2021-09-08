@@ -1,0 +1,36 @@
+.content-page {
+  padding: 20px;
+  &__title {
+    color: $black;
+    font-weight: 300;
+    font-size: 24px;
+  }
+  &__main {
+    background-color: $cl-white;
+    border: 1px solid $gray;
+    padding: 20px 25px;
+  }
+  &__panel {
+    margin-bottom: 20px;
+  }
+  &--panel-extend {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+  &__panel-item {
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+  &__panel-btn {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  &__body {
+  }
+}

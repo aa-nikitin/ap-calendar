@@ -1,4 +1,5 @@
 export * from './admin';
-// export * from './pizzas';
+export * from './clients';
+export * from './client';
 // export * from './cart';
 // export * from './admin';

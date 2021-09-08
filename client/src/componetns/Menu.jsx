@@ -4,7 +4,7 @@ import TodayIcon from '@material-ui/icons/Today';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import LoyaltyIcon from '@material-ui/icons/Loyalty';
-import FaceIcon from '@material-ui/icons/Face';
+import StoreIcon from '@material-ui/icons/Store';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import { MenuItem } from './index';
@@ -18,10 +18,10 @@ const Menu = () => {
   return (
     <div className="menu">
       <MenuItem Icon={TodayIcon} linkTo="/plan" nameItem="Учет" />
+      <MenuItem Icon={StoreIcon} linkTo="/company" nameItem="Залы" />
       <MenuItem Icon={PeopleAltIcon} linkTo="/clients" nameItem="Клиенты" />
       <MenuItem Icon={AttachMoneyIcon} linkTo="/finance" nameItem="Финансы" />
       <MenuItem Icon={LoyaltyIcon} linkTo="/discount" nameItem="Скидки" />
-      <MenuItem Icon={FaceIcon} linkTo="/company" nameItem="Профиль" />
       <MenuItem Icon={ExitToAppIcon} onClick={handleLogout} nameItem="Выйти" />
     </div>
   );

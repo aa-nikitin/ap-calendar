@@ -1,0 +1,22 @@
+.form-box {
+  &__row {
+    margin-bottom: 20px;
+  }
+  &--row-two {
+    display: flex;
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+  &__field {
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 100%;
+  }
+  &__body {
+    padding: 20px;
+  }
+  &__footer {
+    background-color: $gray-light;
+    padding: 10px 20px;
+  }
+}
