@@ -1,0 +1,28 @@
+.hall {
+  display: flex;
+  &__item {
+    width: 25%;
+    padding: 10px 7px;
+  }
+  &--img {
+  }
+  &--name {
+  }
+  &--price {
+  }
+  &--buttons {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+  &__head {
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  &__param {
+    font-size: 14px;
+    color: $gray-dark;
+    padding: 2px 0px;
+  }
+}

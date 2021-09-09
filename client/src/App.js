@@ -34,7 +34,7 @@ function App() {
         <Route path="/clients/:id" component={Client} exact />
         <Route path="/finance" component={Finance} exact />
         <Route path="/discount" component={Discount} exact />
-        <Route path="/company" component={Halls} exact />
+        <Route path="/halls" component={Halls} exact />
       </div>
     </div>
   );

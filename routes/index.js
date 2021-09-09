@@ -12,6 +12,7 @@ const {
   getClients,
   deleteClients
 } = require('../controllers/clients');
+const { addHall, editHall, deleteHall, getHalls } = require('../controllers/halls');
 const router = Router();
 
 // let form = new formidable.IncomingForm();
@@ -37,5 +38,11 @@ router.post('/client', authJwt, addClient);
 router.put('/client/:id', authJwt, editClient);
 router.delete('/client/:id', authJwt, deleteClient);
 // router.delete('/pizzas/:id', deletePizza);
+
+// halls
+router.get('/halls', getHalls);
+router.post('/hall', addHall);
+router.put('/hall/:id', editHall);
+router.delete('/hall/:id', deleteHall);
 
 module.exports = router;

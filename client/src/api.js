@@ -29,9 +29,9 @@ export const fetchLoginFromToken = async (token) => {
   }
 };
 
-export const fetchGetClients = async (token) => {
+export const fetchGetAll = async (url, token) => {
   try {
-    const { data } = await axios.get(`/api/clients`, {
+    const { data } = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -55,10 +55,10 @@ export const fetchGetClient = async (id, token) => {
   }
 };
 
-export const fetchChangeClient = async (id, obj, token) => {
+export const fetchChange = async (url, id, obj, token) => {
   try {
     const { data } = await axios.put(
-      `/api/client/${id}`,
+      `${url}${id}`,
       { ...obj },
       {
         headers: {
@@ -72,10 +72,10 @@ export const fetchChangeClient = async (id, obj, token) => {
   }
 };
 
-export const fetchAddClient = async (obj, token) => {
+export const fetchAdd = async (url, obj, token) => {
   try {
     const { data } = await axios.post(
-      `/api/client/`,
+      url,
       { ...obj },
       {
         headers: {
@@ -96,6 +96,19 @@ export const fetchDeleteClients = async (list, token) => {
         Authorization: `Bearer ${token}`
       },
       data: { list }
+    });
+    return data;
+  } catch (e) {
+    throw e.response.data;
+  }
+};
+
+export const fetchDeleteHalls = async (id, token) => {
+  try {
+    const { data } = await axios.delete(`/api/hall/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
     return data;
   } catch (e) {

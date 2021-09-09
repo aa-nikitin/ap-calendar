@@ -4,3 +4,6 @@ export * from './Login';
 export * from './Loading';
 export * from './TransitionsModal';
 export * from './ClientForm';
+export * from './Hall';
+export * from './ButtonIcon';
+export * from './HallForm';

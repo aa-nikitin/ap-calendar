@@ -1,0 +1,23 @@
+.halls-list {
+  &__head {
+    display: flex;
+  }
+  &__head-item {
+    width: 25%;
+    font-weight: bold;
+    padding: 7px;
+  }
+  &__body {
+  }
+  &__item {
+    border-top: solid 1px $gray-line;
+  }
+  &--head-img {
+  }
+  &--head-name {
+  }
+  &--head-price {
+  }
+  &--head-buttons {
+  }
+}

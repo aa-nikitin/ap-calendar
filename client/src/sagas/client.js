@@ -1,6 +1,6 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
 
-import { fetchGetClient, fetchChangeClient } from '../api';
+import { fetchGetClient, fetchChange } from '../api';
 import {
   clientFetchRequest,
   clientFetchSuccess,
@@ -30,7 +30,7 @@ export function* changeClient() {
   try {
     const token = localStorage.getItem(storageName);
     const { clientId, client } = yield select(getClient);
-    const clientResult = yield call(fetchChangeClient, clientId, client, token);
+    const clientResult = yield call(fetchChange, '/api/client/', clientId, client, token);
 
     yield put(clientChangeSuccess(clientResult));
   } catch (error) {

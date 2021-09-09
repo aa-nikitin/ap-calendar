@@ -18,7 +18,7 @@ const Menu = () => {
   return (
     <div className="menu">
       <MenuItem Icon={TodayIcon} linkTo="/plan" nameItem="Учет" />
-      <MenuItem Icon={StoreIcon} linkTo="/company" nameItem="Залы" />
+      <MenuItem Icon={StoreIcon} linkTo="/halls" nameItem="Залы" />
       <MenuItem Icon={PeopleAltIcon} linkTo="/clients" nameItem="Клиенты" />
       <MenuItem Icon={AttachMoneyIcon} linkTo="/finance" nameItem="Финансы" />
       <MenuItem Icon={LoyaltyIcon} linkTo="/discount" nameItem="Скидки" />

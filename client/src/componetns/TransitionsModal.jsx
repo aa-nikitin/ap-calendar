@@ -6,7 +6,9 @@ import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import PropTypes from 'prop-types';
 
-const TransitionsModal = ({ children, captionButton, align, nameForm }) => {
+import { ButtonIcon } from './';
+
+const TransitionsModal = ({ children, captionButton, align, nameForm, Icon }) => {
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => {
@@ -19,9 +21,13 @@ const TransitionsModal = ({ children, captionButton, align, nameForm }) => {
 
   return (
     <div>
-      <Button variant="outlined" color="primary" onClick={handleOpen}>
-        {captionButton}
-      </Button>
+      {Icon ? (
+        <ButtonIcon Icon={Icon} title={captionButton} onClick={handleOpen} />
+      ) : (
+        <Button variant="outlined" color="primary" onClick={handleOpen}>
+          {captionButton}
+        </Button>
+      )}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -55,13 +61,15 @@ TransitionsModal.propTypes = {
   children: PropTypes.object,
   captionButton: PropTypes.string,
   align: PropTypes.string,
-  nameForm: PropTypes.string
+  nameForm: PropTypes.string,
+  Icon: PropTypes.object
 };
 TransitionsModal.defaultProps = {
   children: {},
   captionButton: '',
   align: '',
-  nameForm: ''
+  nameForm: '',
+  Icon: null
 };
 
 export { TransitionsModal };

@@ -1,6 +1,6 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
 
-import { fetchGetClients, fetchDeleteClients, fetchAddClient } from '../api';
+import { fetchGetAll, fetchDeleteClients, fetchAdd } from '../api';
 import {
   clientsFetchRequest,
   clientsFetchSuccess,
@@ -19,7 +19,7 @@ import { storageName } from '../config';
 export function* getClientsList() {
   try {
     const token = localStorage.getItem(storageName);
-    const clientsResult = yield call(fetchGetClients, token);
+    const clientsResult = yield call(fetchGetAll, '/api/clients', token);
 
     yield put(clientsFetchSuccess(clientsResult));
   } catch (error) {
@@ -44,7 +44,7 @@ export function* addClient() {
   try {
     const token = localStorage.getItem(storageName);
     const { newClient } = yield select(getClients);
-    const clientResult = yield call(fetchAddClient, newClient, token);
+    const clientResult = yield call(fetchAdd, '/api/client/', newClient, token);
 
     yield put(clientsAddSuccess(clientResult));
   } catch (error) {
