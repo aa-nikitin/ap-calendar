@@ -1,10 +1,13 @@
 const express = require('express');
 const config = require('config');
+const path = require('path');
 const mongoose = require('mongoose');
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+app.use('/api', require('./routes'));
 
 if (process.env.NODE_ENV === 'production') {
   app.use('/', express.static(path.join(__dirname, 'client', 'build')));
@@ -15,8 +18,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const PORT = config.get('port') || 5000;
-
-app.use('/api', require('./routes'));
 
 async function start() {
   try {
