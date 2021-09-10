@@ -21,7 +21,6 @@ const router = Router();
 router.post('/login', login);
 router.post(
   '/registration',
-  authJwt,
   [
     check('login', 'Минимальная длина логина 4 символа').isLength({ min: 4 }),
     check('password', 'Минимальная длина пароля 6 символов').isLength({ min: 6 })
