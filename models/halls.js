@@ -6,8 +6,7 @@ const schema = new Schema({
   ceilingHeight: { type: String, required: true },
   priceFrom: { type: String, required: true },
   description: { type: String },
-  order: { type: Number, required: true, default: 0 },
-  photos: { type: Schema.Types.ObjectId, ref: 'hallsPhotos' }
+  order: { type: Number, required: true, default: 0 }
 });
 
 module.exports = model('halls', schema);
