@@ -1,7 +1,7 @@
 const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs');
-const { asyncUnlink, asyncRename, asyncReaddir } = require('../libs/fs.functions');
+const { asyncReaddir } = require('../libs/fs.functions');
 
 module.exports = (req, fileParams, dir, replacePhotos) => {
   // req,
@@ -37,7 +37,7 @@ module.exports = (req, fileParams, dir, replacePhotos) => {
 
             if (fileParams.includes(keyFiles)) {
               if (filesArray[0].size === 0 && filesArray.length === 1) {
-                asyncUnlink(filesArray[0].path);
+                fs.unlinkSync(filesArray[0].path);
                 return {};
               } else
                 return [
@@ -56,14 +56,14 @@ module.exports = (req, fileParams, dir, replacePhotos) => {
                       filePath = path.join(upload, name);
                     }
 
-                    asyncRename(file.path, filePath);
+                    fs.renameSync(file.path, filePath);
 
                     return { size, name: fileName, originalName: file.name, type, path: filePath };
                   })
                 ];
             } else {
               return filesArray.map((file) => {
-                asyncUnlink(file.path);
+                fs.unlinkSync(file.path);
 
                 return;
               });

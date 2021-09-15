@@ -12,8 +12,8 @@ const {
   getClients,
   deleteClients
 } = require('../controllers/clients');
-const { addHall, editHall, deleteHall, getHalls } = require('../controllers/halls');
-const { uploadHallPhotos } = require('../controllers/hall-photos');
+const { addHall, editHall, editHallCover, deleteHall, getHalls } = require('../controllers/halls');
+const { uploadHallPhotos, deleteHallPhoto } = require('../controllers/hall-photos');
 
 const router = Router();
 
@@ -44,8 +44,10 @@ router.delete('/client/:id', authJwt, deleteClient);
 router.get('/halls', getHalls);
 router.post('/hall', addHall);
 router.put('/hall/:id', editHall);
+router.put('/hall-cover/', editHallCover);
 router.delete('/hall/:id', deleteHall);
 
 router.post('/upload-photos', uploadHallPhotos);
+router.delete('/delete-photo', deleteHallPhoto);
 
 module.exports = router;
