@@ -9,7 +9,6 @@ module.exports = (req, fileParams, dir, replacePhotos) => {
   // dir(Array) - дирректория в массиве, с именем каждой папке в отдельном элементе
   // replacePhotos(boolean) - если true то будут создаваться случайные имена
   //                          в случае если такие имена существуют, в противном случае изображения с похожими именами просто перезаписываются
-
   const form = formidable({ multiples: true });
 
   return new Promise(async (resolve, reject) => {

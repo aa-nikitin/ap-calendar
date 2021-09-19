@@ -37,11 +37,7 @@ const Client = ({ match, history }) => {
   useEffect(() => {
     dispatch(clientFetchRequest(match.params.id));
   }, [dispatch, match.params.id]);
-
-  if (clientFetch) {
-    return <Loading />;
-  }
-
+  if (clientFetch) return <Loading />;
   return (
     <div className="content-page">
       <div className="content-page__panel content-page--panel-extend">

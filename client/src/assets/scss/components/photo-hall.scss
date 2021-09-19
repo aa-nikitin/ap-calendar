@@ -1,0 +1,55 @@
+.photo-hall {
+  &__list {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-left: -5px;
+    margin-right: -5px;
+    padding: 10px 20px;
+  }
+  &__item {
+    width: 33.33%;
+    padding: 5px;
+    position: relative;
+    &:hover {
+      & .photo-hall {
+        &__btns {
+          opacity: 1;
+        }
+      }
+    }
+  }
+  &__image {
+    max-width: 100%;
+    display: block;
+  }
+  &__btns {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background-color: rgba($color: $cl-white, $alpha: 0.8);
+    border-radius: 10px;
+    opacity: 0;
+    transition-property: all;
+    transition-duration: 0.5s;
+    border: solid 1px $gray;
+  }
+  &__footer {
+    background-color: $gray-light;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &__input-file {
+    display: none;
+  }
+  &__info-file {
+    font-size: 14px;
+    padding: 0px 10px;
+  }
+  &__message {
+    padding: 20px;
+    font-size: 14px;
+  }
+}

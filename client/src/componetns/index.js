@@ -7,3 +7,4 @@ export * from './ClientForm';
 export * from './Hall';
 export * from './ButtonIcon';
 export * from './HallForm';
+export * from './HallPhotos';

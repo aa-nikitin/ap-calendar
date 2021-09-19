@@ -7,7 +7,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import PropTypes from 'prop-types';
 
 import { ButtonIcon } from './';
-
 const TransitionsModal = ({ children, captionButton, align, nameForm, Icon }) => {
   const [open, setOpen] = React.useState(false);
 

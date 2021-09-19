@@ -84,10 +84,7 @@ const Clients = () => {
   ];
   const classes = useStyles();
 
-  if (clientsFetch) {
-    return <Loading />;
-  }
-
+  if (clientsFetch) return <Loading />;
   return (
     <div className="content-page">
       <h1 className="content-page__title">База клиентов</h1>

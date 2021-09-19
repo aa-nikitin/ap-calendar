@@ -6,6 +6,23 @@ const {
     delete: { request: hallsDeleteRequest, success: hallsDeleteSuccess, error: hallsDeleteError },
     change: { request: hallsChangeRequest, success: hallsChangeSuccess, error: hallsChangeError },
     add: { request: hallsAddRequest, success: hallsAddSuccess, error: hallsAddError }
+  },
+  hallPhotos: {
+    upload: {
+      request: hallPhotosUploadRequest,
+      success: hallPhotosUploadSuccess,
+      error: hallPhotosUploadError
+    },
+    remove: {
+      request: hallPhotoRemoveRequest,
+      success: hallPhotoRemoveSuccess,
+      error: hallPhotoRemoveError
+    },
+    cover: {
+      request: hallPhotoCoverRequest,
+      success: hallPhotoCoverSuccess,
+      error: hallPhotoCoverError
+    }
   }
 } = createActions({
   HALLS: {
@@ -29,6 +46,23 @@ const {
       SUCCESS: null,
       ERROR: null
     }
+  },
+  HALL_PHOTOS: {
+    UPLOAD: {
+      REQUEST: null,
+      SUCCESS: null,
+      ERROR: null
+    },
+    REMOVE: {
+      REQUEST: null,
+      SUCCESS: null,
+      ERROR: null
+    },
+    COVER: {
+      REQUEST: null,
+      SUCCESS: null,
+      ERROR: null
+    }
   }
 });
 
@@ -44,5 +78,14 @@ export {
   hallsChangeError,
   hallsAddRequest,
   hallsAddSuccess,
-  hallsAddError
+  hallsAddError,
+  hallPhotosUploadRequest,
+  hallPhotosUploadSuccess,
+  hallPhotosUploadError,
+  hallPhotoRemoveRequest,
+  hallPhotoRemoveSuccess,
+  hallPhotoRemoveError,
+  hallPhotoCoverRequest,
+  hallPhotoCoverSuccess,
+  hallPhotoCoverError
 };

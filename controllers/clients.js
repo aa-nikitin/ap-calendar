@@ -69,7 +69,7 @@ module.exports.deleteClient = async (req, res) => {
 module.exports.deleteClients = async (req, res) => {
   try {
     await Clients.deleteMany({
-      _id: req.body.list
+      _id: req.body.params
     });
     const clients = await Clients.find({});
     const clientsFinished = clietnsConverter(clients);

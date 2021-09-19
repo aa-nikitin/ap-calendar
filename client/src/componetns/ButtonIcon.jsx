@@ -3,11 +3,11 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import PropTypes from 'prop-types';
 
-const ButtonIcon = ({ Icon, title, onClick }) => {
+const ButtonIcon = ({ Icon, title, fontSize, onClick }) => {
   return (
     <Tooltip title={title}>
       <IconButton onClick={onClick}>
-        <Icon />
+        <Icon fontSize={fontSize ? fontSize : 'medium'} />
       </IconButton>
     </Tooltip>
   );
@@ -16,11 +16,13 @@ const ButtonIcon = ({ Icon, title, onClick }) => {
 ButtonIcon.propTypes = {
   Icon: PropTypes.object,
   title: PropTypes.string,
+  fontSize: PropTypes.string,
   onClick: PropTypes.func
 };
 ButtonIcon.defaultProps = {
   Icon: {},
   title: '',
+  fontSize: '',
   alionClickgn: () => {}
 };
 

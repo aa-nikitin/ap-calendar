@@ -1,7 +1,6 @@
 const config = require('config');
 const uniqueImages = config.get('uniqueImages');
 const _ = require('lodash');
-const mongoose = require('mongoose');
 
 const HallPhotos = require('../models/hall-photos');
 const Halls = require('../models/halls');
@@ -38,7 +37,9 @@ module.exports.uploadHallPhotos = async (req, res, next) => {
       { new: true }
     );
 
-    const hallNew = await Halls.findOne({ _id: fields.idHall }).populate('cover');
+    const hallNew = await Halls.findOne({ _id: fields.idHall })
+      .populate('cover')
+      .populate('photos');
 
     res.json(hallNew);
   } catch (error) {
@@ -49,14 +50,15 @@ module.exports.uploadHallPhotos = async (req, res, next) => {
 
 module.exports.deleteHallPhoto = async (req, res) => {
   try {
-    const { idHall, idPhoto } = req.body;
+    const {
+      params: { idHall, idPhoto }
+    } = req.body;
     const hall = await Halls.findOne({ _id: idHall });
-
     const photoIds = _.remove(hall.photos, function (idObj) {
       return idObj.toString() !== idPhoto;
     });
 
-    const coverId = hall.cover.toString();
+    const coverId = hall.cover && hall.cover.toString();
     const cover = coverId === idPhoto ? null : coverId;
 
     await Halls.updateOne({ _id: idHall }, { photos: [...photoIds], cover }, { new: true });
@@ -69,7 +71,7 @@ module.exports.deleteHallPhoto = async (req, res) => {
       await asyncUnlink(hallPhotos.pathResize);
     }
 
-    const halls = await Halls.find({ _id: idHall }).populate('cover');
+    const halls = await Halls.findOne({ _id: idHall }).populate('cover').populate('photos');
 
     res.json(halls);
   } catch (error) {

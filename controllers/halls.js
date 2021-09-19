@@ -4,7 +4,7 @@ const { asyncUnlink } = require('../libs/fs.functions');
 
 module.exports.getHalls = async (req, res) => {
   try {
-    const halls = await Halls.find({}).populate('cover');
+    const halls = await Halls.find({}).populate('cover').populate('photos');
 
     res.json(halls);
   } catch (error) {
@@ -18,7 +18,7 @@ module.exports.addHall = async (req, res) => {
 
     await hall.save();
 
-    const halls = await Halls.find({}).populate('cover');
+    const halls = await Halls.find({}).populate('cover').populate('photos');
 
     res.status(201).json(halls);
   } catch (error) {
@@ -32,7 +32,7 @@ module.exports.editHall = async (req, res) => {
 
     await Halls.updateOne({ _id: id }, req.body, { new: true });
 
-    const hallChanged = await Halls.find({}).populate('cover');
+    const hallChanged = await Halls.find({}).populate('cover').populate('photos');
 
     res.status(201).json(hallChanged);
   } catch (error) {
@@ -43,12 +43,11 @@ module.exports.editHall = async (req, res) => {
 module.exports.editHallCover = async (req, res) => {
   try {
     const { idHall, idPhoto } = req.body;
-    const halls = await Halls.findOne({ _id: idHall });
-    const cover = halls.cover ? null : idPhoto;
+    const cover = idPhoto;
 
     await Halls.updateOne({ _id: idHall }, { cover }, { new: true });
 
-    const hallChanged = await Halls.find({}).populate('cover');
+    const hallChanged = await Halls.findOne({ _id: idHall }).populate('cover').populate('photos');
 
     res.status(201).json(hallChanged);
   } catch (error) {
@@ -70,7 +69,7 @@ module.exports.deleteHall = async (req, res) => {
     });
     await Halls.deleteOne({ _id: req.params.id });
 
-    const halls = await Halls.find({}).populate('cover');
+    const halls = await Halls.find({}).populate('cover').populate('photos');
 
     res.json(halls);
   } catch (error) {

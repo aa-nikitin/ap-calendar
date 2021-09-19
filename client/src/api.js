@@ -71,6 +71,22 @@ export const fetchChange = async (url, id, obj, token) => {
     throw e.response.data;
   }
 };
+export const fetchChangeParams = async (url, obj, token) => {
+  try {
+    const { data } = await axios.put(
+      `${url}`,
+      { ...obj },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+    return data;
+  } catch (e) {
+    throw e.response.data;
+  }
+};
 
 export const fetchAdd = async (url, obj, token) => {
   try {
@@ -89,13 +105,24 @@ export const fetchAdd = async (url, obj, token) => {
   }
 };
 
-export const fetchDeleteClients = async (list, token) => {
+export const fetchUploadPhotosHall = async (url, obj, token) => {
   try {
-    const { data } = await axios.delete(`/api/clients`, {
+    const { data } = await axios.post(url, obj, {
+      headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` }
+    });
+    return data;
+  } catch (e) {
+    throw e.response.data;
+  }
+};
+
+export const fetchDeleteByParams = async (url, params, token) => {
+  try {
+    const { data } = await axios.delete(url, {
       headers: {
         Authorization: `Bearer ${token}`
       },
-      data: { list }
+      data: { params }
     });
     return data;
   } catch (e) {
