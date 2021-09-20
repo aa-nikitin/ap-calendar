@@ -41,11 +41,24 @@ module.exports = (files, dir, callback, resolution) => {
         // resize img by Jimp
         // ----
         const imageNew = await Jimp.read(filePath);
-        const paramsImageNew =
+        let paramsImageNew =
           imageNew.bitmap.width > imageNew.bitmap.height
             ? [Jimp.AUTO, imgHeight]
             : [imgWidth, Jimp.AUTO];
-        const imageResize = await imageNew.resize(paramsImageNew[0], paramsImageNew[1]);
+        let imageResize = await imageNew.resize(
+          paramsImageNew[0],
+          paramsImageNew[1],
+          Jimp.RESIZE_BEZIER
+        );
+        if (imageResize.bitmap.width < imgWidth || imageResize.bitmap.height < imgHeight) {
+          paramsImageNew =
+            imageResize.bitmap.width < imgWidth ? [imgWidth, Jimp.AUTO] : [Jimp.AUTO, imgHeight];
+          imageResize = await imageNew.resize(
+            paramsImageNew[0],
+            paramsImageNew[1],
+            Jimp.RESIZE_BEZIER
+          );
+        }
         const paramsImageCrop = {
           x: (imageResize.bitmap.width - imgWidth) / 2,
           y: (imageResize.bitmap.height - imgHeight) / 2

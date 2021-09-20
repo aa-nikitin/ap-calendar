@@ -4,5 +4,5 @@
   "secret": "99*bN@fc",
   "imgWidthResize": 340,
   "imgHeightResize": 200,
-  "uniqueImages": false
+  "uniqueImages": true
 }
