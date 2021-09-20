@@ -1,5 +1,6 @@
 const fs = require('fs');
-const sharp = require('sharp');
+// const sharp = require('sharp');
+const Jimp = require('jimp');
 const path = require('path');
 const config = require('config');
 
@@ -37,7 +38,24 @@ module.exports = (files, dir, callback, resolution) => {
         )}_${imgWidth}-${imgHeight}${path.extname(fileName)}`;
         const pathResize = path.join(dirResize, nameResize);
 
-        await sharp(filePath).resize(imgWidth, imgHeight).toFile(pathResize);
+        // resize img by Jimp
+        // ----
+        const imageNew = await Jimp.read(filePath);
+        const paramsImageNew =
+          imageNew.bitmap.width > imageNew.bitmap.height
+            ? [Jimp.AUTO, imgHeight]
+            : [imgWidth, Jimp.AUTO];
+        const imageResize = await imageNew.resize(paramsImageNew[0], paramsImageNew[1]);
+        const paramsImageCrop = {
+          x: (imageResize.bitmap.width - imgWidth) / 2,
+          y: (imageResize.bitmap.height - imgHeight) / 2
+        };
+
+        await imageNew.crop(paramsImageCrop.x, paramsImageCrop.y, imgWidth, imgHeight);
+
+        await imageNew.writeAsync(pathResize);
+        // ----
+        // end resize img by Jimp
 
         const image = await callback({
           fileName,
