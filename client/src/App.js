@@ -1,18 +1,22 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route } from 'react-router-dom';
-import { loginFetchFromToken } from './redux/actions';
+
+import { loginFetchFromToken, setWindowSize } from './redux/actions';
 import { Home, Plan, Clients, Client, Finance, Discount, Halls } from './pages';
 import { Menu, Login, Loading } from './componetns';
 import { getLogin } from './redux/reducers';
+import useWindowDimensions from './hooks/useWindowDimensions';
 
 function App() {
   const { loginCheck, loginFetch } = useSelector((state) => getLogin(state));
+  const { width, height } = useWindowDimensions();
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(loginFetchFromToken());
-  }, [dispatch]);
+    dispatch(setWindowSize({ width, height }));
+  }, [dispatch, width, height]);
 
   if (loginFetch) {
     return <Loading />;

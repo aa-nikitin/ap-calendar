@@ -79,3 +79,31 @@ module.exports.deleteClients = async (req, res) => {
     res.status(500).json({ message: error });
   }
 };
+
+module.exports.searchClient = async (req, res) => {
+  try {
+    const { query } = req.body;
+    let clients = [];
+    if (query.length >= 3) {
+      let regex = new RegExp(query, 'i');
+      await Clients.aggregate(
+        [
+          {
+            $project: { fullname: { $concat: ['$name.first', ' ', '$name.last'] }, doc: '$$ROOT' }
+          },
+          { $match: { fullname: regex } }
+        ],
+        function (err, persons) {
+          if (err) res.status(500).json({ message: err });
+
+          clients = persons.map(function (item) {
+            return item.doc;
+          });
+        }
+      );
+    }
+    res.json(clients);
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};

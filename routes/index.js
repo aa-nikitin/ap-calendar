@@ -10,10 +10,13 @@ const {
   deleteClient,
   getClient,
   getClients,
-  deleteClients
+  deleteClients,
+  searchClient
 } = require('../controllers/clients');
 const { addHall, editHall, editHallCover, deleteHall, getHalls } = require('../controllers/halls');
 const { uploadHallPhotos, deleteHallPhoto } = require('../controllers/hall-photos');
+const { addPlanDate, getPlanHalls, checkPlanFree } = require('../controllers/plan');
+const { changeWorkShedule } = require('../controllers/work-shedule');
 
 const router = Router();
 
@@ -38,16 +41,23 @@ router.get('/client/:id', authJwt, getClient);
 router.post('/client', authJwt, addClient);
 router.put('/client/:id', authJwt, editClient);
 router.delete('/client/:id', authJwt, deleteClient);
+router.post('/client-search', searchClient);
 // router.delete('/pizzas/:id', deletePizza);
 
 // halls
-router.get('/halls', getHalls);
-router.post('/hall', addHall);
-router.put('/hall/:id', editHall);
-router.put('/hall-cover/', editHallCover);
-router.delete('/hall/:id', deleteHall);
+router.get('/halls', authJwt, getHalls);
+router.post('/hall', authJwt, addHall);
+router.put('/hall/:id', authJwt, editHall);
+router.put('/hall-cover/', authJwt, editHallCover);
+router.delete('/hall/:id', authJwt, deleteHall);
 
-router.post('/upload-photos', uploadHallPhotos);
-router.delete('/delete-photo', deleteHallPhoto);
+router.post('/upload-photos', authJwt, uploadHallPhotos);
+router.delete('/delete-photo', authJwt, deleteHallPhoto);
+
+router.post('/plan-halls', getPlanHalls);
+router.post('/plan-date', addPlanDate);
+router.post('/plan-check-free', checkPlanFree);
+
+router.put('/work-shedule', changeWorkShedule);
 
 module.exports = router;

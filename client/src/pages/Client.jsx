@@ -6,9 +6,10 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import { Loading, ClientForm } from '../componetns';
 import { getClient } from '../redux/reducers';
-import { clientFetchRequest, clientChangeRequest } from '../redux/actions';
+import { clientFetchRequest, clientChangeRequest, setPageTplName } from '../redux/actions';
 
 const Client = ({ match, history }) => {
+  const dispatch = useDispatch();
   const { client, clientFetch } = useSelector((state) => getClient(state));
   const firstName = client.name ? client.name.first : '';
   const lastName = client.name ? client.name.last : '';
@@ -20,7 +21,6 @@ const Client = ({ match, history }) => {
     { name: 'E-mail', value: mail },
     { name: 'Комментарий', value: comment }
   ];
-  const dispatch = useDispatch();
 
   const handleBack = () => {
     history.goBack();
@@ -36,6 +36,7 @@ const Client = ({ match, history }) => {
 
   useEffect(() => {
     dispatch(clientFetchRequest(match.params.id));
+    dispatch(setPageTplName('CLIENT'));
   }, [dispatch, match.params.id]);
   if (clientFetch) return <Loading />;
   return (

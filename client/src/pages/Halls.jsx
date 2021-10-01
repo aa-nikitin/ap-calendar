@@ -6,7 +6,8 @@ import {
   hallsFetchRequest,
   hallsDeleteRequest,
   hallsChangeRequest,
-  hallsAddRequest
+  hallsAddRequest,
+  setPageTplName
 } from '../redux/actions';
 import { getHalls } from '../redux/reducers';
 
@@ -30,9 +31,11 @@ const Halls = () => {
 
   useEffect(() => {
     dispatch(hallsFetchRequest());
+    dispatch(setPageTplName('HALLS'));
   }, [dispatch]);
 
   if (hallsFetch) return <Loading />;
+
   return (
     <>
       {hallsPhotosFetch && <Loading />}

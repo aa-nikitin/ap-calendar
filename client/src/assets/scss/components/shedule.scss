@@ -1,0 +1,65 @@
+.shedule {
+  &__row {
+    display: flex;
+  }
+  &__item {
+    flex-grow: 1;
+    padding-right: 5px;
+    padding-left: 5px;
+  }
+  &__head {
+    border: solid 1px $gray-light;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: $size-head-shedule;
+    margin-bottom: $size-hour-shedule;
+  }
+  &__body {
+  }
+  &__scale {
+    padding-top: $size-head-shedule + $size-hour-shedule;
+    margin-right: 5px;
+  }
+  &--scale-last {
+    margin-right: 0px;
+    margin-left: 5px;
+  }
+  &__hour {
+    border-top: solid 1px $gray-line;
+    position: relative;
+  }
+  &--hour-even {
+    border-color: $gray-light;
+  }
+  &__button {
+    height: $size-hour-shedule;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 12px;
+    &:after {
+      content: attr(data-hour) ' Добавить';
+      font-weight: bold;
+      color: $cl-white;
+    }
+    &:hover {
+      background-color: $cl-main;
+    }
+  }
+  &__booking {
+    position: absolute;
+    z-index: 10;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    background-color: #ccc;
+  }
+}

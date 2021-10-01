@@ -23,7 +23,11 @@ const validationSchema = yup.object({
 const ClientForm = ({ captionButton, align, nameForm, client, onClick }) => {
   const firstName = client.name ? client.name.first : '';
   const lastName = client.name ? client.name.last : '';
-  const { nickname, company, phone, mail, comment } = client;
+  const nickname = client.nickname ? client.nickname : '';
+  const company = client.company ? client.company : '';
+  const phone = client.phone ? client.phone : '';
+  const mail = client.mail ? client.mail : '';
+  const comment = client.comment ? client.comment : '';
   const formik = useFormik({
     initialValues: {
       firstName: firstName,

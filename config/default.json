@@ -4,5 +4,9 @@
   "secret": "99*bN@fc",
   "imgWidthResize": 340,
   "imgHeightResize": 200,
-  "uniqueImages": true
+  "uniqueImages": true,
+  "formatDate": "DD.MM.YYYY",
+  "formatTime": "HH:mm",
+  "dateForTime": "01.01.1970",
+  "hourSize": 60
 }

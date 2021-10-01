@@ -9,7 +9,8 @@ import {
   clientsFetchRequest,
   clientsSelectionCheck,
   clientsSelectionDelRequest,
-  clientsAddRequest
+  clientsAddRequest,
+  setPageTplName
 } from '../redux/actions';
 import { getClients } from '../redux/reducers';
 import { Loading, ClientForm } from '../componetns';
@@ -42,6 +43,7 @@ const Clients = () => {
 
   useEffect(() => {
     dispatch(clientsFetchRequest());
+    dispatch(setPageTplName('CLIENTS'));
   }, [dispatch]);
   const columns = [
     {

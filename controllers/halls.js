@@ -4,7 +4,7 @@ const { asyncUnlink } = require('../libs/fs.functions');
 
 module.exports.getHalls = async (req, res) => {
   try {
-    const halls = await Halls.find({}).populate('cover').populate('photos');
+    const halls = await Halls.find({}).sort('order').populate('cover').populate('photos');
 
     res.json(halls);
   } catch (error) {
@@ -32,7 +32,7 @@ module.exports.editHall = async (req, res) => {
 
     await Halls.updateOne({ _id: id }, req.body, { new: true });
 
-    const hallChanged = await Halls.find({}).populate('cover').populate('photos');
+    const hallChanged = await Halls.find({}).sort('order').populate('cover').populate('photos');
 
     res.status(201).json(hallChanged);
   } catch (error) {
