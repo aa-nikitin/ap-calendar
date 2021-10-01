@@ -1,14 +1,6 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
 
-import {
-  fetchGetAll,
-  fetchDeleteHalls,
-  fetchAdd,
-  fetchChange,
-  fetchUploadPhotosHall,
-  fetchDeleteByParams,
-  fetchChangeParams
-} from '../api';
+import { fetchGet, fetchPost, fetchPut, fetchPostMultipart, fetchDelete } from '../api';
 import {
   hallsFetchRequest,
   hallsFetchSuccess,
@@ -39,7 +31,7 @@ import { storageName } from '../config';
 export function* getHallsList() {
   try {
     const token = localStorage.getItem(storageName);
-    const hallsResult = yield call(fetchGetAll, '/api/halls', token);
+    const hallsResult = yield call(fetchGet, '/api/halls/', token);
 
     yield put(hallsFetchSuccess(hallsResult));
   } catch (error) {
@@ -52,7 +44,7 @@ export function* deleteHall() {
   try {
     const token = localStorage.getItem(storageName);
     const { idHall } = yield select(getHalls);
-    const hallsResult = yield call(fetchDeleteHalls, idHall, token);
+    const hallsResult = yield call(fetchDelete, `/api/hall/${idHall}`, {}, token);
 
     yield put(hallsDeleteSuccess(hallsResult));
   } catch (error) {
@@ -65,7 +57,7 @@ export function* addHall() {
   try {
     const token = localStorage.getItem(storageName);
     const { hall } = yield select(getHalls);
-    const hallResult = yield call(fetchAdd, '/api/hall/', hall, token);
+    const hallResult = yield call(fetchPost, '/api/hall/', hall, token);
 
     yield put(hallsAddSuccess(hallResult));
   } catch (error) {
@@ -78,7 +70,7 @@ export function* changeHall() {
   try {
     const token = localStorage.getItem(storageName);
     const { idHall, hall } = yield select(getHalls);
-    const hallResult = yield call(fetchChange, '/api/hall/', idHall, hall, token);
+    const hallResult = yield call(fetchPut, `/api/hall/${idHall}`, hall, token);
 
     yield put(hallsChangeSuccess(hallResult));
   } catch (error) {
@@ -97,7 +89,7 @@ export function* upploadHallPhotos() {
     images.forEach((image) => formData.append('images', image));
     formData.append('idHall', idHall);
 
-    const uploadPhotos = yield call(fetchUploadPhotosHall, '/api/upload-photos', formData, token);
+    const uploadPhotos = yield call(fetchPostMultipart, '/api/upload-photos', formData, token);
 
     yield put(hallPhotosUploadSuccess(uploadPhotos));
   } catch (error) {
@@ -111,12 +103,7 @@ export function* delHallPhoto() {
     const token = localStorage.getItem(storageName);
     const { idHall, idPhoto } = yield select(getHalls);
 
-    const uploadPhotos = yield call(
-      fetchDeleteByParams,
-      '/api/delete-photo',
-      { idHall, idPhoto },
-      token
-    );
+    const uploadPhotos = yield call(fetchDelete, '/api/delete-photo', { idHall, idPhoto }, token);
 
     yield put(hallPhotoRemoveSuccess(uploadPhotos));
   } catch (error) {
@@ -130,12 +117,7 @@ export function* updateCoverHallPhoto() {
     const token = localStorage.getItem(storageName);
     const { idHall, idPhoto } = yield select(getHalls);
 
-    const uploadPhotos = yield call(
-      fetchChangeParams,
-      '/api/hall-cover',
-      { idHall, idPhoto },
-      token
-    );
+    const uploadPhotos = yield call(fetchPut, '/api/hall-cover', { idHall, idPhoto }, token);
 
     yield put(hallPhotoCoverSuccess(uploadPhotos));
   } catch (error) {

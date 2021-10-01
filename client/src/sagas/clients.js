@@ -1,6 +1,6 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
 
-import { fetchGetAll, fetchDeleteByParams, fetchAdd } from '../api';
+import { fetchGet, fetchDelete, fetchPost } from '../api';
 import {
   clientsFetchRequest,
   clientsFetchSuccess,
@@ -19,7 +19,7 @@ import { storageName } from '../config';
 export function* getClientsList() {
   try {
     const token = localStorage.getItem(storageName);
-    const clientsResult = yield call(fetchGetAll, '/api/clients', token);
+    const clientsResult = yield call(fetchGet, '/api/clients/', token);
 
     yield put(clientsFetchSuccess(clientsResult));
   } catch (error) {
@@ -32,7 +32,7 @@ export function* deleteClients() {
   try {
     const token = localStorage.getItem(storageName);
     const { clientsCheckList } = yield select(getClients);
-    const clientsResult = yield call(fetchDeleteByParams, '/api/clients', clientsCheckList, token);
+    const clientsResult = yield call(fetchDelete, '/api/clients', clientsCheckList, token);
 
     yield put(clientsSelectionDelSuccess(clientsResult));
   } catch (error) {
@@ -44,7 +44,7 @@ export function* addClient() {
   try {
     const token = localStorage.getItem(storageName);
     const { newClient } = yield select(getClients);
-    const clientResult = yield call(fetchAdd, '/api/client/', newClient, token);
+    const clientResult = yield call(fetchPost, '/api/client/', newClient, token);
 
     yield put(clientsAddSuccess(clientResult));
   } catch (error) {

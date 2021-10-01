@@ -1,5 +1,5 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
-import { fetchLogin, fetchLoginFromToken } from '../api';
+import { fetchPost } from '../api';
 import {
   loginFetchRequest,
   loginFetchSuccess,
@@ -13,7 +13,7 @@ import { storageName } from '../config';
 export function* loginAdmin() {
   try {
     const { login, pass } = yield select(getLogin);
-    const loginResult = yield call(fetchLogin, login, pass);
+    const loginResult = yield call(fetchPost, `/api/login/`, { login, password: pass });
 
     yield put(loginFetchSuccess(loginResult));
     yield localStorage.setItem(storageName, loginResult.token);
@@ -26,7 +26,7 @@ export function* loginAdmin() {
 export function* loginAdminFromToken() {
   try {
     const token = localStorage.getItem(storageName);
-    const loginToken = yield call(fetchLoginFromToken, token);
+    const loginToken = yield call(fetchPost, '/api/authFromToken/', {}, token);
 
     yield put(loginFetchSuccess(loginToken));
   } catch (error) {

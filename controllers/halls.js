@@ -18,7 +18,7 @@ module.exports.addHall = async (req, res) => {
 
     await hall.save();
 
-    const halls = await Halls.find({}).populate('cover').populate('photos');
+    const halls = await Halls.find({}).sort('order').populate('cover').populate('photos');
 
     res.status(201).json(halls);
   } catch (error) {
