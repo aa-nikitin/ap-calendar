@@ -1,6 +1,16 @@
 .form-box {
   &__row {
     margin-bottom: 20px;
+    position: relative;
+  }
+  &__row-icon {
+    display: flex;
+    align-items: center;
+  }
+  &__drop-list {
+    // position: absolute;
+    z-index: 10;
+    margin-top: 2px;
   }
   &--row-two {
     display: flex;
@@ -14,6 +24,22 @@
   }
   &__body {
     padding: 20px;
+  }
+  &--body-columns {
+    display: flex;
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+  &__column {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  &--column-plan-left {
+    width: 30%;
+    border-right: solid 1px $gray-line;
+  }
+  &--column-plan-right {
+    width: 70%;
   }
   &__footer {
     background-color: $gray-light;

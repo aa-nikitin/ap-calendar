@@ -1,11 +1,12 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
-import { fetchPost } from '../api';
+import { fetchPost, fetchGet } from '../api';
 import {
   loginFetchRequest,
   loginFetchSuccess,
   loginFetchError,
   loginFetchFromToken,
-  logoutFetchFromToken
+  logoutFetchFromToken,
+  setWorkShedule
 } from '../redux/actions';
 import { getLogin } from '../redux/reducers';
 import { storageName } from '../config';
@@ -14,7 +15,9 @@ export function* loginAdmin() {
   try {
     const { login, pass } = yield select(getLogin);
     const loginResult = yield call(fetchPost, `/api/login/`, { login, password: pass });
+    const workShedule = yield call(fetchGet, `/api/work-shedule/`);
 
+    yield put(setWorkShedule(workShedule));
     yield put(loginFetchSuccess(loginResult));
     yield localStorage.setItem(storageName, loginResult.token);
   } catch (error) {
@@ -27,7 +30,9 @@ export function* loginAdminFromToken() {
   try {
     const token = localStorage.getItem(storageName);
     const loginToken = yield call(fetchPost, '/api/authFromToken/', {}, token);
+    const workShedule = yield call(fetchGet, `/api/work-shedule/`);
 
+    yield put(setWorkShedule(workShedule));
     yield put(loginFetchSuccess(loginToken));
   } catch (error) {
     yield put(loginFetchError(error));

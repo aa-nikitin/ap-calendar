@@ -1,7 +1,7 @@
 import { handleActions } from 'redux-actions';
 import { combineReducers } from 'redux';
 
-import { setWindowSize, setPageTplName } from '../actions';
+import { setWindowSize, setPageTplName, setWorkShedule } from '../actions';
 
 const sizeWindow = handleActions(
   {
@@ -15,7 +15,13 @@ const pageTplName = handleActions(
   },
   ''
 );
+const workShedule = handleActions(
+  {
+    [setWorkShedule]: (_state, { payload }) => payload
+  },
+  {}
+);
 
 export const getParams = ({ params }) => params;
 
-export default combineReducers({ sizeWindow, pageTplName });
+export default combineReducers({ sizeWindow, pageTplName, workShedule });

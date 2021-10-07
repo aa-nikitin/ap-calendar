@@ -6,6 +6,20 @@ const {
     activeHall: setActiveParamHall,
     stepHall: setStepParamHall,
     countHall: setCountParamHall
+  },
+  planData: { request: planDataRequest, success: planDataSuccess, error: planDataError },
+  planFetch: {
+    add: { request: planFetchAddRequest, success: planFetchAddSuccess, error: planFetchAddError },
+    edit: {
+      request: planFetchEditRequest,
+      success: planFetchEditSuccess,
+      error: planFetchEditError
+    },
+    delete: {
+      request: planFetchDeleteRequest,
+      success: planFetchDeleteSuccess,
+      error: planFetchDeleteError
+    }
   }
 } = createActions({
   PLAN_HALLS: {
@@ -17,6 +31,16 @@ const {
     ACTIVE_HALL: null,
     STEP_HALL: null,
     COUNT_HALL: null
+  },
+  PLAN_DATA: {
+    REQUEST: null,
+    SUCCESS: null,
+    ERROR: null
+  },
+  PLAN_FETCH: {
+    ADD: { REQUEST: null, SUCCESS: null, ERROR: null },
+    EDIT: { REQUEST: null, SUCCESS: null, ERROR: null },
+    DELETE: { REQUEST: null, SUCCESS: null, ERROR: null }
   }
 });
 
@@ -26,5 +50,17 @@ export {
   planHallsError,
   setActiveParamHall,
   setStepParamHall,
-  setCountParamHall
+  setCountParamHall,
+  planDataRequest,
+  planDataSuccess,
+  planDataError,
+  planFetchAddRequest,
+  planFetchAddSuccess,
+  planFetchAddError,
+  planFetchEditRequest,
+  planFetchEditSuccess,
+  planFetchEditError,
+  planFetchDeleteRequest,
+  planFetchDeleteSuccess,
+  planFetchDeleteError
 };

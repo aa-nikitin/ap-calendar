@@ -1,0 +1,39 @@
+.available-time {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  &__item {
+    border: solid 1px $gray-line;
+    padding: 5px 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    transition-property: all;
+    transition-duration: 0.5s;
+    &:hover {
+      border-color: $gray-dark;
+      background-color: $gray-light;
+    }
+  }
+  &--active {
+    background-color: $yellow;
+    border-color: $yellow;
+    &:hover {
+      border-color: $yellow;
+      background-color: $yellow;
+    }
+  }
+  &--busy {
+    background-color: $gray-light;
+    border-color: $gray-light;
+    color: $gray-dark;
+    text-decoration: line-through;
+    cursor: default;
+    &:hover {
+      border-color: $gray-light;
+      background-color: $gray-light;
+    }
+  }
+}

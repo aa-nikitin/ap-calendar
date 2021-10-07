@@ -19,7 +19,8 @@ import { storageName } from '../config';
 export function* getClientsList() {
   try {
     const token = localStorage.getItem(storageName);
-    const clientsResult = yield call(fetchGet, '/api/clients/', token);
+    const { query } = yield select(getClients);
+    const clientsResult = yield call(fetchPost, '/api/clients/', { query }, token);
 
     yield put(clientsFetchSuccess(clientsResult));
   } catch (error) {

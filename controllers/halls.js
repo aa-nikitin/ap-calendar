@@ -47,7 +47,10 @@ module.exports.editHallCover = async (req, res) => {
 
     await Halls.updateOne({ _id: idHall }, { cover }, { new: true });
 
-    const hallChanged = await Halls.findOne({ _id: idHall }).populate('cover').populate('photos');
+    const hallChanged = await Halls.findOne({ _id: idHall })
+      .sort('order')
+      .populate('cover')
+      .populate('photos');
 
     res.status(201).json(hallChanged);
   } catch (error) {
@@ -69,7 +72,7 @@ module.exports.deleteHall = async (req, res) => {
     });
     await Halls.deleteOne({ _id: req.params.id });
 
-    const halls = await Halls.find({}).populate('cover').populate('photos');
+    const halls = await Halls.find({}).sort('order').populate('cover').populate('photos');
 
     res.json(halls);
   } catch (error) {

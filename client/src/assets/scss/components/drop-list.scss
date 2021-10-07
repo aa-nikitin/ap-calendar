@@ -1,0 +1,32 @@
+.drop-list {
+  border: solid 1px $gray;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: $cl-white;
+  max-height: 200px;
+  overflow-y: auto;
+  &__item {
+    border-bottom: solid 1px $gray;
+    padding: 7px 5px;
+    font-size: 12px;
+    transition-property: all;
+    transition-duration: 0.3s;
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  &--item-active {
+    border: solid 1px $cl-main;
+  }
+  &--item-hover {
+    cursor: pointer;
+    &:hover {
+      background-color: $cl-main;
+      color: $cl-white;
+    }
+  }
+  &__name {
+    font-size: 14px;
+    margin-bottom: 3px;
+  }
+}

@@ -1,11 +1,11 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import TodayIcon from '@material-ui/icons/Today';
-import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-import LoyaltyIcon from '@material-ui/icons/Loyalty';
-import StoreIcon from '@material-ui/icons/Store';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import TodayIcon from '@mui/icons-material/Today';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import LoyaltyIcon from '@mui/icons-material/Loyalty';
+import StoreIcon from '@mui/icons-material/Store';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 import { MenuItem } from './index';
 import { logoutFetchFromToken } from '../redux/actions';

@@ -1,8 +1,8 @@
 import React from 'react';
-import AutorenewIcon from '@material-ui/icons/Autorenew';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import Modal from '@mui/material/Modal';
+import Backdrop from '@mui/material/Backdrop';
+import Fade from '@mui/material/Fade';
 
 const Loading = () => {
   return (
@@ -18,7 +18,9 @@ const Loading = () => {
       }}>
       <Fade in={true}>
         <div className="loading">
-          <AutorenewIcon className="loading__icon" fontSize="large" />
+          <div className="loading__backdrop">
+            <AutorenewIcon className="loading__icon" fontSize="large" />
+          </div>
         </div>
       </Fade>
     </Modal>

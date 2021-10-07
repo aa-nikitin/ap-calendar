@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Button from '@material-ui/core/Button';
-import UpdateIcon from '@material-ui/icons/Update';
-import Tooltip from '@material-ui/core/Tooltip';
+import Button from '@mui/material/Button';
+import UpdateIcon from '@mui/icons-material/Update';
+import Tooltip from '@mui/material/Tooltip';
 
 import { Loading, ClientForm } from '../componetns';
 import { getClient } from '../redux/reducers';

@@ -56,3 +56,13 @@ module.exports.changeWorkShedule = async (req, res) => {
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
   }
 };
+
+module.exports.getWorkShedule = async (req, res) => {
+  try {
+    const workShedule = await WorkShedule.findOne({});
+
+    res.json(workShedule);
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};

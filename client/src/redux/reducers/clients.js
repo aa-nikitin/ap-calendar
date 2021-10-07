@@ -76,6 +76,22 @@ const newClient = handleActions(
   {}
 );
 
+const query = handleActions(
+  {
+    [clientsFetchRequest]: (_state, { payload }) => payload,
+    [clientsFetchSuccess]: (_state) => '',
+    [clientsFetchError]: (_state) => ''
+  },
+  ''
+);
+
 export const getClients = ({ clients }) => clients;
 
-export default combineReducers({ clientsFetch, clients, error, clientsCheckList, newClient });
+export default combineReducers({
+  clientsFetch,
+  clients,
+  error,
+  clientsCheckList,
+  newClient,
+  query
+});

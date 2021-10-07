@@ -35,7 +35,6 @@
     border-color: $gray-light;
   }
   &__button {
-    height: $size-hour-shedule;
     border: none;
     background-color: transparent;
     cursor: pointer;
@@ -45,6 +44,11 @@
     padding-left: 10px;
     padding-right: 10px;
     font-size: 12px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
     &:after {
       content: attr(data-hour) ' Добавить';
       font-weight: bold;
@@ -53,6 +57,10 @@
     &:hover {
       background-color: $cl-main;
     }
+  }
+  &__cell {
+    height: $size-hour-shedule;
+    position: relative;
   }
   &__booking {
     position: absolute;

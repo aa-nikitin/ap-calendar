@@ -11,6 +11,9 @@
     max-width: 600px;
     display: flex;
   }
+  &--wrap-plan-form {
+    max-width: 900px;
+  }
   &__paper {
     background-color: $cl-white;
     padding: 0px;

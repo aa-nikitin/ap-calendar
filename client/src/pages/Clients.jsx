@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { DataGrid, ruRU } from '@mui/x-data-grid';
-import { makeStyles } from '@material-ui/styles';
-import Button from '@material-ui/core/Button';
-
+import { makeStyles } from '@mui/styles';
+import Button from '@mui/material/Button';
+// import { ruRU } from '@mui/material/locale';
 import {
   clientsFetchRequest,
   clientsSelectionCheck,
@@ -26,7 +26,6 @@ const useStyles = makeStyles({
 const Clients = () => {
   const { clients, clientsFetch, clientsCheckList } = useSelector((state) => getClients(state));
   const dispatch = useDispatch();
-
   const clientsSelection = (list) => {
     dispatch(clientsSelectionCheck(list));
   };
@@ -85,7 +84,6 @@ const Clients = () => {
     }
   ];
   const classes = useStyles();
-
   if (clientsFetch) return <Loading />;
   return (
     <div className="content-page">
@@ -117,7 +115,7 @@ const Clients = () => {
             rows={clients}
             checkboxSelection
             disableSelectionOnClick
-            localeText={ruRU.props.MuiDataGrid.localeText}
+            localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
             onSelectionModelChange={(list) => {
               clientsSelection(list);
             }}

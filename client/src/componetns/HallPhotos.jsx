@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import DeleteIcon from '@material-ui/icons/Delete';
-import PermMediaIcon from '@material-ui/icons/PermMedia';
-import Button from '@material-ui/core/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PermMediaIcon from '@mui/icons-material/PermMedia';
+import Button from '@mui/material/Button';
 
 import {
   hallPhotosUploadRequest,

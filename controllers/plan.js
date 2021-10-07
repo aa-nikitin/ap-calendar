@@ -172,3 +172,41 @@ module.exports.checkPlanFree = async (req, res) => {
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
   }
 };
+
+module.exports.checkPlanTime = async (req, res) => {
+  try {
+    const { date, time, idHall } = req.body;
+    const formateDate = moment(`${date}`, formatDateConf);
+    const plan = await Plan.find({
+      date: formateDate,
+      hall: idHall
+    });
+    const shedule = await WorkShedule.findOne({});
+    const resultFreeDays = calculateFreeTime(plan, time, shedule);
+    res.status(201).json(resultFreeDays);
+  } catch (error) {
+    res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
+  }
+};
+
+module.exports.planTimeForEdit = async (req, res) => {
+  try {
+    const { date, time, idHall, minutes, idPlan, busyMinutes } = req.body;
+    const formateDate = moment(`${date}`, formatDateConf);
+    const plan = await Plan.find({
+      date: formateDate,
+      hall: idHall
+    });
+    const planFiltered = plan.filter((item) => {
+      return item.id !== idPlan;
+    });
+
+    const shedule = await WorkShedule.findOne({});
+    const planFreeTime = calculateFreeTime(planFiltered, time, shedule);
+    const planFree = calculateFreeDays(planFiltered, shedule);
+
+    res.status(201).json({ planFreeTime, date, time, idHall, minutes, idPlan, planFree });
+  } catch (error) {
+    res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
+  }
+};

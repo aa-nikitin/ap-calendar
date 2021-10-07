@@ -1,17 +1,17 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import Button from '@material-ui/core/Button';
-import Alert from '@material-ui/lab/Alert';
+import { makeStyles } from '@mui/styles';
+import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
 
 import { loginFetchRequest } from '../redux/actions';
 import { getLogin } from '../redux/reducers';
@@ -57,10 +57,10 @@ const Login = () => {
         <div className="login__item">
           <TextField
             onChange={handleChange('login')}
-            className={clsx(classes.textField)}
             required
             id="standard-basic"
             label="Логин"
+            className={clsx(classes.textField)}
           />
         </div>
         <div className="login__item">
