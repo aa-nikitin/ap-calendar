@@ -25,6 +25,7 @@ module.exports.addPlanDate = async (req, res) => {
       clientAlias,
       clientPhone,
       clientEmail,
+      idPlan,
       comment
     } = req.body;
     const formateDate = moment(`${date}`, formatDateConf);
@@ -36,11 +37,16 @@ module.exports.addPlanDate = async (req, res) => {
     });
 
     const shedule = await WorkShedule.findOne({});
+    const planFiltered = idPlan
+      ? plan.filter((item) => {
+          return item.id !== idPlan;
+        })
+      : plan;
+    // console.log(planFiltered);
 
-    const hoursCount = calculateFreeTime(plan, time, shedule);
+    const hoursCount = calculateFreeTime(planFiltered, time, shedule);
 
     // console.log(hoursCount >= minutes, hoursCount, minutes);
-
     if (!(hoursCount >= minutes)) throw 'Указанное время занято';
 
     let clientFromDB = {};
@@ -69,7 +75,7 @@ module.exports.addPlanDate = async (req, res) => {
       email: clientFromDB.email
     };
 
-    const newPlan = new Plan({
+    const newPlanObj = {
       date: formateDate,
       time: formateTime,
       minutes,
@@ -77,18 +83,17 @@ module.exports.addPlanDate = async (req, res) => {
       client: clientFromDB.id,
       clientInfo: clientInfo,
       comment
-    });
+    };
+    let newPlan = {};
+    if (!idPlan) {
+      newPlan = new Plan(newPlanObj);
 
-    await newPlan.save();
+      await newPlan.save();
+    } else {
+      newPlan = await Plan.updateOne({ _id: idPlan }, newPlanObj, { new: true });
+    }
 
-    // const plan = await Plan.find({
-    //   date: {
-    //     $gte: moment(`12.07.2021`, 'DD.MM.YYYY'),
-    //     $lte: moment(`12.07.2021`, 'DD.MM.YYYY')
-    //   }
-    // });
-    // console.log(moment(plan[1].date).format('DD.MM.YYYY'), moment(plan[1].time).format('HH:mm'));
-    res.status(201).json(newPlan);
+    res.status(201).json({});
   } catch (error) {
     res.status(500).json({ message: error });
   }
@@ -191,7 +196,7 @@ module.exports.checkPlanTime = async (req, res) => {
 
 module.exports.planTimeForEdit = async (req, res) => {
   try {
-    const { date, time, idHall, minutes, idPlan, busyMinutes } = req.body;
+    const { date, time, idHall, minutes, idPlan } = req.body;
     const formateDate = moment(`${date}`, formatDateConf);
     const plan = await Plan.find({
       date: formateDate,
@@ -208,5 +213,16 @@ module.exports.planTimeForEdit = async (req, res) => {
     res.status(201).json({ planFreeTime, date, time, idHall, minutes, idPlan, planFree });
   } catch (error) {
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
+  }
+};
+
+module.exports.deletePlan = async (req, res) => {
+  try {
+    const { idPlan } = req.body.params;
+    const resultDelete = await Plan.deleteOne({ _id: idPlan });
+
+    res.json(resultDelete);
+  } catch (error) {
+    res.status(500).json({ message: error });
   }
 };

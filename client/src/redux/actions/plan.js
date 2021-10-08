@@ -10,11 +10,6 @@ const {
   planData: { request: planDataRequest, success: planDataSuccess, error: planDataError },
   planFetch: {
     add: { request: planFetchAddRequest, success: planFetchAddSuccess, error: planFetchAddError },
-    edit: {
-      request: planFetchEditRequest,
-      success: planFetchEditSuccess,
-      error: planFetchEditError
-    },
     delete: {
       request: planFetchDeleteRequest,
       success: planFetchDeleteSuccess,
@@ -39,7 +34,6 @@ const {
   },
   PLAN_FETCH: {
     ADD: { REQUEST: null, SUCCESS: null, ERROR: null },
-    EDIT: { REQUEST: null, SUCCESS: null, ERROR: null },
     DELETE: { REQUEST: null, SUCCESS: null, ERROR: null }
   }
 });
@@ -57,9 +51,6 @@ export {
   planFetchAddRequest,
   planFetchAddSuccess,
   planFetchAddError,
-  planFetchEditRequest,
-  planFetchEditSuccess,
-  planFetchEditError,
   planFetchDeleteRequest,
   planFetchDeleteSuccess,
   planFetchDeleteError

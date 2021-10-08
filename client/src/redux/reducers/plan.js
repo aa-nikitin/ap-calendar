@@ -14,10 +14,7 @@ import {
   planFetchAddRequest,
   planFetchAddSuccess,
   planFetchAddError,
-  planFetchEditEequest,
-  planFetchEditSuccess,
-  planFetchEditError,
-  planFetchDeleteEequest,
+  planFetchDeleteRequest,
   planFetchDeleteSuccess,
   planFetchDeleteError
 } from '../actions';
@@ -29,7 +26,10 @@ const plan = handleActions(
     [planHallsError]: (_state) => [],
     [planFetchAddRequest]: (_state) => [],
     [planFetchAddSuccess]: (_state, { payload }) => payload,
-    [planFetchAddError]: (_state) => []
+    [planFetchAddError]: (_state) => [],
+    [planFetchDeleteRequest]: (_state) => [],
+    [planFetchDeleteSuccess]: (_state, { payload }) => payload,
+    [planFetchDeleteError]: (_state) => []
   },
   []
 );
@@ -40,7 +40,10 @@ const planFetch = handleActions(
     [planHallsError]: (_state) => false,
     [planFetchAddRequest]: (_state) => true,
     [planFetchAddSuccess]: (_state) => false,
-    [planFetchAddError]: (_state) => false
+    [planFetchAddError]: (_state) => false,
+    [planFetchDeleteRequest]: (_state) => true,
+    [planFetchDeleteSuccess]: (_state) => false,
+    [planFetchDeleteError]: (_state) => false
   },
   false
 );
@@ -62,7 +65,10 @@ const error = handleActions(
     [planDataError]: (_state, { payload }) => payload,
     [planFetchAddRequest]: (_state) => null,
     [planFetchAddSuccess]: (_state) => null,
-    [planFetchAddError]: (_state, { payload }) => payload
+    [planFetchAddError]: (_state, { payload }) => payload,
+    [planFetchDeleteRequest]: (_state) => null,
+    [planFetchDeleteSuccess]: (_state) => null,
+    [planFetchDeleteError]: (_state, { payload }) => payload
   },
   null
 );
@@ -73,7 +79,10 @@ const dataPlan = handleActions(
     [planDataError]: (_state) => {},
     [planFetchAddRequest]: (_state, { payload }) => payload,
     [planFetchAddSuccess]: (_state) => {},
-    [planFetchAddError]: (_state) => {}
+    [planFetchAddError]: (_state) => {},
+    [planFetchDeleteRequest]: (_state, { payload }) => payload,
+    [planFetchDeleteSuccess]: (_state) => {},
+    [planFetchDeleteError]: (_state) => {}
   },
   {}
 );

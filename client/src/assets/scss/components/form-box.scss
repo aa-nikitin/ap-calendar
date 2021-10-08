@@ -45,4 +45,13 @@
     background-color: $gray-light;
     padding: 10px 20px;
   }
+  &--footer-btn-panels {
+    display: flex;
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+  &__footer-btn {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }

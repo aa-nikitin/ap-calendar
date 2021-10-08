@@ -1,6 +1,6 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
 
-import { fetchPost } from '../api';
+import { fetchPost, fetchPut, fetchDelete } from '../api';
 import {
   planHallsRequest,
   planHallsSuccess,
@@ -11,7 +11,10 @@ import {
   planDataError,
   planFetchAddRequest,
   planFetchAddSuccess,
-  planFetchAddError
+  planFetchAddError,
+  planFetchDeleteRequest,
+  planFetchDeleteSuccess,
+  planFetchDeleteError
 } from '../redux/actions';
 import { getPlan } from '../redux/reducers';
 import { storageName } from '../config';
@@ -37,7 +40,7 @@ export function* getPlanData() {
     const token = localStorage.getItem(storageName);
     const { dataPlan } = yield select(getPlan);
     const { date, time, idHall, idPlan, minutes } = dataPlan;
-    // console.log(idPlan);
+
     if (!idPlan) {
       const planFreeTime = yield call(fetchPost, '/api/plan-check-time/', dataPlan, token);
       const planFree = yield call(fetchPost, '/api/plan-check-free/', dataPlan, token);
@@ -57,16 +60,18 @@ export function* addPlan() {
   try {
     const token = localStorage.getItem(storageName);
     const { dataPlan } = yield select(getPlan);
-    yield call(fetchPost, '/api/plan-date/', dataPlan, token);
+
+    if (!dataPlan.idPlan) {
+      yield call(fetchPost, '/api/plan-date/', dataPlan, token);
+    } else {
+      yield call(fetchPut, '/api/plan-date/', dataPlan, token);
+    }
     const planHallsResult = yield call(
       fetchPost,
       '/api/plan-halls',
       { date: dataPlan.date },
       token
     );
-    // console.log(dataPlan);
-    // const { date, time, idHall, idPlan, minutes } = dataPlan;
-    // console.log(idPlan);
     yield put(planFetchAddSuccess(planHallsResult));
   } catch (error) {
     if (error === 'Unauthorized') yield put(logoutFetchFromToken());
@@ -74,8 +79,29 @@ export function* addPlan() {
   }
 }
 
+export function* deletePlan() {
+  try {
+    const token = localStorage.getItem(storageName);
+    const { dataPlan } = yield select(getPlan);
+
+    yield call(fetchDelete, '/api/plan-date/', { idPlan: dataPlan.idPlan }, token);
+
+    const planHallsResult = yield call(
+      fetchPost,
+      '/api/plan-halls',
+      { date: dataPlan.date },
+      token
+    );
+    yield put(planFetchDeleteSuccess(planHallsResult));
+  } catch (error) {
+    if (error === 'Unauthorized') yield put(logoutFetchFromToken());
+    yield put(planFetchDeleteError(error));
+  }
+}
+
 export function* planWatch() {
   yield takeLatest(planHallsRequest, getPlanHalls);
   yield takeLatest(planDataRequest, getPlanData);
   yield takeLatest(planFetchAddRequest, addPlan);
+  yield takeLatest(planFetchDeleteRequest, deletePlan);
 }

@@ -37,6 +37,7 @@ const PlanForm = ({
   CustomBtn,
   params,
   handleClick,
+  handleDeletePlan,
   thisHourInfo
 }) => {
   // console.log(params);
@@ -330,11 +331,12 @@ const PlanForm = ({
                   // console.log(activeTimeItem);
                   return (
                     <div
-                      onClick={refreshParamsPlan(
-                        { time: timeFree, minutes, date: date, idHall },
-                        !busy,
-                        { positionTime, minutesStep, minutesStep, planFreeTime }
-                      )}
+                      onClick={refreshParamsPlan({ time: timeFree, minutes, date, idHall }, !busy, {
+                        positionTime,
+                        minutesStep,
+                        minutesStep,
+                        planFreeTime
+                      })}
                       className={`available-time__item ${
                         activeTimeItem ? 'available-time--active' : ''
                       } ${busy ? 'available-time--busy' : ''}`}
@@ -347,10 +349,22 @@ const PlanForm = ({
             )}
           </div>
         </div>
-        <div className="form-box__footer">
-          <Button variant="outlined" color="primary" type="submit">
-            Сохранить
-          </Button>
+        <div className="form-box__footer  form-box--footer-btn-panels">
+          <div className="form-box__footer-btn">
+            <Button variant="outlined" color="primary" type="submit">
+              Сохранить
+            </Button>
+          </div>
+          {!!thisHourInfo.id && handleDeletePlan && (
+            <div className="form-box__footer-btn">
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleDeletePlan({ date, idPlan: thisHourInfo.id })}>
+                Отменить заявку
+              </Button>
+            </div>
+          )}
         </div>
       </form>
     </TransitionsModal>
@@ -365,7 +379,8 @@ PlanForm.propTypes = {
   params: PropTypes.object,
   CustomBtn: PropTypes.func,
   handleClick: PropTypes.func,
-  thisHourInfo: PropTypes.object
+  thisHourInfo: PropTypes.object,
+  handleDeletePlan: PropTypes.func
 };
 PlanForm.defaultProps = {
   captionButton: '',
@@ -375,7 +390,8 @@ PlanForm.defaultProps = {
   handleClick: null,
   CustomBtn: null,
   params: {},
-  thisHourInfo: {}
+  thisHourInfo: {},
+  handleDeletePlan: () => {}
 };
 
 export { PlanForm };

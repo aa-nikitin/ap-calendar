@@ -68,6 +68,12 @@
     left: 0px;
     top: 0px;
     width: 100%;
-    background-color: #ccc;
+    overflow: hidden;
+    background-color: $aquamarine;
+    cursor: pointer;
+    &:hover {
+      overflow: visible;
+      z-index: 20;
+    }
   }
 }

@@ -17,6 +17,7 @@ const { uploadHallPhotos, deleteHallPhoto } = require('../controllers/hall-photo
 const {
   addPlanDate,
   getPlanHalls,
+  deletePlan,
   checkPlanFree,
   checkPlanTime,
   planTimeForEdit
@@ -60,6 +61,8 @@ router.delete('/delete-photo', authJwt, deleteHallPhoto);
 
 router.post('/plan-halls', getPlanHalls);
 router.post('/plan-date', addPlanDate);
+router.put('/plan-date', addPlanDate);
+router.delete('/plan-date', deletePlan);
 router.post('/plan-check-free', checkPlanFree);
 router.post('/plan-check-time', checkPlanTime);
 router.post('/plan-time-for-edit', planTimeForEdit);

@@ -1,23 +1,38 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import moment from 'moment';
+import TextField from '@mui/material/TextField';
+import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import Button from '@mui/material/Button';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ruLocale from 'date-fns/locale/ru';
 
 import { Loading, PlanForm, BtnAddPlan } from '../componetns';
 import {
   planHallsRequest,
   setPageTplName,
   planDataRequest,
-  planFetchAddRequest
+  planFetchAddRequest,
+  planFetchDeleteRequest
 } from '../redux/actions';
 import { getPlan, getParams } from '../redux/reducers';
 
 const Plan = () => {
+  const [valueDate, setValueDate] = React.useState(new Date());
   const dispatch = useDispatch();
   const { plan, planFetch, planPopupFetch } = useSelector((state) => getPlan(state));
   const { workShedule } = useSelector((state) => getParams(state));
   const { list: hoursArray, minutesStep, hourSize } = workShedule;
   const handlePlan = (values) => {
-    console.log(values);
     dispatch(planFetchAddRequest(values));
+  };
+  const handleDeletePlan = (dataPlan) => () => {
+    if (window.confirm('Вы действительно хотите отменить заявку?')) {
+      dispatch(planFetchDeleteRequest(dataPlan));
+    }
   };
   const handlePlanBtn = (obj, thisHourInfo) => (refreshObj) => {
     const workObj = refreshObj ? refreshObj : obj;
@@ -27,15 +42,27 @@ const Plan = () => {
       // console.log(thisHourInfo.id, obj);
     }
   };
+  const handleDateChange = (newValue) => {
+    setValueDate(newValue);
+  };
+  const handleDateInc = () => {
+    setValueDate(moment(valueDate).add(1, 'd'));
+  };
+  const handleDateDec = () => {
+    setValueDate(moment(valueDate).subtract(1, 'd'));
+  };
+  const handleDateToday = () => {
+    setValueDate(new Date());
+  };
   // console.log(animals.slice(-2));
   // console.log(halls.slice(2, 4));
   // console.log(plan);
-  const thisDate = '15.07.2021';
+  const thisDate = moment(valueDate).format('DD.MM.YYYY');
   useEffect(() => {
     dispatch(planHallsRequest(thisDate));
     dispatch(setPageTplName('PLAN'));
-  }, [dispatch]);
-
+  }, [dispatch, thisDate]);
+  // console.log(moment(valueDate).format('DD.MM.YYYY'));
   // const handleClick = () => {
   //   handlePlanBtn({ date: thisDate });
   // };
@@ -48,16 +75,42 @@ const Plan = () => {
         <div className="content-page__main">
           <div className="content-page__panel content-page--panel-extend">
             <div className="content-page__panel-item">
-              <div className="content-page__panel-btn">sad</div>
+              <div className="content-page__panel-btn">
+                <PlanForm
+                  onClick={handlePlan}
+                  captionButton={`+Добавить`}
+                  nameForm="Аренда"
+                  params={workShedule}
+                  handleClick={handlePlanBtn({ date: thisDate })}
+                />
+              </div>
+              <div className="content-page__panel-btn">
+                <Button variant="outlined" color="primary" onClick={handleDateToday}>
+                  Сегодня
+                </Button>
+              </div>
+              <div className="content-page__panel-btn">
+                <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+                  <MobileDatePicker
+                    label="Дата"
+                    inputFormat="dd.MM.yyyy"
+                    value={valueDate}
+                    onChange={handleDateChange}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+              </div>
+              <div className="content-page__panel-btn">
+                <Button variant="outlined" color="primary" onClick={handleDateDec}>
+                  <ArrowBackIosNewIcon />
+                </Button>
+                <Button variant="outlined" color="primary" onClick={handleDateInc}>
+                  <ArrowForwardIosIcon />
+                </Button>
+              </div>
             </div>
           </div>
-          <PlanForm
-            onClick={handlePlan}
-            captionButton={`+Добавить`}
-            nameForm="Аренда"
-            params={workShedule}
-            handleClick={handlePlanBtn({ date: thisDate })}
-          />
+
           <div className="content-page__info">
             {plan.length > 0 && (
               <div className="shedule">
@@ -109,6 +162,7 @@ const Plan = () => {
                                       nameForm="Аренда"
                                       params={workShedule}
                                       thisHourInfo={thisHourInfo}
+                                      handleDeletePlan={handleDeletePlan}
                                       handleClick={handlePlanBtn(
                                         {
                                           idHall: planItem.id,
