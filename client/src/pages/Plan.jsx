@@ -124,7 +124,7 @@ const Plan = () => {
                         <div className="shedule-scale__item" key={item.minutes}>
                           {!(itemCount % divisorCount) && (
                             <div className="shedule-scale__hour">
-                              <span>{item.timeH}</span>
+                              <span>{item.timeH === '24' ? '00' : item.timeH}</span>
                               <em>{item.timeM}</em>
                             </div>
                           )}
@@ -196,7 +196,7 @@ const Plan = () => {
                         <div className="shedule-scale__item" key={item.minutes}>
                           {!(itemCount % divisorCount) && (
                             <div className="shedule-scale__hour">
-                              <span>{item.timeH}</span>
+                              <span>{item.timeH === '24' ? '00' : item.timeH}</span>
                               <em>{item.timeM}</em>
                             </div>
                           )}

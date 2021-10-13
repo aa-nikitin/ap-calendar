@@ -188,6 +188,7 @@ module.exports.checkPlanTime = async (req, res) => {
     });
     const shedule = await WorkShedule.findOne({});
     const resultFreeDays = calculateFreeTime(plan, time, shedule);
+    // console.log(resultFreeDays);
     res.status(201).json(resultFreeDays);
   } catch (error) {
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });

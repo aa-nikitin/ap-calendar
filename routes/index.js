@@ -23,6 +23,7 @@ const {
   planTimeForEdit
 } = require('../controllers/plan');
 const { changeWorkShedule, getWorkShedule } = require('../controllers/work-shedule');
+const { getBookingPlanWeek } = require('../controllers/booking');
 
 const router = Router();
 
@@ -59,13 +60,15 @@ router.delete('/hall/:id', authJwt, deleteHall);
 router.post('/upload-photos', authJwt, uploadHallPhotos);
 router.delete('/delete-photo', authJwt, deleteHallPhoto);
 
-router.post('/plan-halls', getPlanHalls);
-router.post('/plan-date', addPlanDate);
-router.put('/plan-date', addPlanDate);
-router.delete('/plan-date', deletePlan);
-router.post('/plan-check-free', checkPlanFree);
-router.post('/plan-check-time', checkPlanTime);
-router.post('/plan-time-for-edit', planTimeForEdit);
+router.post('/plan-halls', authJwt, getPlanHalls);
+router.post('/plan-date', authJwt, addPlanDate);
+router.put('/plan-date', authJwt, addPlanDate);
+router.delete('/plan-date', authJwt, deletePlan);
+router.post('/plan-check-free', authJwt, checkPlanFree);
+router.post('/plan-check-time', authJwt, checkPlanTime);
+router.post('/plan-time-for-edit', authJwt, planTimeForEdit);
+
+router.post('/booking-plan-week', getBookingPlanWeek);
 
 router.put('/work-shedule', changeWorkShedule);
 router.get('/work-shedule', getWorkShedule);

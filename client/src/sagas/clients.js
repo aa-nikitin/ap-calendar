@@ -1,6 +1,6 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
 
-import { fetchGet, fetchDelete, fetchPost } from '../api';
+import { fetchDelete, fetchPost } from '../api';
 import {
   clientsFetchRequest,
   clientsFetchSuccess,

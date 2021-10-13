@@ -6,10 +6,12 @@ const formatTime = config.get('formatTime');
 const dateForTime = config.get('dateForTime');
 const hourSize = config.get('hourSize');
 
-const timeToMinutes = (time) => {
+const timeToMinutes = (time, day) => {
   const arrTime = time.split(':');
-  const hours = Number(arrTime[0]);
+  let hours = Number(arrTime[0]);
   const minutes = Number(arrTime[1]);
+
+  if (hours === 0 && Number(day) === 2) hours = 24;
 
   return hours * hourSize + minutes;
 };
@@ -56,7 +58,7 @@ const calculateFreeTime = (plan, time, shedule) => {
   });
   if (!isError) {
     const timeFromInMinutes = timeToMinutes(timeFrom.format(formatTime));
-    const timeToInMinutes = timeToMinutes(endTime.format(formatTime));
+    const timeToInMinutes = timeToMinutes(endTime.format(formatTime), endTime.format('DD'));
 
     return timeToInMinutes - timeFromInMinutes;
   } else return 0;
@@ -72,8 +74,7 @@ const calculateFreeDays = (plan, shedule) => {
       'm'
     );
     let minutesFrom = timeToMinutes(planTimeFrom.format(formatTime));
-    const minutesTo = timeToMinutes(planTimeTo.format(formatTime));
-
+    const minutesTo = timeToMinutes(planTimeTo.format(formatTime), planTimeTo.format('DD'));
     while (minutesFrom < minutesTo) {
       listBusyTime.push(Number(minutesFrom));
       minutesFrom = minutesFrom + shedule.minutesStep;

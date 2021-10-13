@@ -334,7 +334,6 @@ const PlanForm = ({
                       onClick={refreshParamsPlan({ time: timeFree, minutes, date, idHall }, !busy, {
                         positionTime,
                         minutesStep,
-                        minutesStep,
                         planFreeTime
                       })}
                       className={`available-time__item ${
