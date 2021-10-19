@@ -51,7 +51,7 @@ router.delete('/client/:id', authJwt, deleteClient);
 // router.delete('/pizzas/:id', deletePizza);
 
 // halls
-router.get('/halls', authJwt, getHalls);
+router.get('/halls', getHalls);
 router.post('/hall', authJwt, addHall);
 router.put('/hall/:id', authJwt, editHall);
 router.put('/hall-cover/', authJwt, editHallCover);

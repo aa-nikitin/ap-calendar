@@ -42,11 +42,9 @@ module.exports.addPlanDate = async (req, res) => {
           return item.id !== idPlan;
         })
       : plan;
-    // console.log(planFiltered);
 
     const hoursCount = calculateFreeTime(planFiltered, time, shedule);
 
-    // console.log(hoursCount >= minutes, hoursCount, minutes);
     if (!(hoursCount >= minutes)) throw 'Указанное время занято';
 
     let clientFromDB = {};
@@ -55,7 +53,6 @@ module.exports.addPlanDate = async (req, res) => {
       clientFromDB = await Clients.findOne({ _id: idClient });
     } else {
       const clientNameArray = clientName.split(' ');
-      // console.log(clientNameArray);
       const clientFirstName = clientNameArray[0] ? clientNameArray[0] : '';
       const clientLastName = clientNameArray[1] ? clientNameArray[1] : '';
       clientFromDB = new Clients({
@@ -101,22 +98,14 @@ module.exports.addPlanDate = async (req, res) => {
 
 module.exports.getPlanHalls = async (req, res) => {
   try {
-    // console.log(req.body);
     const { date } = req.body;
     const newPlan = {};
-    // const plan = await Plan.find({
-    //   date: moment(date, 'DD.MM.YYYY')
-    // }).populate('clients');
     const plan = await Plan.find({
       date: moment(date, formatDateConf)
     });
 
     const halls = await Halls.find({}).sort('order');
-    // console.log(halls);
     halls.forEach(({ id, name, square, ceilingHeight, priceFrom, description, order }) => {
-      // console.log({ id, name, square, ceilingHeight, priceFrom, description, order });
-
-      // console.log(date);
       newPlan[id] = {
         id,
         date,
@@ -130,15 +119,12 @@ module.exports.getPlanHalls = async (req, res) => {
       };
     });
     plan.forEach((planItem) => {
-      // newPlan[planItem.hall._id.toString()].plans.push('asd');
       const idHall = planItem.hall._id.toString();
       const { id, time, minutes, client, clientInfo } = planItem;
       // console.log(client);
       const formatTime = moment(time).format(formatTimeConf);
       const timeEnd = moment(time).add(minutes, 'm').format(formatTimeConf);
       const timeRange = `${formatTime} - ${timeEnd}`;
-      // console.log(moment(time).format('HH:mm'), minutes);
-      // console.log(timeRange);
       if (!!newPlan[idHall]) {
         newPlan[idHall].plans[formatTime] = {
           id,
@@ -148,14 +134,7 @@ module.exports.getPlanHalls = async (req, res) => {
           clientInfo: { ...clientInfo }
         };
       }
-      // console.log(newPlan[planItem.hall._id.toString()]);
     });
-    // console.log(newPlan);
-    // console.log(date, plan);
-    // console.log(moment(plan[1].date).format('DD.MM.YYYY'), moment(plan[1].time).format('HH:mm'));
-    // const aaa = _.chain(plan).groupBy('hall.name').value();
-    // console.log(Object.values(aaa));
-    // console.log(halls);
     res.status(201).json(Object.values(newPlan));
   } catch (error) {
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
