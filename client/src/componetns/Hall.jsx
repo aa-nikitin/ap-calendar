@@ -21,6 +21,7 @@ const Hall = ({ params, handleDelete, onClick }) => {
       </div>
       <div className="hall__item hall--name">
         <div className="hall__head">{name}</div>
+        <div className="hall__param">ID {id}</div>
         <div className="hall__param">потолок {ceilingHeight} м</div>
         <div className="hall__param">
           площадь {square} м<sup>2</sup>
