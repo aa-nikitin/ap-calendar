@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PropTypes from 'prop-types';
 
-import { ButtonIcon, HallForm, HallPhotos } from '../componetns';
+import { ButtonIcon, HallForm, HallPhotos, PriceHall } from '../componetns';
 
 const Hall = ({ params, handleDelete, onClick }) => {
   const { _id: id, name, priceFrom, ceilingHeight, square, cover, photos } = params;
@@ -28,7 +28,9 @@ const Hall = ({ params, handleDelete, onClick }) => {
         </div>
         <div className="hall__param">цена от {priceFrom} руб.</div>
       </div>
-      <div className="hall__item hall--price">{priceFrom}</div>
+      <div className="hall__item hall--price">
+        <PriceHall idHall={id} />
+      </div>
       <div className="hall__item hall--buttons">
         <ButtonIcon Icon={DeleteIcon} title="Удалить" onClick={handleDelete(id)} />
         <HallForm

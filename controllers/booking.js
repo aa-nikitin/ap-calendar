@@ -3,11 +3,12 @@ const moment = require('moment');
 const config = require('config');
 const formatDateConf = config.get('formatDate');
 const formatTimeConf = config.get('formatTime');
-const weekDaysConf = config.get('weekDays');
+// const weekDaysConf = config.get('weekDays');
 
 const Plan = require('../models/plan');
 const WorkShedule = require('../models/work-shedule');
 const { timeToMinutes } = require('../libs/handler-time');
+const { daysOfWeekArr: weekDaysConf } = require('../config/priceSettings');
 
 moment.locale('ru');
 
@@ -43,7 +44,7 @@ module.exports.getBookingPlanWeek = async (req, res) => {
       sheduleWork[dateStart.format(formatDateConf)] = {
         dateShort: dateStart.format(formatDateConf),
         dateFull: dateFull,
-        dayWeek: `${weekDaysConf[i]}, ${dateStart.format('DD')}`,
+        dayWeek: `${weekDaysConf[i].name}, ${dateStart.format('DD')}`,
         idHall,
         list: listSheduleWork
       };

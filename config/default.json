@@ -8,6 +8,5 @@
   "formatDate": "DD.MM.YYYY",
   "formatTime": "HH:mm",
   "dateForTime": "01.01.1970",
-  "hourSize": 60,
-  "weekDays": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+  "hourSize": 60
 }

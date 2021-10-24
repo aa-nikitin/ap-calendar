@@ -10,3 +10,7 @@ export * from './HallForm';
 export * from './HallPhotos';
 export * from './PlanForm';
 export * from './BtnAddPlan';
+export * from './PriceHall';
+export * from './BtnAddPrice';
+export * from './PriceForm';
+export * from './ButtonsSwitches';

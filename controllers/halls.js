@@ -5,8 +5,12 @@ const { asyncUnlink } = require('../libs/fs.functions');
 module.exports.getHalls = async (req, res) => {
   try {
     const halls = await Halls.find({}).sort('order').populate('cover').populate('photos');
-
-    res.json(halls);
+    // console.log(halls);
+    const hallsWithPrices = halls.map((item) => {
+      console.log({ ...item });
+      return item;
+    });
+    res.json(hallsWithPrices);
   } catch (error) {
     res.status(500).json({ message: error });
   }
