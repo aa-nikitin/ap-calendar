@@ -24,7 +24,15 @@ const {
 } = require('../controllers/plan');
 const { changeWorkShedule, getWorkShedule } = require('../controllers/work-shedule');
 const { getBookingPlanWeek } = require('../controllers/booking');
-const { getPriceParams, addPrice, getPrices } = require('../controllers/prices');
+const {
+  getPriceParams,
+  addPrice,
+  getPrices,
+  copyPrices,
+  deletePrice,
+  editPrice,
+  deletePrices
+} = require('../controllers/prices');
 
 const router = Router();
 
@@ -76,6 +84,10 @@ router.get('/work-shedule', getWorkShedule); //authJwt
 
 router.get('/price-params', getPriceParams); //authJwt
 router.post('/price', addPrice); //authJwt
-router.post('/get-prices', getPrices); //authJwt
+router.delete('/price/:id', deletePrice); //authJwt
+router.put('/price/:id', editPrice); //authJwt
+router.get('/prices', getPrices); //authJwt
+router.post('/prices', copyPrices); //authJwt
+router.delete('/prices', deletePrices); //authJwt
 
 module.exports = router;

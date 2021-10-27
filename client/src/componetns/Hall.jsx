@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import { ButtonIcon, HallForm, HallPhotos, PriceHall } from '../componetns';
 
-const Hall = ({ params, handleDelete, onClick }) => {
+const Hall = ({ params, prices, handleDelete, onClick }) => {
   const { _id: id, name, priceFrom, ceilingHeight, square, cover, photos } = params;
 
   return (
@@ -29,7 +29,7 @@ const Hall = ({ params, handleDelete, onClick }) => {
         <div className="hall__param">цена от {priceFrom} руб.</div>
       </div>
       <div className="hall__item hall--price">
-        <PriceHall idHall={id} />
+        <PriceHall idHall={id} prices={prices} />
       </div>
       <div className="hall__item hall--buttons">
         <ButtonIcon Icon={DeleteIcon} title="Удалить" onClick={handleDelete(id)} />
@@ -48,12 +48,14 @@ const Hall = ({ params, handleDelete, onClick }) => {
 Hall.propTypes = {
   params: PropTypes.object,
   handleDelete: PropTypes.func,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  prices: PropTypes.object
 };
 Hall.defaultProps = {
   params: {},
   handleDelete: () => {},
-  onClick: () => {}
+  onClick: () => {},
+  prices: {}
 };
 
 export { Hall };

@@ -1,16 +1,13 @@
 const Halls = require('../models/halls');
+const Price = require('../models/prices');
 const HallPhotos = require('../models/hall-photos');
 const { asyncUnlink } = require('../libs/fs.functions');
 
 module.exports.getHalls = async (req, res) => {
   try {
     const halls = await Halls.find({}).sort('order').populate('cover').populate('photos');
-    // console.log(halls);
-    const hallsWithPrices = halls.map((item) => {
-      console.log({ ...item });
-      return item;
-    });
-    res.json(hallsWithPrices);
+
+    res.json(halls);
   } catch (error) {
     res.status(500).json({ message: error });
   }
@@ -75,6 +72,17 @@ module.exports.deleteHall = async (req, res) => {
       _id: hall.photos
     });
     await Halls.deleteOne({ _id: req.params.id });
+
+    const idHall = req.params.id;
+    const prices = await Price.find({ idHall });
+    const arrPrices = prices.map((itemPrice) => {
+      return new Promise(async (resolve) => {
+        await Price.deleteOne({ _id: itemPrice.id });
+
+        resolve();
+      });
+    });
+    await Promise.all(arrPrices);
 
     const halls = await Halls.find({}).sort('order').populate('cover').populate('photos');
 

@@ -16,7 +16,7 @@ import Checkbox from '@mui/material/Checkbox';
 
 import { ButtonsSwitches, Loading, TransitionsModal } from '../componetns';
 import { getPriceParams, getPrices } from '../redux/reducers';
-import { addPriceRequest } from '../redux/actions';
+import { addPriceRequest, deletePriceRequest, editPriceRequest } from '../redux/actions';
 
 const validationSchema = yup.object({
   purpose: yup.string('Цель аренды'),
@@ -27,7 +27,7 @@ const validationSchema = yup.object({
   validityPeriod: yup.string('Срок действия'),
   price: yup.string('Цена'),
   priceSum: yup.string('Цена').required('Поле обязательное для заполнения'),
-  // daysOfWeek: yup.string('Список дней недели'),
+  // daysOfWeek: yup.array('Список дней недели'),
   timeFrom: yup.date('Время от'),
   timeTo: yup.date('Время до'),
   dateFrom: yup.date('Дата от'),
@@ -39,49 +39,80 @@ const validationSchema = yup.object({
   roundUp: yup.boolean('Округлять')
 });
 
-const PriceForm = ({ idHall, captionButton, align, nameForm, CustomBtn, handleClick }) => {
+const PriceForm = ({ idHall, prices, captionButton, align, nameForm, CustomBtn, handleClick }) => {
   const dispatch = useDispatch();
-  const [visibleDaysOfWeek, setVisibleDaysOfWeek] = useState(false);
-  const [visibleByTime, setVisibleByTime] = useState(false);
-  const [visibleLimitedPeriod, setVisibleLimitedPeriod] = useState(false);
+  const [visibleDaysOfWeek, setVisibleDaysOfWeek] = useState(
+    prices && prices.weekday === 'by-days' ? true : false
+  );
+  const [visibleByTime, setVisibleByTime] = useState(
+    prices && prices.worktime === 'by-time' ? true : false
+  );
+  const [visibleLimitedPeriod, setVisibleLimitedPeriod] = useState(
+    prices && prices.validityPeriod === 'limited' ? true : false
+  );
   const { purposeArr, weekdayArr, worktimeArr, validityPeriodArr, priceArr, daysOfWeekArr } =
     useSelector((state) => getPriceParams(state));
-
   const { loading } = useSelector((state) => getPrices(state));
+  const priceId = prices && prices._id ? prices._id : '';
 
+  const initialValues = {
+    purpose: prices ? prices.purpose : purposeArr[0].value,
+    weekday: prices ? prices.weekday : weekdayArr[0].value,
+    daysOfWeek: prices ? prices.daysOfWeek : [],
+    worktime: prices ? prices.worktime : worktimeArr[0].value,
+    timeFrom: prices && prices.timeFrom ? prices.timeFrom : new Date(),
+    timeTo: prices && prices.timeTo ? prices.timeTo : new Date(),
+    fromHours: prices ? prices.fromHours : '',
+    fromPersons: prices ? prices.fromPersons : '',
+    validityPeriod: prices ? prices.validityPeriod : validityPeriodArr[0].value,
+    dateFrom: prices && prices.dateFrom ? prices.dateFrom : new Date(),
+    dateTo: prices && prices.dateTo ? prices.dateTo : new Date(),
+    price: prices ? prices.price : priceArr[0].value,
+    priceSum: prices ? prices.priceSum : '',
+    priority: prices ? prices.priority : 0,
+    roundUp: prices ? prices.roundUp : false
+  };
   const formik = useFormik({
-    initialValues: {
-      purpose: purposeArr[0].value,
-      weekday: 'all-week',
-      daysOfWeek: [],
-      worktime: 'working-time',
-      timeFrom: new Date(),
-      timeTo: new Date(),
-      fromHours: '',
-      fromPersons: '',
-      validityPeriod: 'always',
-      dateFrom: new Date(),
-      dateTo: new Date(),
-      price: 'rent',
-      priceSum: '',
-      priority: 0,
-      roundUp: false
-    },
+    initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
       const dateFrom = moment(values.dateFrom).format('DD.MM.YYYY');
       const dateTo = moment(values.dateTo).format('DD.MM.YYYY');
       const timeFrom = moment(values.timeFrom).format('HH:mm');
       const timeTo = moment(values.timeTo).format('HH:mm');
-      // console.log(dateFrom);
-      dispatch(addPriceRequest({ ...values, dateFrom, dateTo, timeFrom, timeTo, idHall }));
+
+      if (!priceId) {
+        dispatch(addPriceRequest({ ...values, dateFrom, dateTo, timeFrom, timeTo, idHall }));
+        formik.setFieldValue('purpose', purposeArr[0].value);
+        formik.setFieldValue('weekday', weekdayArr[0].value);
+        formik.setFieldValue('daysOfWeek', []);
+        formik.setFieldValue('worktime', worktimeArr[0].value);
+        formik.setFieldValue('timeFrom', new Date());
+        formik.setFieldValue('timeTo', new Date());
+        formik.setFieldValue('fromHours', '');
+        formik.setFieldValue('fromPersons', '');
+        formik.setFieldValue('validityPeriod', validityPeriodArr[0].value);
+        formik.setFieldValue('dateFrom', new Date());
+        formik.setFieldValue('dateTo', new Date());
+        formik.setFieldValue('price', priceArr[0].value);
+        formik.setFieldValue('priceSum', '');
+        formik.setFieldValue('priority', 0);
+        formik.setFieldValue('roundUp', false);
+        setVisibleDaysOfWeek(false);
+        setVisibleByTime(false);
+        setVisibleLimitedPeriod(false);
+      } else
+        dispatch(
+          editPriceRequest({
+            id: priceId,
+            list: { ...values, dateFrom, dateTo, timeFrom, timeTo, idHall }
+          })
+        );
     }
   });
 
   const handleDaysOfWeekArr = (_, value) => formik.setFieldValue('daysOfWeek', value);
-
   const handleChangeByTime = (nameField) => (elem) => formik.setFieldValue(nameField, elem);
-
   const handleChangeSwitcher = (switcher) => (elem, value) => {
     switch (switcher) {
       case 'weekday':
@@ -103,6 +134,9 @@ const PriceForm = ({ idHall, captionButton, align, nameForm, CustomBtn, handleCl
     if (switcher === 'roundUp') {
       formik.setFieldValue('roundUp', value);
     } else formik.handleChange(elem);
+  };
+  const handleDeletePrice = () => {
+    dispatch(deletePriceRequest({ id: priceId }));
   };
 
   return loading ? (
@@ -294,10 +328,19 @@ const PriceForm = ({ idHall, captionButton, align, nameForm, CustomBtn, handleCl
             />
           </div>
         </div>
-        <div className="form-box__footer">
-          <Button variant="outlined" color="primary" type="submit">
-            Сохранить
-          </Button>
+        <div className="form-box__footer  form-box--footer-btn-panels">
+          <div className="form-box__footer-btn">
+            <Button variant="outlined" color="primary" type="submit">
+              Сохранить
+            </Button>
+          </div>
+          {!!priceId && (
+            <div className="form-box__footer-btn">
+              <Button variant="outlined" color="secondary" onClick={handleDeletePrice}>
+                Удалить
+              </Button>
+            </div>
+          )}
         </div>
       </form>
     </TransitionsModal>
@@ -305,24 +348,22 @@ const PriceForm = ({ idHall, captionButton, align, nameForm, CustomBtn, handleCl
 };
 
 PriceForm.propTypes = {
+  idHall: PropTypes.string,
   captionButton: PropTypes.string,
   align: PropTypes.string,
   nameForm: PropTypes.string,
   params: PropTypes.object,
   CustomBtn: PropTypes.func,
-  handleClick: PropTypes.func,
-  thisHourInfo: PropTypes.object,
-  handleDeletePlan: PropTypes.func
+  handleClick: PropTypes.func
 };
 PriceForm.defaultProps = {
+  idHall: '',
   captionButton: '',
   align: '',
   nameForm: '',
   handleClick: null,
   CustomBtn: null,
-  params: {},
-  thisHourInfo: {},
-  handleDeletePlan: () => {}
+  params: {}
 };
 
 export { PriceForm };

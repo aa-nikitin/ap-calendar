@@ -15,8 +15,7 @@ const TransitionsModal = ({
   Icon,
   CustomBtn,
   nameClass,
-  handleClick,
-  closeModal
+  handleClick
 }) => {
   const [open, setOpen] = React.useState(false);
 

@@ -23,7 +23,8 @@ import {
   hallPhotoRemoveError,
   hallPhotoCoverRequest,
   hallPhotoCoverSuccess,
-  hallPhotoCoverError
+  hallPhotoCoverError,
+  setPrices
 } from '../redux/actions';
 import { getHalls } from '../redux/reducers';
 import { storageName } from '../config';
@@ -32,7 +33,9 @@ export function* getHallsList() {
   try {
     const token = localStorage.getItem(storageName);
     const hallsResult = yield call(fetchGet, '/api/halls/', token);
+    const prices = yield call(fetchGet, '/api/prices/', token);
 
+    yield put(setPrices(prices));
     yield put(hallsFetchSuccess(hallsResult));
   } catch (error) {
     if (error === 'Unauthorized') yield put(logoutFetchFromToken());

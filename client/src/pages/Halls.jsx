@@ -9,12 +9,12 @@ import {
   hallsAddRequest,
   setPageTplName
 } from '../redux/actions';
-import { getHalls } from '../redux/reducers';
+import { getHalls, getPrices } from '../redux/reducers';
 
 const Halls = () => {
   const dispatch = useDispatch();
   const { halls, hallsFetch, hallsPhotosFetch } = useSelector((state) => getHalls(state));
-
+  const { list: priceList } = useSelector((state) => getPrices(state));
   const handleDelete = (id) => () => {
     if (window.confirm('Вы действительно хотите удалить зал?')) {
       dispatch(hallsDeleteRequest(id));
@@ -64,6 +64,7 @@ const Halls = () => {
                       <div key={elem._id} className="halls-list__item">
                         <Hall
                           params={elem}
+                          prices={priceList[elem._id]}
                           handleDelete={handleDelete}
                           onClick={editHall(elem._id)}
                         />

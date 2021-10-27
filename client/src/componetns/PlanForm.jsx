@@ -358,7 +358,7 @@ const PlanForm = ({
             <div className="form-box__footer-btn">
               <Button
                 variant="outlined"
-                color="error"
+                color="secondary"
                 onClick={handleDeletePlan({ date, idPlan: thisHourInfo.id })}>
                 Отменить заявку
               </Button>

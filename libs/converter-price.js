@@ -5,7 +5,7 @@ const formatDateConf = config.get('formatDate');
 const formatTimeConf = config.get('formatTime');
 const dateForTimeConf = config.get('dateForTime');
 
-module.exports = (fields) => {
+module.exports = (fields, rebuild) => {
   const {
     purpose,
     weekday,
@@ -24,6 +24,26 @@ module.exports = (fields) => {
     roundUp,
     idHall
   } = fields;
+
+  if (rebuild)
+    return {
+      purpose,
+      weekday,
+      daysOfWeek,
+      worktime,
+      timeFrom,
+      timeTo,
+      fromHours,
+      fromPersons,
+      validityPeriod,
+      dateFrom,
+      dateTo,
+      price,
+      priceSum,
+      priority,
+      roundUp,
+      idHall
+    };
 
   const newDateFrom = moment(`${dateFrom} 00:00`, `${formatDateConf} ${formatTimeConf}`);
   const newDateTo = moment(`${dateTo} 00:00`, `${formatDateConf} ${formatTimeConf}`);

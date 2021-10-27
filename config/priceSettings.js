@@ -15,7 +15,7 @@ module.exports.weekdayArr = [
 module.exports.worktimeArr = [
   { name: 'Рабочее время', value: 'working-time' },
   { name: 'Весь день', value: 'all-day' },
-  { name: 'по времени', value: 'by-time' }
+  { name: 'По времени', value: 'by-time' }
 ];
 
 module.exports.validityPeriodArr = [
@@ -24,10 +24,10 @@ module.exports.validityPeriodArr = [
 ];
 
 module.exports.priceArr = [
-  { name: 'Аренда', value: 'rent' },
-  { name: 'Доплата', value: 'surcharge' },
-  { name: 'Доплата за чел.', value: 'surcharge-per' },
-  { name: 'Доплата за чел./ч', value: 'surcharge-per-hour' }
+  { name: 'Аренда', value: 'rent', text: '' },
+  { name: 'Доплата', value: 'surcharge', text: 'Доплата' },
+  { name: 'Доплата за чел.', value: 'surcharge-per', text: 'Доплата за чел.' },
+  { name: 'Доплата за чел./ч', value: 'surcharge-per-hour', text: 'Доплата за чел.' }
 ];
 
 module.exports.daysOfWeekArr = [
