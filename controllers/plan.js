@@ -7,7 +7,10 @@ const Plan = require('../models/plan');
 const Clients = require('../models/clients');
 const Halls = require('../models/halls');
 const WorkShedule = require('../models/work-shedule');
+const Price = require('../models/prices');
 const { calculateFreeTime, calculateFreeDays } = require('../libs/handler-time');
+const groupPrices = require('../libs/group-prices');
+const calcPrice = require('../libs/calc-price');
 
 const formatDateConf = config.get('formatDate');
 const formatTimeConf = config.get('formatTime');
@@ -26,7 +29,13 @@ module.exports.addPlanDate = async (req, res) => {
       clientPhone,
       clientEmail,
       idPlan,
-      comment
+      status,
+      paymentType,
+      purpose,
+      persons,
+      comment,
+      paidFor,
+      paymentMethod
     } = req.body;
     const formateDate = moment(`${date}`, formatDateConf);
     const formateTime = moment(`${dateForTimeConf} ${time}`, `${formatDateConf} ${formatTimeConf}`);
@@ -79,8 +88,15 @@ module.exports.addPlanDate = async (req, res) => {
       hall: idHall,
       client: clientFromDB.id,
       clientInfo: clientInfo,
-      comment
+      status,
+      paymentType,
+      purpose,
+      persons,
+      comment,
+      paidFor,
+      paymentMethod
     };
+    // console.log(newPlanObj);
     let newPlan = {};
     if (!idPlan) {
       newPlan = new Plan(newPlanObj);
@@ -103,8 +119,13 @@ module.exports.getPlanHalls = async (req, res) => {
     const plan = await Plan.find({
       date: moment(date, formatDateConf)
     });
-
+    const prices = await Price.find({}).sort('priority');
+    const pricesSort = _.reverse(prices);
+    const pricesObj = groupPrices(pricesSort);
     const halls = await Halls.find({}).sort('order');
+    const shedule = await WorkShedule.findOne({});
+    const { minutesStep, hourSize } = shedule;
+
     halls.forEach(({ id, name, square, ceilingHeight, priceFrom, description, order }) => {
       newPlan[id] = {
         id,
@@ -118,22 +139,54 @@ module.exports.getPlanHalls = async (req, res) => {
         plans: {}
       };
     });
+
     plan.forEach((planItem) => {
+      // console.log(planItem);
       const idHall = planItem.hall._id.toString();
-      const { id, time, minutes, client, clientInfo } = planItem;
+      const {
+        id,
+        time,
+        minutes,
+        client,
+        clientInfo,
+        status,
+        paymentType,
+        purpose,
+        persons,
+        comment,
+        paidFor,
+        paymentMethod
+      } = planItem;
       // console.log(client);
+      // const formatTime =
+      //   Number(moment(time).format('mm')) !== minutesStep % hourSize
+      //     ? moment(time).subtract(30, 'minutes').format(formatTimeConf)
+      //     : moment(time).format(formatTimeConf);
       const formatTime = moment(time).format(formatTimeConf);
       const timeEnd = moment(time).add(minutes, 'm').format(formatTimeConf);
       const timeRange = `${formatTime} - ${timeEnd}`;
+
       if (!!newPlan[idHall]) {
         newPlan[idHall].plans[formatTime] = {
           id,
           minutes,
           timeRange,
           client: client && client.toString(),
-          clientInfo: { ...clientInfo }
+          clientInfo: { ...clientInfo },
+          status,
+          paymentType,
+          purpose,
+          persons,
+          comment,
+          paidFor,
+          paymentMethod
         };
       }
+
+      const priceByPurpose =
+        pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
+      const price = calcPrice(planItem, priceByPurpose, shedule);
+      console.log(price);
     });
     res.status(201).json(Object.values(newPlan));
   } catch (error) {
@@ -151,6 +204,7 @@ module.exports.checkPlanFree = async (req, res) => {
     });
     const shedule = await WorkShedule.findOne({});
     const resultFreeDays = calculateFreeDays(plan, shedule);
+    // console.log(resultFreeDays);
     res.status(201).json(resultFreeDays);
   } catch (error) {
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });

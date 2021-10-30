@@ -2,24 +2,23 @@
   &__head {
     color: $gray-dark;
     text-transform: uppercase;
-    margin-bottom: 7px;
+    margin-bottom: 15px;
     font-size: 15px;
   }
   &__list {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
   }
   &__str {
     font-size: 14px;
     margin-bottom: 5px;
     position: relative;
-    padding-left: 20px;
-    &:before {
-      content: '—';
-      display: block;
-      position: absolute;
-      left: 0px;
-      top: 3px;
-    }
+    padding-left: 40px;
+  }
+  &__check {
+    position: absolute !important;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
   }
   &__str-price {
     display: inline-block;

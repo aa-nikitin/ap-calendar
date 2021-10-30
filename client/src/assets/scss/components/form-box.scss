@@ -1,7 +1,11 @@
 .form-box {
   &__row {
     margin-bottom: 20px;
+    margin-top: 20px;
     position: relative;
+    &:first-child {
+      margin-top: 0px;
+    }
   }
   &__row-icon {
     display: flex;
@@ -35,11 +39,11 @@
     padding-right: 10px;
   }
   &--column-plan-left {
-    width: 30%;
+    width: 35%;
     border-right: solid 1px $gray-line;
   }
   &--column-plan-right {
-    width: 70%;
+    width: 65%;
   }
   &__footer {
     background-color: $gray-light;

@@ -3,9 +3,9 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
 
-const ButtonIcon = ({ Icon, title, fontSize, onClick }) => {
+const ButtonIcon = ({ Icon, title, fontSize, onClick, className }) => {
   return (
-    <Tooltip title={title}>
+    <Tooltip className={className} title={title}>
       <IconButton onClick={onClick}>
         <Icon fontSize={fontSize ? fontSize : 'medium'} />
       </IconButton>

@@ -142,7 +142,15 @@ const Plan = () => {
                           {hoursArray.map((item, key) => {
                             const itemCount = item.minutes / minutesStep;
                             const thisTime = `${item.timeH}:${item.timeM}`;
-                            const thisHourInfo = planItem.plans[thisTime];
+                            // console.log(hoursArray[key].timeH);
+                            const thisTimeHalfHour =
+                              !(minutesStep % hourSize) &&
+                              !!planItem.plans[thisTime.replace('00', '30')]
+                                ? thisTime.replace('00', '30')
+                                : thisTime;
+                            // console.log(aaa);
+                            // console.log(minutesStep % hourSize);
+                            const thisHourInfo = planItem.plans[thisTimeHalfHour];
                             const style = thisHourInfo && {
                               height: Math.ceil(thisHourInfo.minutes / minutesStep) * 26
                             };

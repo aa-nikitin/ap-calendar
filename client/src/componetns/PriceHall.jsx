@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
+import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 
-import { PriceForm, PriceCopyForm, BtnAddPrice } from '../componetns';
+import { PriceForm, PriceCopyForm, BtnAddPrice, ButtonIcon } from '../componetns';
 import { delAllPricesRequest } from '../redux/actions';
 
 const PriceHall = ({ idHall, prices }) => {
@@ -16,7 +17,6 @@ const PriceHall = ({ idHall, prices }) => {
   };
 
   const pricesArr = Object.keys(prices);
-  // console.log(pricesArr);
   return (
     <div className="price-hall">
       {pricesArr.map((item) => {
@@ -26,7 +26,14 @@ const PriceHall = ({ idHall, prices }) => {
             <div className="price-list__list">
               {prices[item].list.map((itemPrice) => (
                 <div className="price-list__str" key={itemPrice.id}>
+                  <ButtonIcon
+                    Icon={PriceCheckIcon}
+                    title={`Приоритет ${itemPrice.obj.priority}`}
+                    fontSize="small"
+                    className="price-list__check"
+                  />
                   {itemPrice.info}
+                  {itemPrice.obj.roundUp ? <b> [R] </b> : ''}
                   <div className="price-list__str-price">
                     <PriceForm
                       prices={itemPrice.obj}

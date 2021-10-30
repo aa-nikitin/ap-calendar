@@ -12,7 +12,14 @@ const schema = new Schema({
     phone: { type: String },
     email: { type: String }
   },
-  comment: { type: String }
+  purpose: { type: String, require: true },
+  status: { type: String, require: true },
+  paymentType: { type: String, require: true },
+  persons: { type: Number, require: true },
+  comment: { type: String },
+  price: { type: Number },
+  paymentMethod: { type: String },
+  paidFor: { type: String }
 });
 
 module.exports = model('plan', schema);

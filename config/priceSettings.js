@@ -13,7 +13,6 @@ module.exports.weekdayArr = [
 ];
 
 module.exports.worktimeArr = [
-  { name: 'Рабочее время', value: 'working-time' },
   { name: 'Весь день', value: 'all-day' },
   { name: 'По времени', value: 'by-time' }
 ];
@@ -38,4 +37,22 @@ module.exports.daysOfWeekArr = [
   { name: 'Пт', value: '4' },
   { name: 'Сб', value: '5' },
   { name: 'Вс', value: '6' }
+];
+
+module.exports.statusArr = [
+  { name: 'Заявка', value: 'application' },
+  { name: 'Бронь', value: 'booking' },
+  { name: 'Завершено', value: 'completed' }
+];
+
+module.exports.paymentTypeArr = [
+  { name: 'Платно', value: 'paid' },
+  { name: 'Бесплатно', value: 'free' },
+  { name: 'Бартер', value: 'barter' },
+  { name: 'Для себя', value: 'myself' }
+];
+
+module.exports.paymentMethodArr = [
+  { name: 'Безналичный', value: 'сashless' },
+  { name: 'Наличный', value: 'сash' }
 ];

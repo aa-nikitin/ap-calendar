@@ -8,14 +8,27 @@ const {
   worktimeArr,
   validityPeriodArr,
   priceArr,
-  daysOfWeekArr
+  daysOfWeekArr,
+  statusArr,
+  paymentTypeArr,
+  paymentMethodArr
 } = require('../config/priceSettings');
 const converterPrice = require('../libs/converter-price');
 const groupPrices = require('../libs/group-prices');
 
 module.exports.getPriceParams = async (req, res) => {
   try {
-    res.json({ purposeArr, weekdayArr, worktimeArr, validityPeriodArr, priceArr, daysOfWeekArr });
+    res.json({
+      purposeArr,
+      weekdayArr,
+      worktimeArr,
+      validityPeriodArr,
+      priceArr,
+      daysOfWeekArr,
+      statusArr,
+      paymentTypeArr,
+      paymentMethodArr
+    });
   } catch (error) {
     res.status(500).json({ message: error });
   }
@@ -26,14 +39,8 @@ module.exports.addPrice = async (req, res) => {
 
     await priceNew.save();
 
-    const prices = await Price.find();
-    const pricesSort = _.reverse(
-      _.sortBy(prices, [
-        function (elem) {
-          return elem.priority;
-        }
-      ])
-    );
+    const prices = await Price.find().sort('priority');
+    const pricesSort = _.reverse(prices);
     const pricesObj = groupPrices(pricesSort);
 
     res.json(pricesObj);
@@ -47,14 +54,8 @@ module.exports.editPrice = async (req, res) => {
     const { id } = req.params;
     await Price.updateOne({ _id: id }, converterPrice(req.body), { new: true });
 
-    const prices = await Price.find();
-    const pricesSort = _.reverse(
-      _.sortBy(prices, [
-        function (elem) {
-          return elem.priority;
-        }
-      ])
-    );
+    const prices = await Price.find().sort('priority');
+    const pricesSort = _.reverse(prices);
     const pricesObj = groupPrices(pricesSort);
 
     res.status(201).json(pricesObj);
@@ -65,14 +66,8 @@ module.exports.editPrice = async (req, res) => {
 
 module.exports.getPrices = async (req, res) => {
   try {
-    const prices = await Price.find({});
-    const pricesSort = _.reverse(
-      _.sortBy(prices, [
-        function (elem) {
-          return elem.priority;
-        }
-      ])
-    );
+    const prices = await Price.find({}).sort('priority');
+    const pricesSort = _.reverse(prices);
 
     const pricesObj = groupPrices(pricesSort);
 
@@ -96,14 +91,8 @@ module.exports.deletePrice = async (req, res) => {
   try {
     await Price.deleteOne({ _id: req.params.id });
 
-    const prices = await Price.find({});
-    const pricesSort = _.reverse(
-      _.sortBy(prices, [
-        function (elem) {
-          return elem.priority;
-        }
-      ])
-    );
+    const prices = await Price.find({}).sort('priority');
+    const pricesSort = _.reverse(prices);
 
     pricesObj = groupPrices(pricesSort);
 
@@ -140,14 +129,8 @@ module.exports.copyPrices = async (req, res) => {
     await Promise.all(arrOldPrices);
     await Promise.all(arrNewPrices);
 
-    const pricesResult = await Price.find({});
-    const pricesSort = _.reverse(
-      _.sortBy(pricesResult, [
-        function (elem) {
-          return elem.priority;
-        }
-      ])
-    );
+    const pricesResult = await Price.find({}).sort('priority');
+    const pricesSort = _.reverse(pricesResult);
 
     pricesObj = groupPrices(pricesSort);
 
@@ -170,14 +153,8 @@ module.exports.deletePrices = async (req, res) => {
     });
     await Promise.all(arrPrices);
 
-    const pricesResult = await Price.find({});
-    const pricesSort = _.reverse(
-      _.sortBy(pricesResult, [
-        function (elem) {
-          return elem.priority;
-        }
-      ])
-    );
+    const pricesResult = await Price.find({}).sort('priority');
+    const pricesSort = _.reverse(pricesResult);
 
     pricesObj = groupPrices(pricesSort);
 

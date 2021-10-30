@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import LiveHelpIcon from '@mui/icons-material/LiveHelp';
 
-import { Loading, HallForm, Hall } from '../componetns';
+import { Loading, HallForm, Hall, ButtonIcon } from '../componetns';
 import {
   hallsFetchRequest,
   hallsDeleteRequest,
@@ -55,7 +56,15 @@ const Halls = () => {
                 <div className="halls-list__head">
                   <div className="halls-list__head-item halls-list--head-img"></div>
                   <div className="halls-list__head-item halls-list--head-name">Название</div>
-                  <div className="halls-list__head-item halls-list--head-price">Цена</div>
+                  <div className="halls-list__head-item halls-list--head-price">
+                    Цена
+                    <ButtonIcon
+                      Icon={LiveHelpIcon}
+                      title={
+                        'У каждой цены есть поле "приоритет", чем больше этот параметр тем важнее цена, в таблице такие цены располагаются вверху'
+                      }
+                    />
+                  </div>
                   <div className="halls-list__head-item halls-list--head-buttons"></div>
                 </div>
                 <div className="halls-list__body">

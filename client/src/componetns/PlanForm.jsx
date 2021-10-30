@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import CloseIcon from '@mui/icons-material/Close';
 import Slider from '@mui/material/Slider';
-import InputLabel from '@mui/material/InputLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import NativeSelect from '@mui/material/NativeSelect';
 import Tab from '@mui/material/Tab';
@@ -18,11 +17,21 @@ import PropTypes from 'prop-types';
 
 import { clientsFetchRequest } from '../redux/actions';
 import { TransitionsModal } from './';
-import { getClients, getPlan } from '../redux/reducers';
-import { ButtonIcon } from '../componetns';
+import { getPriceParams, getClients, getPlan } from '../redux/reducers';
+import { ButtonIcon, ButtonsSwitches } from '../componetns';
 
 const validationSchema = yup.object({
+  status: yup.string('Статус'),
+  paymentType: yup.string('Тип платежа'),
+  purpose: yup.string('Цель аренды'),
   hall: yup.string('Зал'),
+  persons: yup
+    .number('Количество человек')
+    .required('Поле обязательное для заполнения')
+    .typeError('Должно быть числом'),
+  comment: yup.string('Комментарий'),
+  paidFor: yup.string('Оплачено'),
+  paymentMethod: yup.string('Метод оплаты'),
   clientName: yup.string('Имя клиента'),
   clientAlias: yup.string('Псевдоним'),
   clientPhone: yup.string('Телефон'),
@@ -58,6 +67,9 @@ const PlanForm = ({
   const dispatch = useDispatch();
   const [clientSelected, setClientSelected] = useState(newClientInfo);
   const { clients } = useSelector((state) => getClients(state));
+  const { statusArr, paymentTypeArr, purposeArr, paymentMethodArr } = useSelector((state) =>
+    getPriceParams(state)
+  );
   const { availableDataPlan, plan } = useSelector((state) => getPlan(state));
   const {
     planFree,
@@ -67,21 +79,43 @@ const PlanForm = ({
     idHall,
     time: timeChoice
   } = availableDataPlan;
-  // console.log(thisHourInfo);
+
+  const initialValues = {
+    status: thisHourInfo.status ? thisHourInfo.status : statusArr[0].value,
+    paymentType: thisHourInfo.paymentType ? thisHourInfo.paymentType : paymentTypeArr[0].value,
+    purpose: thisHourInfo.purpose ? thisHourInfo.purpose : purposeArr[0].value,
+    persons: thisHourInfo.persons ? thisHourInfo.persons : 1,
+    comment: thisHourInfo.comment ? thisHourInfo.comment : '',
+    paidFor: thisHourInfo.paidFor ? thisHourInfo.paidFor : '',
+    paymentMethod: thisHourInfo ? thisHourInfo.paymentMethod : paymentMethodArr[0].value,
+    hall: idHall,
+    clientName: '',
+    clientAlias: '',
+    clientPhone: '',
+    clientEmail: ''
+  };
+
   const formik = useFormik({
-    initialValues: {
-      hall: idHall,
-      clientName: '',
-      clientAlias: '',
-      clientPhone: '',
-      clientEmail: ''
-    },
+    initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      const {
+        clientName,
+        clientAlias,
+        clientPhone,
+        clientEmail,
+        status,
+        paymentType,
+        purpose,
+        persons,
+        comment,
+        paidFor,
+        paymentMethod
+      } = values;
       if (!idHall) return alert('Зал не выбран');
       if (!planFreeTime || !positionTime || !timeChoice) return alert('Не выбрано время');
       if (tabValue === '1' && !clientSelected.id) return alert('Выберите клиента');
-      if (tabValue === '2' && !values.clientName) return alert('Введите имя клиента');
+      if (tabValue === '2' && !clientName) return alert('Введите имя клиента');
 
       const planMinutes = positionTime > planFreeTime ? planFreeTime : positionTime;
 
@@ -91,14 +125,21 @@ const PlanForm = ({
         date,
         time: timeChoice,
         idClient: clientSelected.id,
-        clientName: values.clientName,
-        clientAlias: values.clientAlias,
-        clientPhone: values.clientPhone,
-        clientEmail: values.clientEmail,
-        idPlan: thisHourInfo.id
+        clientName,
+        clientAlias,
+        clientPhone,
+        clientEmail,
+        idPlan: thisHourInfo.id,
+        status,
+        paymentType,
+        purpose,
+        persons,
+        comment,
+        paidFor,
+        paymentMethod
       };
 
-      // console.log(values, idHall);
+      // console.log(newPlan);
       onClick(newPlan);
     }
   });
@@ -126,7 +167,7 @@ const PlanForm = ({
   };
   const resultTime = calcTime(positionTime, true);
   // console.log(clientSelected);
-  const refreshParamsPlan = (obj, refresh, aaa) => () => {
+  const refreshParamsPlan = (obj, refresh) => () => {
     // console.log(thisHourInfo);
     // if (positionTime > planFreeTime) setPositionTime(planFreeTime);
 
@@ -148,6 +189,7 @@ const PlanForm = ({
       dispatch(clientsFetchRequest(searchName));
     }
   }, [dispatch, searchName]);
+  // console.log(planFreeTime);
   return (
     <TransitionsModal
       captionButton={captionButton}
@@ -160,7 +202,58 @@ const PlanForm = ({
         <div className="form-box__body form-box--body-columns">
           <div className="form-box__column form-box--column-plan-left">
             <div className="form-box__row">
-              <InputLabel id="demo-simple-select-label">Зал</InputLabel>
+              <div className="form-box__head">Статус</div>
+              <ButtonsSwitches
+                values={formik.values.status}
+                onChange={formik.handleChange}
+                listButtons={statusArr}
+                name="status"
+              />
+            </div>
+            <div className="form-box__row">
+              <div className="form-box__head">Тип платежа</div>
+              <NativeSelect
+                style={{ width: '100%' }}
+                id="paymentType"
+                name="paymentType"
+                value={formik.values.paymentType}
+                onChange={formik.handleChange}
+                error={formik.touched.paymentType && Boolean(formik.errors.paymentType)}
+                inputProps={{
+                  name: 'paymentType',
+                  id: 'paymentType'
+                }}>
+                {paymentTypeArr.map((planItem) => (
+                  <option key={planItem.value} value={planItem.value}>
+                    {planItem.name}
+                  </option>
+                ))}
+              </NativeSelect>
+              <FormHelperText>{formik.touched.hall && formik.errors.hall}</FormHelperText>
+            </div>
+            <div className="form-box__row">
+              <div className="form-box__head">Цель аренды</div>
+              <NativeSelect
+                style={{ width: '100%' }}
+                id="purpose"
+                name="purpose"
+                value={formik.values.purpose}
+                onChange={formik.handleChange}
+                error={formik.touched.purpose && Boolean(formik.errors.purpose)}
+                inputProps={{
+                  name: 'purpose',
+                  id: 'purpose'
+                }}>
+                {purposeArr.map((planItem) => (
+                  <option key={planItem.value} value={planItem.value}>
+                    {planItem.name}
+                  </option>
+                ))}
+              </NativeSelect>
+              <FormHelperText>{formik.touched.hall && formik.errors.hall}</FormHelperText>
+            </div>
+            <div className="form-box__row">
+              <div className="form-box__head">Зал</div>
               <NativeSelect
                 style={{ width: '100%' }}
                 id="hall"
@@ -181,25 +274,101 @@ const PlanForm = ({
                 ))}
               </NativeSelect>
               <FormHelperText>{formik.touched.hall && formik.errors.hall}</FormHelperText>
-              {/* <InputLabel id="demo-simple-select-label">Зал</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="hall"
-                name="hall"
-                value={formik.values.hall}
-                onChange={formik.handleChange}
-                error={formik.touched.hall && Boolean(formik.errors.hall)}
-                label="Зал">
-                {plan.map((planItem) => (
-                  <MenuItem key={planItem.id} value={planItem.id}>
-                    {planItem.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>{formik.touched.hall && formik.errors.hall}</FormHelperText> */}
             </div>
             <div className="form-box__row">
-              <InputLabel>Клиент</InputLabel>
+              <TextField
+                fullWidth
+                id="persons"
+                name="persons"
+                label="Количество человек"
+                value={formik.values.persons}
+                onChange={formik.handleChange}
+                error={formik.touched.persons && Boolean(formik.errors.persons)}
+                helperText={formik.touched.persons && formik.errors.persons}
+              />
+            </div>
+            <div className="form-box__row">
+              <TextField
+                fullWidth
+                multiline
+                id="comment"
+                name="comment"
+                label="Комментарий к заказу"
+                value={formik.values.comment}
+                onChange={formik.handleChange}
+                error={formik.touched.comment && Boolean(formik.errors.comment)}
+                helperText={formik.touched.comment && formik.errors.comment}
+              />
+            </div>
+            <div className="form-box__row">
+              <div className="form-box__head">Итоговая стоимость</div>
+              <b>2123 руб.</b>
+            </div>
+            <div className="form-box__row">
+              <div className="form-box__head">Метод оплаты</div>
+              <ButtonsSwitches
+                values={formik.values.paymentMethod}
+                onChange={formik.handleChange}
+                listButtons={paymentMethodArr}
+                name="paymentMethod"
+              />
+            </div>
+            <div className="form-box__row">
+              <TextField
+                fullWidth
+                id="paidFor"
+                name="paidFor"
+                label="Оплачено"
+                value={formik.values.paidFor}
+                onChange={formik.handleChange}
+                error={formik.touched.paidFor && Boolean(formik.errors.paidFor)}
+                helperText={formik.touched.paidFor && formik.errors.paidFor}
+              />
+            </div>
+          </div>
+          <div className="form-box__column form-box--column-plan-right">
+            {!!planFreeTime && !!idHall && (
+              <>
+                <Slider
+                  aria-label="Small steps"
+                  value={positionTime}
+                  step={minutesStep}
+                  marks
+                  min={minutesStep}
+                  max={planFreeTime}
+                  onChange={(_, value) => setPositionTime(value)}
+                  // valueLabelDisplay="off"
+                  // valueLabelFormat={(value) => aaa(value)}
+                />
+                {resultTime}
+              </>
+            )}
+
+            {planFree && (
+              <div className="available-time">
+                {planFree.map(({ time: timeFree, minutes, busy }) => {
+                  const activeTimeItem =
+                    minutes >= minutesAvailable && minutes < minutesAvailable + positionTime;
+                  // console.log(activeTimeItem);
+                  return (
+                    <div
+                      onClick={refreshParamsPlan({ time: timeFree, minutes, date, idHall }, !busy, {
+                        positionTime,
+                        minutesStep,
+                        planFreeTime
+                      })}
+                      className={`available-time__item ${
+                        activeTimeItem ? 'available-time--active' : ''
+                      } ${busy ? 'available-time--busy' : ''}`}
+                      key={minutes}>
+                      {timeFree}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            <div className="form-box__row">
+              <div className="form-box__head">Клиент</div>
               <TabContext value={tabValue}>
                 <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                   <Tab label="Найти" value="1" />
@@ -304,48 +473,6 @@ const PlanForm = ({
                 </TabPanel>
               </TabContext>
             </div>
-          </div>
-          <div className="form-box__column form-box--column-plan-right">
-            {!!planFreeTime && !!idHall && (
-              <>
-                <Slider
-                  aria-label="Small steps"
-                  value={positionTime}
-                  step={minutesStep}
-                  marks
-                  min={minutesStep}
-                  max={planFreeTime}
-                  onChange={(_, value) => setPositionTime(value)}
-                  // valueLabelDisplay="off"
-                  // valueLabelFormat={(value) => aaa(value)}
-                />
-                {resultTime}
-              </>
-            )}
-
-            {planFree && (
-              <div className="available-time">
-                {planFree.map(({ time: timeFree, minutes, busy }) => {
-                  const activeTimeItem =
-                    minutes >= minutesAvailable && minutes < minutesAvailable + positionTime;
-                  // console.log(activeTimeItem);
-                  return (
-                    <div
-                      onClick={refreshParamsPlan({ time: timeFree, minutes, date, idHall }, !busy, {
-                        positionTime,
-                        minutesStep,
-                        planFreeTime
-                      })}
-                      className={`available-time__item ${
-                        activeTimeItem ? 'available-time--active' : ''
-                      } ${busy ? 'available-time--busy' : ''}`}
-                      key={minutes}>
-                      {timeFree}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
           </div>
         </div>
         <div className="form-box__footer  form-box--footer-btn-panels">

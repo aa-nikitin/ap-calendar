@@ -6,6 +6,7 @@ const BtnAddPlan = ({ thisHourInfo, time, style }) => {
     { name: 'Телефон', value: 'phone' },
     { name: 'E-mail', value: 'mail' }
   ];
+  // console.log(thisHourInfo);
   return (params) => {
     return thisHourInfo ? (
       <div className="shedule__booking " style={style} {...params}>

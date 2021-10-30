@@ -34,7 +34,7 @@ const calculateFreeTime = (plan, time, shedule) => {
   const endTimeStart = moment(
     `${dateForTime} ${sheduleTimeTo}`,
     `${formatDate} ${formatTime}`
-  ).subtract(hourSize, 'm');
+  ).subtract(shedule.minutesStep, 'm');
 
   if (!timeFrom.isSameOrAfter(startTime) || !timeFrom.isSameOrBefore(endTimeStart)) {
     isError = true;
