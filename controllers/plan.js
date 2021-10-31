@@ -15,6 +15,8 @@ const calcPrice = require('../libs/calc-price');
 const formatDateConf = config.get('formatDate');
 const formatTimeConf = config.get('formatTime');
 const dateForTimeConf = config.get('dateForTime');
+const { purposeArr, paymentTypeArr } = require('../config/priceSettings');
+const { arrToObj } = require('../libs/helper.functions');
 
 module.exports.addPlanDate = async (req, res) => {
   try {
@@ -39,6 +41,10 @@ module.exports.addPlanDate = async (req, res) => {
     } = req.body;
     const formateDate = moment(`${date}`, formatDateConf);
     const formateTime = moment(`${dateForTimeConf} ${time}`, `${formatDateConf} ${formatTimeConf}`);
+
+    const prices = await Price.find({}).sort('priority');
+    const pricesSort = _.reverse(prices);
+    const pricesObj = groupPrices(pricesSort);
 
     const plan = await Plan.find({
       date: formateDate,
@@ -97,6 +103,15 @@ module.exports.addPlanDate = async (req, res) => {
       paymentMethod
     };
     // console.log(newPlanObj);
+
+    if (paymentType === 'paid') {
+      const priceByPurpose =
+        pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
+      const price = calcPrice(newPlanObj, priceByPurpose, shedule);
+      newPlanObj.price = price;
+    } else newPlanObj.price = 0;
+    // console.log(newPlanObj);
+
     let newPlan = {};
     if (!idPlan) {
       newPlan = new Plan(newPlanObj);
@@ -115,16 +130,15 @@ module.exports.addPlanDate = async (req, res) => {
 module.exports.getPlanHalls = async (req, res) => {
   try {
     const { date } = req.body;
+    paymentTypeArr;
+    const purposeObj = arrToObj(purposeArr);
+    const paymentTypeObj = arrToObj(paymentTypeArr);
     const newPlan = {};
     const plan = await Plan.find({
       date: moment(date, formatDateConf)
     });
-    const prices = await Price.find({}).sort('priority');
-    const pricesSort = _.reverse(prices);
-    const pricesObj = groupPrices(pricesSort);
     const halls = await Halls.find({}).sort('order');
-    const shedule = await WorkShedule.findOne({});
-    const { minutesStep, hourSize } = shedule;
+    // const { minutesStep, hourSize } = shedule;
 
     halls.forEach(({ id, name, square, ceilingHeight, priceFrom, description, order }) => {
       newPlan[id] = {
@@ -155,7 +169,8 @@ module.exports.getPlanHalls = async (req, res) => {
         persons,
         comment,
         paidFor,
-        paymentMethod
+        paymentMethod,
+        price
       } = planItem;
       // console.log(client);
       // const formatTime =
@@ -165,7 +180,6 @@ module.exports.getPlanHalls = async (req, res) => {
       const formatTime = moment(time).format(formatTimeConf);
       const timeEnd = moment(time).add(minutes, 'm').format(formatTimeConf);
       const timeRange = `${formatTime} - ${timeEnd}`;
-
       if (!!newPlan[idHall]) {
         newPlan[idHall].plans[formatTime] = {
           id,
@@ -175,18 +189,17 @@ module.exports.getPlanHalls = async (req, res) => {
           clientInfo: { ...clientInfo },
           status,
           paymentType,
+          paymentTypeObj: paymentTypeObj[paymentType],
           purpose,
+          purposeText: purposeObj[purpose].text,
           persons,
           comment,
           paidFor,
-          paymentMethod
+          paymentMethod,
+          price,
+          priceFormat: price ? price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ') : ''
         };
       }
-
-      const priceByPurpose =
-        pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
-      const price = calcPrice(planItem, priceByPurpose, shedule);
-      console.log(price);
     });
     res.status(201).json(Object.values(newPlan));
   } catch (error) {

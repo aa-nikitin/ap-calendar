@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import PropTypes from 'prop-types';
+import InputMask from 'react-input-mask';
 
 import { TransitionsModal } from './';
 
@@ -100,16 +101,15 @@ const ClientForm = ({ captionButton, align, nameForm, client, onClick }) => {
             />
           </div>
           <div className="form-box__row">
-            <TextField
-              fullWidth
-              id="phone"
-              name="phone"
-              label="Телефон"
+            <InputMask
+              mask="+7 (999) 999-99-99"
               value={formik.values.phone}
               onChange={formik.handleChange}
+              disabled={false}
               error={formik.touched.phone && Boolean(formik.errors.phone)}
-              helperText={formik.touched.phone && formik.errors.phone}
-            />
+              helperText={formik.touched.phone && formik.errors.phone}>
+              <TextField fullWidth id="phone" name="phone" label="Телефон" />
+            </InputMask>
           </div>
           <div className="form-box__row">
             <TextField

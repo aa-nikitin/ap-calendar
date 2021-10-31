@@ -1,8 +1,8 @@
 module.exports.purposeArr = [
-  { name: 'Фото', value: 'photo' },
-  { name: 'Видео', value: 'video' },
-  { name: 'Мероприятие', value: 'event' },
-  { name: 'Семинар', value: 'seminar' }
+  { name: 'Фото', value: 'photo', text: 'фото' },
+  { name: 'Видео', value: 'video', text: 'видео' },
+  { name: 'Мероприятие', value: 'event', text: 'мероприятия' },
+  { name: 'Семинар', value: 'seminar', text: 'семинара' }
 ];
 
 module.exports.weekdayArr = [

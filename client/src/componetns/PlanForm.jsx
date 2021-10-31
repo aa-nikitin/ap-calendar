@@ -12,6 +12,7 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import InputMask from 'react-input-mask';
 
 import PropTypes from 'prop-types';
 
@@ -35,7 +36,7 @@ const validationSchema = yup.object({
   clientName: yup.string('Имя клиента'),
   clientAlias: yup.string('Псевдоним'),
   clientPhone: yup.string('Телефон'),
-  clientEmail: yup.string('E-mail')
+  clientEmail: yup.string('Введите E-mail').email('Введите корректный email')
 });
 
 const PlanForm = ({
@@ -58,7 +59,14 @@ const PlanForm = ({
     { name: 'Комментарий', value: 'comment' }
   ];
   const { minutesStep, hourSize } = params;
-  const { minutes: busyMinutes, clientInfo, client: idClient } = thisHourInfo;
+  const {
+    minutes: busyMinutes,
+    clientInfo,
+    client: idClient,
+    price,
+    priceFormat,
+    paymentType
+  } = thisHourInfo;
   const newClientInfo = clientInfo ? { ...clientInfo, id: idClient } : {};
   const [searchName, setSearchName] = useState('');
   const [tabValue, setTabValue] = useState('1');
@@ -82,12 +90,14 @@ const PlanForm = ({
 
   const initialValues = {
     status: thisHourInfo.status ? thisHourInfo.status : statusArr[0].value,
-    paymentType: thisHourInfo.paymentType ? thisHourInfo.paymentType : paymentTypeArr[0].value,
+    paymentType: paymentType ? paymentType : paymentTypeArr[0].value,
     purpose: thisHourInfo.purpose ? thisHourInfo.purpose : purposeArr[0].value,
     persons: thisHourInfo.persons ? thisHourInfo.persons : 1,
     comment: thisHourInfo.comment ? thisHourInfo.comment : '',
     paidFor: thisHourInfo.paidFor ? thisHourInfo.paidFor : '',
-    paymentMethod: thisHourInfo ? thisHourInfo.paymentMethod : paymentMethodArr[0].value,
+    paymentMethod: thisHourInfo.paymentMethod
+      ? thisHourInfo.paymentMethod
+      : paymentMethodArr[0].value,
     hall: idHall,
     clientName: '',
     clientAlias: '',
@@ -139,7 +149,6 @@ const PlanForm = ({
         paymentMethod
       };
 
-      // console.log(newPlan);
       onClick(newPlan);
     }
   });
@@ -300,31 +309,35 @@ const PlanForm = ({
                 helperText={formik.touched.comment && formik.errors.comment}
               />
             </div>
-            <div className="form-box__row">
-              <div className="form-box__head">Итоговая стоимость</div>
-              <b>2123 руб.</b>
-            </div>
-            <div className="form-box__row">
-              <div className="form-box__head">Метод оплаты</div>
-              <ButtonsSwitches
-                values={formik.values.paymentMethod}
-                onChange={formik.handleChange}
-                listButtons={paymentMethodArr}
-                name="paymentMethod"
-              />
-            </div>
-            <div className="form-box__row">
-              <TextField
-                fullWidth
-                id="paidFor"
-                name="paidFor"
-                label="Оплачено"
-                value={formik.values.paidFor}
-                onChange={formik.handleChange}
-                error={formik.touched.paidFor && Boolean(formik.errors.paidFor)}
-                helperText={formik.touched.paidFor && formik.errors.paidFor}
-              />
-            </div>
+            {price > 0 && thisHourInfo.paymentType === 'paid' && (
+              <>
+                <div className="form-box__row">
+                  <div className="form-box__head">Итоговая стоимость</div>
+                  <b>{priceFormat} руб.</b>
+                </div>
+                <div className="form-box__row">
+                  <div className="form-box__head">Метод оплаты</div>
+                  <ButtonsSwitches
+                    values={formik.values.paymentMethod}
+                    onChange={formik.handleChange}
+                    listButtons={paymentMethodArr}
+                    name="paymentMethod"
+                  />
+                </div>
+                <div className="form-box__row">
+                  <TextField
+                    fullWidth
+                    id="paidFor"
+                    name="paidFor"
+                    label="Оплачено"
+                    value={formik.values.paidFor}
+                    onChange={formik.handleChange}
+                    error={formik.touched.paidFor && Boolean(formik.errors.paidFor)}
+                    helperText={formik.touched.paidFor && formik.errors.paidFor}
+                  />
+                </div>
+              </>
+            )}
           </div>
           <div className="form-box__column form-box--column-plan-right">
             {!!planFreeTime && !!idHall && (
@@ -447,16 +460,15 @@ const PlanForm = ({
                     />
                   </div>
                   <div className="form-box__row">
-                    <TextField
-                      fullWidth
-                      id="clientPhone"
-                      name="clientPhone"
-                      label="Телефон"
+                    <InputMask
+                      mask="+7 (999) 999-99-99"
                       value={formik.values.clientPhone}
                       onChange={formik.handleChange}
+                      disabled={false}
                       error={formik.touched.clientPhone && Boolean(formik.errors.clientPhone)}
-                      helperText={formik.touched.clientPhone && formik.errors.clientPhone}
-                    />
+                      helperText={formik.touched.clientPhone && formik.errors.clientPhone}>
+                      <TextField fullWidth id="clientPhone" name="clientPhone" label="Телефон" />
+                    </InputMask>
                   </div>
                   <div className="form-box__row">
                     <TextField
