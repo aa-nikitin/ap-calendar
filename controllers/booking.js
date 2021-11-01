@@ -4,6 +4,7 @@ const config = require('config');
 const formatDateConf = config.get('formatDate');
 const formatTimeConf = config.get('formatTime');
 const _ = require('lodash');
+const request = require('request');
 // const weekDaysConf = config.get('weekDays');
 
 const Plan = require('../models/plan');
@@ -115,6 +116,55 @@ module.exports.getBookingPrice = async (req, res) => {
       timeRange: `${minutesToTime(minutes)}-${minutesToTime(minutes + minutesBusy)}`,
       timeBusy: minutesToTimeHour(minutesBusy)
     });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+const requestFunc = (params) => {
+  return new Promise((resolve, reject) => {
+    request(params, function (error, response, body) {
+      if (error) reject(error);
+      if (!error && response.statusCode == 200) {
+        resolve(response.body);
+      }
+    });
+  });
+};
+module.exports.bookingFetch = async (req, res) => {
+  try {
+    // const aaa = await fetch('https://kamorka2.server.paykeeper.ru/info/settings/token/', {
+    //   method: 'GET',
+    //   headers: { Authorization: 'Basic ZGVtbzpkZW1v' }
+    // });
+    const { firstName, phone, mail, comment, typePay, price } = req.body;
+    // console.log(firstName, phone, mail, comment, typePay);
+    const getToken = JSON.parse(
+      await requestFunc({
+        method: 'GET',
+        url: 'https://kamorka2.server.paykeeper.ru/info/settings/token/',
+        headers: {
+          Authorization: 'Basic YWRtaW46MTA3NzM1NmZiNDkz'
+        }
+      })
+    );
+    const invoice = JSON.parse(
+      await requestFunc({
+        method: 'POST',
+        url: 'https://kamorka2.server.paykeeper.ru/change/invoice/preview/',
+        headers: {
+          Authorization: 'Basic YWRtaW46MTA3NzM1NmZiNDkz'
+        },
+        formData: {
+          token: getToken.token,
+          pay_amount: price,
+          client_email: mail,
+          client_phone: phone
+        }
+      })
+    );
+    // console.log(invoice);
+    res.json(invoice);
   } catch (error) {
     res.status(500).json({ message: error });
   }

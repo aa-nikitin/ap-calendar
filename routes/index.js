@@ -30,7 +30,7 @@ const {
   planTimeForEdit
 } = require('../controllers/plan');
 const { changeWorkShedule, getWorkShedule } = require('../controllers/work-shedule');
-const { getBookingPlanWeek, getBookingPrice } = require('../controllers/booking');
+const { getBookingPlanWeek, getBookingPrice, bookingFetch } = require('../controllers/booking');
 const {
   getPriceParams,
   addPrice,
@@ -87,6 +87,7 @@ router.post('/plan-time-for-edit', authJwt, planTimeForEdit);
 
 router.post('/booking-plan-week', getBookingPlanWeek);
 router.post('/booking-price', getBookingPrice);
+router.post('/booking-fetch', bookingFetch);
 
 router.put('/work-shedule', changeWorkShedule); //authJwt
 router.get('/work-shedule', getWorkShedule); //authJwt
