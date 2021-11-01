@@ -7,6 +7,7 @@ const formatTime = config.get('formatTime');
 const { timeToMinutes } = require('../libs/handler-time');
 
 module.exports = (plan, price, shedule) => {
+  // console.log(plan, price, shedule);
   const { date, time, minutes, persons } = plan;
   const { minutesStep, hourSize } = shedule;
   const countHours = minutes / hourSize;
@@ -40,7 +41,8 @@ module.exports = (plan, price, shedule) => {
       return;
     if (itemPrice.weekday === 'by-days' && !itemPrice.daysOfWeek.includes(dayOfWeek)) return;
     if (!(persons >= itemPrice.fromPersons)) return;
-    if (!(countHours >= itemPrice.fromHours)) return;
+    if (!(Math.ceil(countHours) >= itemPrice.fromHours)) return;
+
     if (
       itemPrice.validityPeriod === 'limited' &&
       !(datePlan.isSameOrAfter(datePriceFrom) && datePlan.isSameOrBefore(datePriceTo))

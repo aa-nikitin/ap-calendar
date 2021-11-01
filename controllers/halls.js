@@ -2,12 +2,39 @@ const Halls = require('../models/halls');
 const Price = require('../models/prices');
 const HallPhotos = require('../models/hall-photos');
 const { asyncUnlink } = require('../libs/fs.functions');
+const { purposeArr } = require('../config/priceSettings');
+const { arrToObj } = require('../libs/helper.functions');
 
 module.exports.getHalls = async (req, res) => {
   try {
     const halls = await Halls.find({}).sort('order').populate('cover').populate('photos');
 
     res.json(halls);
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+module.exports.getHallsPurpose = async (req, res) => {
+  try {
+    const purposeObj = arrToObj(purposeArr);
+    const prices = await Price.find({}).sort('priority');
+    const newPurpose = {};
+
+    prices.forEach((itemPurpose) => {
+      if (!newPurpose[itemPurpose.purpose]) {
+        newPurpose[itemPurpose.purpose] = {};
+        newPurpose[itemPurpose.purpose].name = purposeObj[itemPurpose.purpose].name;
+        newPurpose[itemPurpose.purpose].value = purposeObj[itemPurpose.purpose].value;
+        newPurpose[itemPurpose.purpose].list = [itemPurpose.idHall];
+      }
+      if (!!newPurpose[itemPurpose.purpose]) {
+        if (!newPurpose[itemPurpose.purpose].list.includes(itemPurpose.idHall))
+          newPurpose[itemPurpose.purpose].list.push(itemPurpose.idHall);
+      }
+    });
+    // console.log(Object.values(newPurpose));
+    res.json(newPurpose);
   } catch (error) {
     res.status(500).json({ message: error });
   }

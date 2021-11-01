@@ -108,6 +108,7 @@ module.exports.addPlanDate = async (req, res) => {
       const priceByPurpose =
         pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
       const price = calcPrice(newPlanObj, priceByPurpose, shedule);
+      // console.log(newPlanObj);
       newPlanObj.price = price;
     } else newPlanObj.price = 0;
     // console.log(newPlanObj);

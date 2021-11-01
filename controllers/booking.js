@@ -3,12 +3,16 @@ const moment = require('moment');
 const config = require('config');
 const formatDateConf = config.get('formatDate');
 const formatTimeConf = config.get('formatTime');
+const _ = require('lodash');
 // const weekDaysConf = config.get('weekDays');
 
 const Plan = require('../models/plan');
+const Price = require('../models/prices');
 const WorkShedule = require('../models/work-shedule');
-const { timeToMinutes } = require('../libs/handler-time');
+const { timeToMinutes, minutesToTime, minutesToTimeHour } = require('../libs/handler-time');
 const { daysOfWeekArr: weekDaysConf } = require('../config/priceSettings');
+const groupPrices = require('../libs/group-prices');
+const calcPrice = require('../libs/calc-price');
 
 moment.locale('ru');
 
@@ -51,19 +55,18 @@ module.exports.getBookingPlanWeek = async (req, res) => {
       dateStart.add(1, 'd');
     }
     plan.forEach((item) => {
-      const datePlan = moment(item.date, formatDateConf).format(formatDateConf);
-      const minutesStartPlan = timeToMinutes(
-        String(moment(item.time, formatTimeConf).format(formatTimeConf))
-      );
-      const minutesPlan = item.minutes;
+      const datePlan = moment(item.date).format(formatDateConf);
+      const timePlan = moment(item.time).format(formatTimeConf);
+      const isErrorRate = timeToMinutes(timePlan) % shedule.minutesStep;
+      const minutesStartPlan =
+        isErrorRate > 0 ? timeToMinutes(String(timePlan)) - 30 : timeToMinutes(String(timePlan));
+      const minutesPlan = isErrorRate > 0 ? item.minutes + 30 : item.minutes;
 
       let counterMinutes = minutesStartPlan;
       while (counterMinutes < minutesStartPlan + minutesPlan) {
-        // console.log(counterMinutes);
         sheduleWork[datePlan]['list'][String(counterMinutes)]['busy'] = true;
         counterMinutes = counterMinutes + shedule.minutesStep;
       }
-      // console.log(datePlan, minutesStartPlan, minutesPlan);
     });
 
     const dates = Object.keys(sheduleWork);
@@ -84,6 +87,33 @@ module.exports.getBookingPlanWeek = async (req, res) => {
       minutesTo: shedule.minutesTo,
       rangeDate,
       firstDate: dates[0]
+    });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+module.exports.getBookingPrice = async (req, res) => {
+  try {
+    const { date, minutes, minutesBusy, idHall, persons, key, purpose } = req.body;
+    const formateDate = moment(`${date}`, formatDateConf);
+    const formateTime = moment(`${minutesToTime(minutes)}`, formatTimeConf);
+    const bookingObj = { date: formateDate, time: formateTime, minutes: minutesBusy, persons };
+    const shedule = await WorkShedule.findOne({});
+    const prices = await Price.find({}).sort('priority');
+    const pricesSort = _.reverse(prices);
+    const pricesObj = groupPrices(pricesSort);
+    const priceByPurpose =
+      pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
+    const price = calcPrice(bookingObj, priceByPurpose, shedule);
+    // console.log(persons);
+    // console.log(date, minutes, minutesBusy, idHall, persons, key, purpose);
+    res.json({
+      price,
+      key,
+      priceText: price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 '),
+      timeRange: `${minutesToTime(minutes)}-${minutesToTime(minutes + minutesBusy)}`,
+      timeBusy: minutesToTimeHour(minutesBusy)
     });
   } catch (error) {
     res.status(500).json({ message: error });

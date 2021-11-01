@@ -55,7 +55,7 @@ const BtnAddPlan = ({ thisHourInfo, time, style }) => {
               </div>
             )}
             <div className="shedule-booking__item">
-              {paidFor >= price ? (
+              {paidFor >= price && paymentType.value === 'paid' ? (
                 <b>Оплачено полностью</b>
               ) : (
                 `Осталось оплатить: ${price - paidFor} руб.`

@@ -12,7 +12,14 @@ const {
   getClients,
   deleteClients
 } = require('../controllers/clients');
-const { addHall, editHall, editHallCover, deleteHall, getHalls } = require('../controllers/halls');
+const {
+  addHall,
+  editHall,
+  editHallCover,
+  deleteHall,
+  getHalls,
+  getHallsPurpose
+} = require('../controllers/halls');
 const { uploadHallPhotos, deleteHallPhoto } = require('../controllers/hall-photos');
 const {
   addPlanDate,
@@ -23,7 +30,7 @@ const {
   planTimeForEdit
 } = require('../controllers/plan');
 const { changeWorkShedule, getWorkShedule } = require('../controllers/work-shedule');
-const { getBookingPlanWeek } = require('../controllers/booking');
+const { getBookingPlanWeek, getBookingPrice } = require('../controllers/booking');
 const {
   getPriceParams,
   addPrice,
@@ -61,6 +68,7 @@ router.delete('/client/:id', authJwt, deleteClient);
 
 // halls
 router.get('/halls', getHalls);
+router.get('/halls-purpose', getHallsPurpose);
 router.post('/hall', authJwt, addHall);
 router.put('/hall/:id', authJwt, editHall);
 router.put('/hall-cover/', authJwt, editHallCover);
@@ -78,6 +86,7 @@ router.post('/plan-check-time', authJwt, checkPlanTime);
 router.post('/plan-time-for-edit', authJwt, planTimeForEdit);
 
 router.post('/booking-plan-week', getBookingPlanWeek);
+router.post('/booking-price', getBookingPrice);
 
 router.put('/work-shedule', changeWorkShedule); //authJwt
 router.get('/work-shedule', getWorkShedule); //authJwt

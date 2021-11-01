@@ -23,6 +23,15 @@ const minutesToTime = (minutes) => {
   return `${hoursTime.toString().padStart(2, '0')}:${minutesTime.toString().padStart(2, '0')}`;
 };
 
+const minutesToTimeHour = (minutes) => {
+  const hoursTime = Math.floor(minutes / hourSize);
+  const minutesTime = minutes - hoursTime * hourSize;
+  const hoursTimeResult = hoursTime > 0 ? `${hoursTime} ч.` : '';
+  const minutesTimeResult = minutesTime > 0 ? `${minutesTime} м.` : '';
+
+  return `${hoursTimeResult}${minutesTimeResult}`;
+};
+
 const calculateFreeTime = (plan, time, shedule) => {
   const sheduleTimeFrom = minutesToTime(shedule.minutesFrom);
   const sheduleTimeTo = minutesToTime(shedule.minutesTo);
@@ -96,5 +105,6 @@ const calculateFreeDays = (plan, shedule) => {
 
 module.exports.timeToMinutes = timeToMinutes;
 module.exports.minutesToTime = minutesToTime;
+module.exports.minutesToTimeHour = minutesToTimeHour;
 module.exports.calculateFreeTime = calculateFreeTime;
 module.exports.calculateFreeDays = calculateFreeDays;
