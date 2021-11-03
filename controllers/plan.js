@@ -131,7 +131,6 @@ module.exports.addPlanDate = async (req, res) => {
 module.exports.getPlanHalls = async (req, res) => {
   try {
     const { date } = req.body;
-    paymentTypeArr;
     const purposeObj = arrToObj(purposeArr);
     const paymentTypeObj = arrToObj(paymentTypeArr);
     const newPlan = {};

@@ -11,9 +11,10 @@ const Plan = require('../models/plan');
 const Price = require('../models/prices');
 const WorkShedule = require('../models/work-shedule');
 const { timeToMinutes, minutesToTime, minutesToTimeHour } = require('../libs/handler-time');
-const { daysOfWeekArr: weekDaysConf } = require('../config/priceSettings');
+const { purposeArr, daysOfWeekArr: weekDaysConf } = require('../config/priceSettings');
 const groupPrices = require('../libs/group-prices');
 const calcPrice = require('../libs/calc-price');
+const { arrToObj } = require('../libs/helper.functions');
 
 moment.locale('ru');
 
@@ -104,15 +105,16 @@ module.exports.getBookingPrice = async (req, res) => {
     const prices = await Price.find({}).sort('priority');
     const pricesSort = _.reverse(prices);
     const pricesObj = groupPrices(pricesSort);
+    const purposeObj = arrToObj(purposeArr);
     const priceByPurpose =
       pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
     const price = calcPrice(bookingObj, priceByPurpose, shedule);
-    // console.log(persons);
     // console.log(date, minutes, minutesBusy, idHall, persons, key, purpose);
     res.json({
       price,
       key,
       priceText: price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 '),
+      purposeText: purposeObj[purpose].text,
       timeRange: `${minutesToTime(minutes)}-${minutesToTime(minutes + minutesBusy)}`,
       timeBusy: minutesToTimeHour(minutesBusy)
     });
