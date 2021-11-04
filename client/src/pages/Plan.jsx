@@ -156,7 +156,7 @@ const Plan = () => {
                             };
                             const divisorCount =
                               hourSize / minutesStep > 2 ? hourSize / minutesStep : 2;
-
+                            // console.log(planItem.plans);
                             return (
                               <div
                                 className={`shedule__hour ${

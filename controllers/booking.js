@@ -1,20 +1,28 @@
 const moment = require('moment');
+const { trim } = require('lodash');
 
 const config = require('config');
 const formatDateConf = config.get('formatDate');
 const formatTimeConf = config.get('formatTime');
 const _ = require('lodash');
-const request = require('request');
+// const request = require('request');
 // const weekDaysConf = config.get('weekDays');
 
 const Plan = require('../models/plan');
 const Price = require('../models/prices');
+const Clients = require('../models/clients');
 const WorkShedule = require('../models/work-shedule');
 const { timeToMinutes, minutesToTime, minutesToTimeHour } = require('../libs/handler-time');
-const { purposeArr, daysOfWeekArr: weekDaysConf } = require('../config/priceSettings');
+const {
+  statusArr,
+  paymentTypeArr,
+  purposeArr,
+  daysOfWeekArr: weekDaysConf
+} = require('../config/priceSettings');
 const groupPrices = require('../libs/group-prices');
 const calcPrice = require('../libs/calc-price');
-const { arrToObj } = require('../libs/helper.functions');
+const { arrToObj, parseFullName, transformEmpty } = require('../libs/helper.functions');
+const handleAddPlan = require('../libs/handler-add-plan');
 
 moment.locale('ru');
 
@@ -123,51 +131,108 @@ module.exports.getBookingPrice = async (req, res) => {
   }
 };
 
-const requestFunc = (params) => {
-  return new Promise((resolve, reject) => {
-    request(params, function (error, response, body) {
-      if (error) reject(error);
-      if (!error && response.statusCode == 200) {
-        resolve(response.body);
-      }
-    });
-  });
-};
-module.exports.bookingFetch = async (req, res) => {
+module.exports.addOrders = async (req, res) => {
   try {
-    // const aaa = await fetch('https://kamorka2.server.paykeeper.ru/info/settings/token/', {
-    //   method: 'GET',
-    //   headers: { Authorization: 'Basic ZGVtbzpkZW1v' }
-    // });
-    const { firstName, phone, mail, comment, typePay, price } = req.body;
-    // console.log(firstName, phone, mail, comment, typePay);
-    const getToken = JSON.parse(
-      await requestFunc({
-        method: 'GET',
-        url: 'https://kamorka2.server.paykeeper.ru/info/settings/token/',
-        headers: {
-          Authorization: 'Basic YWRtaW46MTA3NzM1NmZiNDkz'
+    const { firstName, phone, mail, comment, price, selected } = req.body;
+    let clientFromDB = {};
+
+    const findClient = await Clients.findOne({
+      $or: [
+        { phone: phone },
+        {
+          mail: mail
         }
-      })
-    );
-    const invoice = JSON.parse(
-      await requestFunc({
-        method: 'POST',
-        url: 'https://kamorka2.server.paykeeper.ru/change/invoice/preview/',
-        headers: {
-          Authorization: 'Basic YWRtaW46MTA3NzM1NmZiNDkz'
-        },
-        formData: {
-          token: getToken.token,
-          pay_amount: price,
-          client_email: mail,
-          client_phone: phone
-        }
-      })
-    );
-    // console.log(invoice);
-    res.json(invoice);
+      ]
+    });
+
+    if (findClient) {
+      clientFromDB = findClient;
+    } else {
+      const clientNameArray = parseFullName(firstName);
+      clientFromDB = new Clients({
+        name: { first: clientNameArray.firstName, last: clientNameArray.lastName },
+        phone: transformEmpty(phone),
+        mail: transformEmpty(mail)
+      });
+
+      await clientFromDB.save();
+    }
+
+    const client = {
+      name: trim(`${clientFromDB.name.first} ${clientFromDB.name.last}`),
+      phone: transformEmpty(clientFromDB.phone),
+      email: transformEmpty(clientFromDB.mail)
+    };
+
+    const keysOrders = Object.keys(selected);
+    const promiseOrder = keysOrders.map(async (item) => {
+      const itemOrders = selected[item];
+      // console.log(itemOrders);
+      const newOrder = {
+        idHall: itemOrders.idHall,
+        minutes: itemOrders.minutesBusy,
+        date: itemOrders.date,
+        time: minutesToTime(itemOrders.minutes),
+        status: statusArr[0].value,
+        paymentType: paymentTypeArr[0].value,
+        purpose: itemOrders.purpose,
+        persons: itemOrders.persons,
+        comment,
+        paidFor: '',
+        paymentMethod: 'сashless'
+      };
+      const plan = handleAddPlan(newOrder, client, clientFromDB.id);
+
+      return plan;
+    });
+    const allAddedOrders = await Promise.all(promiseOrder);
+    // console.log(allAddedOrders);
+    res.json(allAddedOrders);
   } catch (error) {
     res.status(500).json({ message: error });
   }
 };
+
+// const requestFunc = (params) => {
+//   return new Promise((resolve, reject) => {
+//     request(params, function (error, response, body) {
+//       if (error) reject(error);
+//       if (!error && response.statusCode == 200) {
+//         resolve(response.body);
+//       }
+//     });
+//   });
+// };
+// module.exports.bookingFetch = async (req, res) => {
+//   try {
+//     const { firstName, phone, mail, comment, typePay, price } = req.body;
+//     const getToken = JSON.parse(
+//       await requestFunc({
+//         method: 'GET',
+//         url: 'https://kamorka2.server.paykeeper.ru/info/settings/token/',
+//         headers: {
+//           Authorization: 'Basic YWRtaW46MTA3NzM1NmZiNDkz'
+//         }
+//       })
+//     );
+//     const invoice = JSON.parse(
+//       await requestFunc({
+//         method: 'POST',
+//         url: 'https://kamorka2.server.paykeeper.ru/change/invoice/preview/',
+//         headers: {
+//           Authorization: 'Basic YWRtaW46MTA3NzM1NmZiNDkz'
+//         },
+//         formData: {
+//           token: getToken.token,
+//           pay_amount: price,
+//           client_email: mail,
+//           client_phone: phone
+//         }
+//       })
+//     );
+//     // console.log(invoice);
+//     res.json(invoice);
+//   } catch (error) {
+//     res.status(500).json({ message: error });
+//   }
+// };

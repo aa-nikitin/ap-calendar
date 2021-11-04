@@ -16,15 +16,18 @@ const BtnAddPlan = ({ thisHourInfo, time, style }) => {
       <div
         className={`shedule__booking ${
           status === 'application' ? 'shedule--booking-application' : ''
-        }`}
+        } ${status === 'completed' ? 'shedule--booking-completed' : ''}`}
         style={style}
         {...params}>
         <div
           className={`shedule-booking ${
             status === 'application' ? 'shedule-booking--application' : ''
-          }`}>
+          } ${status === 'completed' ? 'shedule-booking--completed' : ''}`}>
           <div className="shedule-booking__head">
             {thisHourInfo.timeRange} {thisHourInfo.clientInfo.name}
+          </div>
+          <div className="shedule-booking__status">
+            <b>{thisHourInfo.statusText}</b>
           </div>
           <div className="shedule-booking__body">
             {!!thisHourInfo.comment && (
@@ -43,6 +46,7 @@ const BtnAddPlan = ({ thisHourInfo, time, style }) => {
                     </div>
                   )
               )}
+
             <div className="shedule-booking__item">
               <div className="shedule-booking__value">Аренда, для {thisHourInfo.purposeText}</div>
             </div>

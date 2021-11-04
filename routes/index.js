@@ -30,7 +30,7 @@ const {
   planTimeForEdit
 } = require('../controllers/plan');
 const { changeWorkShedule, getWorkShedule } = require('../controllers/work-shedule');
-const { getBookingPlanWeek, getBookingPrice, bookingFetch } = require('../controllers/booking');
+const { getBookingPlanWeek, getBookingPrice, addOrders } = require('../controllers/booking');
 const {
   getPriceParams,
   addPrice,
@@ -87,17 +87,17 @@ router.post('/plan-time-for-edit', authJwt, planTimeForEdit);
 
 router.post('/booking-plan-week', getBookingPlanWeek);
 router.post('/booking-price', getBookingPrice);
-router.post('/booking-fetch', bookingFetch);
+router.post('/booking-add-orders', addOrders);
 
-router.put('/work-shedule', changeWorkShedule); //authJwt
-router.get('/work-shedule', getWorkShedule); //authJwt
+router.put('/work-shedule', changeWorkShedule);
+router.get('/work-shedule', getWorkShedule);
 
-router.get('/price-params', getPriceParams); //authJwt
-router.post('/price', addPrice); //authJwt
-router.delete('/price/:id', deletePrice); //authJwt
-router.put('/price/:id', editPrice); //authJwt
-router.get('/prices', getPrices); //authJwt
-router.post('/prices', copyPrices); //authJwt
-router.delete('/prices', deletePrices); //authJwt
+router.get('/price-params', getPriceParams);
+router.post('/price', authJwt, addPrice);
+router.delete('/price/:id', authJwt, deletePrice);
+router.put('/price/:id', authJwt, editPrice);
+router.get('/prices', authJwt, getPrices);
+router.post('/prices', authJwt, copyPrices);
+router.delete('/prices', authJwt, deletePrices);
 
 module.exports = router;

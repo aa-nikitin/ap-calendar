@@ -8,6 +8,14 @@
       }
     }
   }
+  &--completed {
+    background-color: $cl-completed;
+    & .shedule-booking {
+      &__head {
+        background-color: $cl-completed-head;
+      }
+    }
+  }
   &__head {
     background-color: $lightseagreen;
     padding: 3px;
@@ -39,5 +47,13 @@
     padding: 2px 7px;
     font-size: 12px;
     border-radius: 3px;
+  }
+  &__status {
+    border-bottom: 1px solid rgba($color: $black, $alpha: 0.5);
+    padding: 3px 7px;
+    font-size: 14px;
+    margin-bottom: 5px;
+    background-color: rgba($color: $black, $alpha: 0.2);
+    color: rgba($color: $black, $alpha: 0.8);
   }
 }
