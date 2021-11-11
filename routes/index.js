@@ -43,6 +43,7 @@ const {
 const { getHolidays, addHolidays, deleteHolidays } = require('../controllers/holidays');
 const { getPaykeeper, changePaykeeper } = require('../controllers/paykeeper');
 const { getPrepayment, changePrepayment } = require('../controllers/prepayment');
+const { sendMail } = require('../controllers/sendmail');
 
 const router = Router();
 
@@ -112,5 +113,7 @@ router.put('/paykeeper', changePaykeeper); //authJwt,
 
 router.get('/prepayment/:token', getPrepayment); //authJwt,
 router.put('/prepayment', changePrepayment); //authJwt,
+
+router.get('/sendmail', sendMail); //authJwt,
 
 module.exports = router;
