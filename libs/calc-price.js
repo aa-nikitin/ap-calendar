@@ -6,7 +6,7 @@ const formatTime = config.get('formatTime');
 
 const { timeToMinutes } = require('../libs/handler-time');
 
-module.exports = (plan, price, shedule) => {
+module.exports = (plan, price, shedule, holidaysObj) => {
   // console.log(plan, price, shedule);
   const { date, time, minutes, persons } = plan;
   const { minutesStep, hourSize } = shedule;
@@ -26,7 +26,8 @@ module.exports = (plan, price, shedule) => {
     counterMinutes = counterMinutes + minutesStep;
   }
 
-  const holidays = ['29.10.2021'];
+  const holidays = holidaysObj.map((itemHoliday) => itemHoliday.date);
+
   let commonPrice = { price: 0, roundUp: false };
   price.forEach(({ obj: itemPrice }) => {
     const { roundUp, priceSum, timeFrom, timeTo } = itemPrice;

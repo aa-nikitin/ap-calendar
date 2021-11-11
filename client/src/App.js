@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Route } from 'react-router-dom';
 
 import { loginFetchFromToken, setWindowSize } from './redux/actions';
-import { Home, Plan, Clients, Client, Finance, Discount, Halls } from './pages';
+import { Home, Plan, Clients, Client, Finance, Discount, Halls, Settings } from './pages';
 import { Menu, Login, Loading } from './componetns';
 import { getLogin } from './redux/reducers';
 import useWindowDimensions from './hooks/useWindowDimensions';
@@ -39,6 +39,7 @@ function App() {
         <Route path="/finance" component={Finance} exact />
         <Route path="/discount" component={Discount} exact />
         <Route path="/halls" component={Halls} exact />
+        <Route path="/settings" component={Settings} exact />
       </div>
     </div>
   );

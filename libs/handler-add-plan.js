@@ -8,6 +8,7 @@ const formatTimeConf = config.get('formatTime');
 
 const Plan = require('../models/plan');
 const WorkShedule = require('../models/work-shedule');
+const Holidays = require('../models/holidays');
 const Price = require('../models/prices');
 const groupPrices = require('../libs/group-prices');
 const { calculateFreeTime } = require('../libs/handler-time');
@@ -68,7 +69,9 @@ module.exports = async (params, client, clientID) => {
     if (paymentType === 'paid') {
       const priceByPurpose =
         pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
-      const price = calcPrice(newPlanObj, priceByPurpose, shedule);
+
+      const holidaysObj = await Holidays.find({});
+      const price = calcPrice(newPlanObj, priceByPurpose, shedule, holidaysObj);
       // console.log(newPlanObj);
       newPlanObj.price = price;
     } else newPlanObj.price = 0;

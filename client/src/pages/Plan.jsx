@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ruLocale from 'date-fns/locale/ru';
+import { NavLink } from 'react-router-dom';
 
 import { Loading, PlanForm, BtnAddPlan } from '../componetns';
 import {
@@ -18,13 +19,13 @@ import {
   planFetchAddRequest,
   planFetchDeleteRequest
 } from '../redux/actions';
-import { getPlan, getParams } from '../redux/reducers';
+import { getPlan, getWorkShedule } from '../redux/reducers';
 
 const Plan = () => {
   const [valueDate, setValueDate] = React.useState(new Date());
   const dispatch = useDispatch();
   const { plan, planFetch, planPopupFetch } = useSelector((state) => getPlan(state));
-  const { workShedule } = useSelector((state) => getParams(state));
+  const workShedule = useSelector((state) => getWorkShedule(state));
   const { list: hoursArray, minutesStep, hourSize } = workShedule;
   const handlePlan = (values) => {
     dispatch(planFetchAddRequest(values));
@@ -110,112 +111,122 @@ const Plan = () => {
               </div>
             </div>
           </div>
+          {hoursArray ? (
+            <div className="content-page__info">
+              {plan.length > 0 && (
+                <div className="shedule">
+                  <div className="shedule__row">
+                    <div className="shedule__scale shedule-scale">
+                      {hoursArray.map((item) => {
+                        const itemCount = item.minutes / minutesStep;
+                        const divisorCount =
+                          hourSize / minutesStep > 2 ? hourSize / minutesStep : 2;
 
-          <div className="content-page__info">
-            {plan.length > 0 && (
-              <div className="shedule">
-                <div className="shedule__row">
-                  <div className="shedule__scale shedule-scale">
-                    {hoursArray.map((item) => {
-                      const itemCount = item.minutes / minutesStep;
-                      const divisorCount = hourSize / minutesStep > 2 ? hourSize / minutesStep : 2;
-
-                      return (
-                        <div className="shedule-scale__item" key={item.minutes}>
-                          {!(itemCount % divisorCount) && (
-                            <div className="shedule-scale__hour">
-                              <span>{item.timeH === '24' ? '00' : item.timeH}</span>
-                              <em>{item.timeM}</em>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {plan.map((planItem) => {
-                    return (
-                      <div className="shedule__item" key={planItem.id}>
-                        <div className="shedule__head" key={planItem.id}>
-                          {planItem.name}
-                        </div>
-                        <div className="shedule__body">
-                          {hoursArray.map((item, key) => {
-                            const itemCount = item.minutes / minutesStep;
-                            const thisTime = `${item.timeH}:${item.timeM}`;
-                            // console.log(hoursArray[key].timeH);
-                            const thisTimeHalfHour =
-                              !(minutesStep % hourSize) &&
-                              !!planItem.plans[thisTime.replace('00', '30')]
-                                ? thisTime.replace('00', '30')
-                                : thisTime;
-                            // console.log(aaa);
-                            // console.log(minutesStep % hourSize);
-                            const thisHourInfo = planItem.plans[thisTimeHalfHour];
-                            const style = thisHourInfo && {
-                              height: Math.ceil(thisHourInfo.minutes / minutesStep) * 26
-                            };
-                            const divisorCount =
-                              hourSize / minutesStep > 2 ? hourSize / minutesStep : 2;
-                            // console.log(planItem.plans);
-                            return (
-                              <div
-                                className={`shedule__hour ${
-                                  !!(itemCount % divisorCount) ? 'shedule--hour-even' : ''
-                                }`}
-                                key={item.minutes}>
-                                {!(key + 1 === hoursArray.length) && (
-                                  <div className="shedule__cell">
-                                    <PlanForm
-                                      onClick={handlePlan}
-                                      nameForm="Аренда"
-                                      params={workShedule}
-                                      thisHourInfo={thisHourInfo}
-                                      handleDeletePlan={handleDeletePlan}
-                                      handleClick={handlePlanBtn(
-                                        {
-                                          idHall: planItem.id,
-                                          date: thisDate,
-                                          time: thisTime,
-                                          minutes: item.minutes
-                                        },
-                                        thisHourInfo
-                                      )}
-                                      CustomBtn={BtnAddPlan({
-                                        thisHourInfo,
-                                        time: thisTime,
-                                        style
-                                      })}
-                                    />
-                                  </div>
-                                )}
+                        return (
+                          <div className="shedule-scale__item" key={item.minutes}>
+                            {!(itemCount % divisorCount) && (
+                              <div className="shedule-scale__hour">
+                                <span>{item.timeH === '24' ? '00' : item.timeH}</span>
+                                <em>{item.timeM}</em>
                               </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                  <div className="shedule__scale shedule--scale-last shedule-scale ">
-                    {hoursArray.map((item) => {
-                      const itemCount = item.minutes / minutesStep;
-                      const divisorCount = hourSize / minutesStep > 2 ? hourSize / minutesStep : 2;
-
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {plan.map((planItem) => {
                       return (
-                        <div className="shedule-scale__item" key={item.minutes}>
-                          {!(itemCount % divisorCount) && (
-                            <div className="shedule-scale__hour">
-                              <span>{item.timeH === '24' ? '00' : item.timeH}</span>
-                              <em>{item.timeM}</em>
-                            </div>
-                          )}
+                        <div className="shedule__item" key={planItem.id}>
+                          <div className="shedule__head" key={planItem.id}>
+                            {planItem.name}
+                          </div>
+                          <div className="shedule__body">
+                            {hoursArray.map((item, key) => {
+                              const itemCount = item.minutes / minutesStep;
+                              const thisTime = `${item.timeH}:${item.timeM}`;
+                              // console.log(hoursArray[key].timeH);
+                              const thisTimeHalfHour =
+                                !(minutesStep % hourSize) &&
+                                !!planItem.plans[thisTime.replace('00', '30')]
+                                  ? thisTime.replace('00', '30')
+                                  : thisTime;
+                              // console.log(aaa);
+                              // console.log(minutesStep % hourSize);
+                              const thisHourInfo = planItem.plans[thisTimeHalfHour];
+                              const style = thisHourInfo && {
+                                height: Math.ceil(thisHourInfo.minutes / minutesStep) * 26
+                              };
+                              const divisorCount =
+                                hourSize / minutesStep > 2 ? hourSize / minutesStep : 2;
+                              // console.log(planItem.plans);
+                              return (
+                                <div
+                                  className={`shedule__hour ${
+                                    !!(itemCount % divisorCount) ? 'shedule--hour-even' : ''
+                                  }`}
+                                  key={item.minutes}>
+                                  {!(key + 1 === hoursArray.length) && (
+                                    <div className="shedule__cell">
+                                      <PlanForm
+                                        onClick={handlePlan}
+                                        nameForm="Аренда"
+                                        params={workShedule}
+                                        thisHourInfo={thisHourInfo}
+                                        handleDeletePlan={handleDeletePlan}
+                                        handleClick={handlePlanBtn(
+                                          {
+                                            idHall: planItem.id,
+                                            date: thisDate,
+                                            time: thisTime,
+                                            minutes: item.minutes
+                                          },
+                                          thisHourInfo
+                                        )}
+                                        CustomBtn={BtnAddPlan({
+                                          thisHourInfo,
+                                          time: thisTime,
+                                          style
+                                        })}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
                       );
                     })}
+                    <div className="shedule__scale shedule--scale-last shedule-scale ">
+                      {hoursArray.map((item) => {
+                        const itemCount = item.minutes / minutesStep;
+                        const divisorCount =
+                          hourSize / minutesStep > 2 ? hourSize / minutesStep : 2;
+
+                        return (
+                          <div className="shedule-scale__item" key={item.minutes}>
+                            {!(itemCount % divisorCount) && (
+                              <div className="shedule-scale__hour">
+                                <span>{item.timeH === '24' ? '00' : item.timeH}</span>
+                                <em>{item.timeM}</em>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          ) : (
+            <>
+              Для того что бы начать работу с данным разделом задайте параметры расписания в{' '}
+              <NavLink className="link" to="/settings">
+                настройках
+              </NavLink>
+            </>
+          )}
         </div>
       </div>
       {planPopupFetch && <Loading />}

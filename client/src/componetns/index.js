@@ -15,3 +15,7 @@ export * from './BtnAddPrice';
 export * from './PriceForm';
 export * from './PriceCopyForm';
 export * from './ButtonsSwitches';
+export * from './SettingsShedule';
+export * from './SettingsHolidays';
+export * from './SettingsPaykeeper';
+export * from './SettingsPrepayment';

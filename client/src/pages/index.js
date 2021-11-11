@@ -5,3 +5,4 @@ export * from './Client';
 export * from './Finance';
 export * from './Discount';
 export * from './Halls';
+export * from './Settings';

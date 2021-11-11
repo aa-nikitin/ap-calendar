@@ -1,0 +1,49 @@
+.hollidays {
+  &__panel {
+    margin-bottom: 20px;
+  }
+  &--panel-extend {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+  &__panel-item {
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+  &__panel-btn {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  &__body {
+  }
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  &__item {
+    border: solid 1px $gray-line;
+    padding: 10px;
+    border-radius: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+    transition-property: all;
+    transition-duration: 0.5s;
+    &:hover {
+      border-color: $cl-main2;
+    }
+  }
+  &--same-item {
+    border-color: $cl-error;
+  }
+  &__info {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+}

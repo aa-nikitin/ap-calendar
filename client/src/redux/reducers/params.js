@@ -1,7 +1,7 @@
 import { handleActions } from 'redux-actions';
 import { combineReducers } from 'redux';
 
-import { setWindowSize, setPageTplName, setWorkShedule, setPriceParams } from '../actions';
+import { setWindowSize, setPageTplName, setPriceParams } from '../actions';
 
 const sizeWindow = handleActions(
   {
@@ -15,12 +15,6 @@ const pageTplName = handleActions(
   },
   ''
 );
-const workShedule = handleActions(
-  {
-    [setWorkShedule]: (_state, { payload }) => payload
-  },
-  {}
-);
 const priceParams = handleActions(
   {
     [setPriceParams]: (_state, { payload }) => payload
@@ -31,4 +25,4 @@ const priceParams = handleActions(
 export const getParams = ({ params }) => params;
 export const getPriceParams = ({ params }) => params.priceParams;
 
-export default combineReducers({ sizeWindow, pageTplName, workShedule, priceParams });
+export default combineReducers({ sizeWindow, pageTplName, priceParams });

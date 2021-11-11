@@ -40,6 +40,9 @@ const {
   editPrice,
   deletePrices
 } = require('../controllers/prices');
+const { getHolidays, addHolidays, deleteHolidays } = require('../controllers/holidays');
+const { getPaykeeper, changePaykeeper } = require('../controllers/paykeeper');
+const { getPrepayment, changePrepayment } = require('../controllers/prepayment');
 
 const router = Router();
 
@@ -89,7 +92,7 @@ router.post('/booking-plan-week', getBookingPlanWeek);
 router.post('/booking-price', getBookingPrice);
 router.post('/booking-add-orders', addOrders);
 
-router.put('/work-shedule', changeWorkShedule);
+router.put('/work-shedule', authJwt, changeWorkShedule);
 router.get('/work-shedule', getWorkShedule);
 
 router.get('/price-params', getPriceParams);
@@ -99,5 +102,15 @@ router.put('/price/:id', authJwt, editPrice);
 router.get('/prices', authJwt, getPrices);
 router.post('/prices', authJwt, copyPrices);
 router.delete('/prices', authJwt, deletePrices);
+
+router.get('/holidays', getHolidays); //authJwt,
+router.post('/holidays', addHolidays); //authJwt,
+router.delete('/holidays/:id', deleteHolidays); //authJwt,
+
+router.get('/paykeeper/:token', getPaykeeper); //authJwt,
+router.put('/paykeeper', changePaykeeper); //authJwt,
+
+router.get('/prepayment/:token', getPrepayment); //authJwt,
+router.put('/prepayment', changePrepayment); //authJwt,
 
 module.exports = router;

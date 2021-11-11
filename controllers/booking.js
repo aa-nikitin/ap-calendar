@@ -10,6 +10,7 @@ const _ = require('lodash');
 
 const Plan = require('../models/plan');
 const Price = require('../models/prices');
+const Holidays = require('../models/holidays');
 const Clients = require('../models/clients');
 const WorkShedule = require('../models/work-shedule');
 const { timeToMinutes, minutesToTime, minutesToTimeHour } = require('../libs/handler-time');
@@ -111,12 +112,14 @@ module.exports.getBookingPrice = async (req, res) => {
     const bookingObj = { date: formateDate, time: formateTime, minutes: minutesBusy, persons };
     const shedule = await WorkShedule.findOne({});
     const prices = await Price.find({}).sort('priority');
+    const holidaysObj = await Holidays.find({});
     const pricesSort = _.reverse(prices);
     const pricesObj = groupPrices(pricesSort);
     const purposeObj = arrToObj(purposeArr);
     const priceByPurpose =
       pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
-    const price = calcPrice(bookingObj, priceByPurpose, shedule);
+
+    const price = calcPrice(bookingObj, priceByPurpose, shedule, holidaysObj);
     // console.log(date, minutes, minutesBusy, idHall, persons, key, purpose);
     res.json({
       price,

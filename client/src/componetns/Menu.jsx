@@ -6,6 +6,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import StoreIcon from '@mui/icons-material/Store';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 import { MenuItem } from './index';
 import { logoutFetchFromToken } from '../redux/actions';
@@ -22,6 +23,7 @@ const Menu = () => {
       <MenuItem Icon={PeopleAltIcon} linkTo="/clients" nameItem="Клиенты" />
       <MenuItem Icon={AttachMoneyIcon} linkTo="/finance" nameItem="Финансы" />
       <MenuItem Icon={LoyaltyIcon} linkTo="/discount" nameItem="Скидки" />
+      <MenuItem Icon={SettingsIcon} linkTo="/settings" nameItem="Настройки" />
       <MenuItem Icon={ExitToAppIcon} onClick={handleLogout} nameItem="Выйти" />
     </div>
   );

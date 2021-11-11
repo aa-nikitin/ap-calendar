@@ -36,7 +36,7 @@ module.exports.addPlanDate = async (req, res) => {
         };
       }
     } else {
-      const clientNameArray = parseFullName(clientName.name);
+      const clientNameArray = parseFullName(clientName);
       clientFromDB = new Clients({
         name: { first: clientNameArray.firstName, last: clientNameArray.lastName },
         nickname: clientAlias,
@@ -55,7 +55,6 @@ module.exports.addPlanDate = async (req, res) => {
     };
     const plan = await handleAddPlan(req.body, client, clientFromDB.id);
 
-    console.log(req.body);
     res.status(201).json(plan);
   } catch (error) {
     res.status(500).json({ message: error });
