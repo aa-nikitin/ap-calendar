@@ -8,19 +8,21 @@ import TabPanel from '@mui/lab/TabPanel';
 
 import { setPageTplName } from '../redux/actions';
 import {
-  settingsLoadPrepaymentRequest,
-  settingsLoadPaykeeperRequest,
   settingsSavePaykeeperRequest,
-  settingsSavePrepaymentRequest
+  settingsSavePrepaymentRequest,
+  settingsSaveMailPostRequest,
+  settingsLoadSettingsRequest,
+  settingsSendMailPostRequest
 } from '../redux/actions';
 import {
   SettingsShedule,
   SettingsHolidays,
   SettingsPaykeeper,
   SettingsPrepayment,
+  SettingsMailPost,
   Loading
 } from '../componetns';
-import { getSettings, getPaykeeper, getPrepayment } from '../redux/reducers';
+import { getSettings, getPaykeeper, getPrepayment, getMailPost } from '../redux/reducers';
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -28,6 +30,7 @@ const Settings = () => {
   const { loading } = useSelector((state) => getSettings(state));
   const paykeeper = useSelector((state) => getPaykeeper(state));
   const prepayment = useSelector((state) => getPrepayment(state));
+  const mailPost = useSelector((state) => getMailPost(state));
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -38,11 +41,16 @@ const Settings = () => {
   const handlePrepayment = (values) => {
     dispatch(settingsSavePrepaymentRequest(values));
   };
+  const handleMailPost = (values) => {
+    dispatch(settingsSaveMailPostRequest(values));
+  };
+  const handleSendMailPost = () => {
+    dispatch(settingsSendMailPostRequest());
+  };
 
   useEffect(() => {
     dispatch(setPageTplName('SETTINGS'));
-    dispatch(settingsLoadPaykeeperRequest());
-    dispatch(settingsLoadPrepaymentRequest());
+    dispatch(settingsLoadSettingsRequest());
   }, [dispatch]);
 
   return (
@@ -59,6 +67,7 @@ const Settings = () => {
                   <Tab label="Праздники" value="holidays" />
                   <Tab label="PayKeeper" value="paykeeper" />
                   <Tab label="Предоплата" value="prepayment" />
+                  <Tab label="Почта" value="mailpost" />
                 </TabList>
               </Box>
               <TabPanel value="shedule">
@@ -72,6 +81,13 @@ const Settings = () => {
               </TabPanel>
               <TabPanel value="prepayment">
                 <SettingsPrepayment prepayment={prepayment} handlePrepayment={handlePrepayment} />
+              </TabPanel>
+              <TabPanel value="mailpost">
+                <SettingsMailPost
+                  mailPost={mailPost}
+                  handleMailPost={handleMailPost}
+                  handleSendMailPost={handleSendMailPost}
+                />
               </TabPanel>
             </TabContext>
           </Box>

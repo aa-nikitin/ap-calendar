@@ -43,7 +43,7 @@ const {
 const { getHolidays, addHolidays, deleteHolidays } = require('../controllers/holidays');
 const { getPaykeeper, changePaykeeper } = require('../controllers/paykeeper');
 const { getPrepayment, changePrepayment } = require('../controllers/prepayment');
-const { sendMail } = require('../controllers/sendmail');
+const { getMailPost, changeMailPost, sendMailTest } = require('../controllers/mail-post');
 
 const router = Router();
 
@@ -104,16 +104,18 @@ router.get('/prices', authJwt, getPrices);
 router.post('/prices', authJwt, copyPrices);
 router.delete('/prices', authJwt, deletePrices);
 
-router.get('/holidays', getHolidays); //authJwt,
-router.post('/holidays', addHolidays); //authJwt,
-router.delete('/holidays/:id', deleteHolidays); //authJwt,
+router.get('/holidays', authJwt, getHolidays);
+router.post('/holidays', authJwt, addHolidays);
+router.delete('/holidays/:id', authJwt, deleteHolidays);
 
-router.get('/paykeeper/:token', getPaykeeper); //authJwt,
-router.put('/paykeeper', changePaykeeper); //authJwt,
+router.get('/paykeeper', authJwt, getPaykeeper);
+router.put('/paykeeper', authJwt, changePaykeeper);
 
-router.get('/prepayment/:token', getPrepayment); //authJwt,
-router.put('/prepayment', changePrepayment); //authJwt,
+router.get('/prepayment', authJwt, getPrepayment);
+router.put('/prepayment', authJwt, changePrepayment);
 
-router.get('/sendmail', sendMail); //authJwt,
+router.get('/mail-post', authJwt, getMailPost);
+router.put('/mail-post', authJwt, changeMailPost);
+router.get('/send-mail-post', authJwt, sendMailTest);
 
 module.exports = router;

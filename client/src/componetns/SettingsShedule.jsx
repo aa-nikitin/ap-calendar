@@ -89,10 +89,12 @@ const SettingsShedule = () => {
           <MenuItem value={60}>1 час</MenuItem>
         </Select>
       </div>
-      <div>
-        <Button variant="outlined" color="primary" type="submit">
-          Сохранить
-        </Button>
+      <div className="form-box__footer  form-box--footer-btn-panels">
+        <div className="form-box__footer-btn">
+          <Button variant="outlined" color="primary" type="submit">
+            Сохранить
+          </Button>
+        </div>
       </div>
     </form>
   );

@@ -56,10 +56,12 @@ const SettingsPrepayment = ({ prepayment, handlePrepayment }) => {
           onChange={handleChangeSelect('percent')}
         />
       </div>
-      <div>
-        <Button variant="outlined" color="primary" type="submit">
-          Сохранить
-        </Button>
+      <div className="form-box__footer  form-box--footer-btn-panels">
+        <div className="form-box__footer-btn">
+          <Button variant="outlined" color="primary" type="submit">
+            Сохранить
+          </Button>
+        </div>
       </div>
     </form>
   );

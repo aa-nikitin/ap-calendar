@@ -15,18 +15,21 @@ import {
   settingsSaveHolidaysRequest,
   settingsSaveHolidaysSuccess,
   settingsSaveHolidaysError,
-  settingsLoadPaykeeperRequest,
-  settingsLoadPaykeeperSuccess,
-  settingsLoadPaykeeperError,
   settingsSavePaykeeperRequest,
   settingsSavePaykeeperSuccess,
   settingsSavePaykeeperError,
-  settingsLoadPrepaymentRequest,
-  settingsLoadPrepaymentSuccess,
-  settingsLoadPrepaymentError,
   settingsSavePrepaymentRequest,
   settingsSavePrepaymentSuccess,
   settingsSavePrepaymentError,
+  settingsSaveMailPostRequest,
+  settingsSaveMailPostSuccess,
+  settingsSaveMailPostError,
+  settingsLoadSettingsRequest,
+  settingsLoadSettingsSuccess,
+  settingsLoadSettingsError,
+  settingsSendMailPostRequest,
+  settingsSendMailPostSuccess,
+  settingsSendMailPostError,
   logoutFetchFromToken
 } from '../redux/actions';
 import { getSettings } from '../redux/reducers';
@@ -43,6 +46,8 @@ export function* changeShedule() {
       hourSize: query.hourSize
     };
     const settingsShedule = yield call(fetchPut, '/api/work-shedule', newShedule, token);
+
+    alert(`Изменения успешно сохранены`);
 
     yield put(settingsSaveSheduleSuccess(settingsShedule));
   } catch (error) {
@@ -96,22 +101,13 @@ export function* addHoliday() {
   }
 }
 
-export function* getPaykeeper() {
-  try {
-    const token = localStorage.getItem(storageName);
-    const paykeeper = yield call(fetchGet, `/api/paykeeper/${token}`, token);
-
-    yield put(settingsLoadPaykeeperSuccess(paykeeper));
-  } catch (error) {
-    if (error === 'Unauthorized') yield put(logoutFetchFromToken());
-    yield put(settingsLoadPaykeeperError(error));
-  }
-}
 export function* savePaykeeper() {
   try {
     const token = localStorage.getItem(storageName);
     const { query } = yield select(getSettings);
     const paykeeper = yield call(fetchPut, `/api/paykeeper`, query, token);
+
+    alert(`Изменения успешно сохранены`);
 
     yield put(settingsSavePaykeeperSuccess(paykeeper));
   } catch (error) {
@@ -120,22 +116,13 @@ export function* savePaykeeper() {
   }
 }
 
-export function* getPrepayment() {
-  try {
-    const token = localStorage.getItem(storageName);
-    const prepayment = yield call(fetchGet, `/api/prepayment/${token}`, token);
-
-    yield put(settingsLoadPrepaymentSuccess(prepayment));
-  } catch (error) {
-    if (error === 'Unauthorized') yield put(logoutFetchFromToken());
-    yield put(settingsLoadPrepaymentError(error));
-  }
-}
 export function* savePrepayment() {
   try {
     const token = localStorage.getItem(storageName);
     const { query } = yield select(getSettings);
     const prepayment = yield call(fetchPut, `/api/prepayment`, query, token);
+
+    alert(`Изменения успешно сохранены`);
 
     yield put(settingsSavePrepaymentSuccess(prepayment));
   } catch (error) {
@@ -144,13 +131,61 @@ export function* savePrepayment() {
   }
 }
 
+export function* saveMailPost() {
+  try {
+    const token = localStorage.getItem(storageName);
+    const { query } = yield select(getSettings);
+    const mailPost = yield call(fetchPut, `/api/mail-post`, query, token);
+
+    alert(`Изменения успешно сохранены`);
+
+    yield put(settingsSaveMailPostSuccess(mailPost));
+  } catch (error) {
+    if (error === 'Unauthorized') yield put(logoutFetchFromToken());
+    yield put(settingsSaveMailPostError(error));
+  }
+}
+export function* getSettingParams() {
+  try {
+    const token = localStorage.getItem(storageName);
+    const mailPost = yield call(fetchGet, `/api/mail-post`, token);
+    const prepayment = yield call(fetchGet, `/api/prepayment`, token);
+    const paykeeper = yield call(fetchGet, `/api/paykeeper`, token);
+
+    yield put(settingsLoadSettingsSuccess({ mailPost, prepayment, paykeeper }));
+  } catch (error) {
+    if (error === 'Unauthorized') yield put(logoutFetchFromToken());
+    yield put(settingsLoadSettingsError(error));
+  }
+}
+export function* sendMailPost() {
+  try {
+    const token = localStorage.getItem(storageName);
+    const mailPost = yield call(fetchGet, `/api/send-mail-post`, token);
+
+    alert(`Тестовое письмо успешно отправлено на следующий адресс - ${mailPost.accepted[0]}`);
+
+    yield put(settingsSendMailPostSuccess());
+  } catch (error) {
+    console.log(error.message);
+
+    alert(
+      `Сообщение не было отправлено что то пошло не так, отчет можно посмотреть в консоле (нажмите клавишу F12)`
+    );
+
+    if (error === 'Unauthorized') yield put(logoutFetchFromToken());
+    yield put(settingsSendMailPostError(error));
+  }
+}
+
 export function* settingsWatch() {
   yield takeLatest(settingsSaveSheduleRequest, changeShedule);
   yield takeLatest(settingsLoadHolidaysRequest, getHolidays);
   yield takeLatest(settingsDeleteHolidaysRequest, delHoliday);
   yield takeLatest(settingsSaveHolidaysRequest, addHoliday);
-  yield takeLatest(settingsLoadPaykeeperRequest, getPaykeeper);
   yield takeLatest(settingsSavePaykeeperRequest, savePaykeeper);
-  yield takeLatest(settingsLoadPrepaymentRequest, getPrepayment);
   yield takeLatest(settingsSavePrepaymentRequest, savePrepayment);
+  yield takeLatest(settingsSaveMailPostRequest, saveMailPost);
+  yield takeLatest(settingsLoadSettingsRequest, getSettingParams);
+  yield takeLatest(settingsSendMailPostRequest, sendMailPost);
 }

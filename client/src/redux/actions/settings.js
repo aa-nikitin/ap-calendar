@@ -31,11 +31,6 @@ const {
     }
   },
   paykeeper: {
-    load: {
-      request: settingsLoadPaykeeperRequest,
-      success: settingsLoadPaykeeperSuccess,
-      error: settingsLoadPaykeeperError
-    },
     save: {
       request: settingsSavePaykeeperRequest,
       success: settingsSavePaykeeperSuccess,
@@ -43,15 +38,29 @@ const {
     }
   },
   prepayment: {
-    load: {
-      request: settingsLoadPrepaymentRequest,
-      success: settingsLoadPrepaymentSuccess,
-      error: settingsLoadPrepaymentError
-    },
     save: {
       request: settingsSavePrepaymentRequest,
       success: settingsSavePrepaymentSuccess,
       error: settingsSavePrepaymentError
+    }
+  },
+  mailPost: {
+    save: {
+      request: settingsSaveMailPostRequest,
+      success: settingsSaveMailPostSuccess,
+      error: settingsSaveMailPostError
+    },
+    send: {
+      request: settingsSendMailPostRequest,
+      success: settingsSendMailPostSuccess,
+      error: settingsSendMailPostError
+    }
+  },
+  settings: {
+    load: {
+      request: settingsLoadSettingsRequest,
+      success: settingsLoadSettingsSuccess,
+      error: settingsLoadSettingsError
     }
   }
 } = createActions({
@@ -65,13 +74,16 @@ const {
     DELETE: { REQUEST: null, SUCCESS: null, ERROR: null }
   },
   PAYKEEPER: {
-    LOAD: { REQUEST: null, SUCCESS: null, ERROR: null },
     SAVE: { REQUEST: null, SUCCESS: null, ERROR: null }
   },
   PREPAYMENT: {
-    LOAD: { REQUEST: null, SUCCESS: null, ERROR: null },
     SAVE: { REQUEST: null, SUCCESS: null, ERROR: null }
-  }
+  },
+  MAIL_POST: {
+    SAVE: { REQUEST: null, SUCCESS: null, ERROR: null },
+    SEND: { REQUEST: null, SUCCESS: null, ERROR: null }
+  },
+  SETTINGS: { LOAD: { REQUEST: null, SUCCESS: null, ERROR: null } }
 });
 
 export {
@@ -90,16 +102,19 @@ export {
   settingsDeleteHolidaysRequest,
   settingsDeleteHolidaysSuccess,
   settingsDeleteHolidaysError,
-  settingsLoadPaykeeperRequest,
-  settingsLoadPaykeeperSuccess,
-  settingsLoadPaykeeperError,
   settingsSavePaykeeperRequest,
   settingsSavePaykeeperSuccess,
   settingsSavePaykeeperError,
-  settingsLoadPrepaymentRequest,
-  settingsLoadPrepaymentSuccess,
-  settingsLoadPrepaymentError,
   settingsSavePrepaymentRequest,
   settingsSavePrepaymentSuccess,
-  settingsSavePrepaymentError
+  settingsSavePrepaymentError,
+  settingsSaveMailPostRequest,
+  settingsSaveMailPostSuccess,
+  settingsSaveMailPostError,
+  settingsLoadSettingsRequest,
+  settingsLoadSettingsSuccess,
+  settingsLoadSettingsError,
+  settingsSendMailPostRequest,
+  settingsSendMailPostSuccess,
+  settingsSendMailPostError
 };
