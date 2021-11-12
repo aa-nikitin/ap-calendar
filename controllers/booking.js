@@ -11,9 +11,15 @@ const _ = require('lodash');
 const Plan = require('../models/plan');
 const Price = require('../models/prices');
 const Holidays = require('../models/holidays');
+const Halls = require('../models/halls');
 const Clients = require('../models/clients');
 const WorkShedule = require('../models/work-shedule');
-const { timeToMinutes, minutesToTime, minutesToTimeHour } = require('../libs/handler-time');
+const {
+  timeToMinutes,
+  minutesToTime,
+  minutesToTimeHour,
+  creatingSchedule
+} = require('../libs/handler-time');
 const {
   statusArr,
   paymentTypeArr,
@@ -37,6 +43,7 @@ module.exports.getBookingPlanWeek = async (req, res) => {
     const dateTo = moment(date, formatDateConf).isoWeekday(1).add(7, 'd');
     const dateStart = moment(date, formatDateConf).isoWeekday(1);
     const shedule = await WorkShedule.findOne({});
+    const { minutesTo, hourSize, minutesFrom } = shedule;
     const plan = await Plan.find({
       date: {
         $gte: dateFrom,
@@ -44,12 +51,19 @@ module.exports.getBookingPlanWeek = async (req, res) => {
       },
       hall: idHall
     });
+    const hall = await Halls.findOne({
+      _id: idHall
+    });
+
+    const minutesStep = hall.step ? hall.step : shedule.minutesStep;
+    const list = creatingSchedule({ minutesFrom, minutesTo, minutesStep, hourSize });
+
     for (let i = 0; i < 7; i++) {
       let busy = false;
       const dateFull = moment(dateStart.format(formatDateConf), formatDateConf);
 
       const listSheduleWork = {};
-      shedule.list.forEach((item) => {
+      list.forEach((item) => {
         busy =
           (dateFull.isSame(dateNow) && item.minutes <= minutesNow) || dateFull.isBefore(dateNow)
             ? true
@@ -68,7 +82,7 @@ module.exports.getBookingPlanWeek = async (req, res) => {
     plan.forEach((item) => {
       const datePlan = moment(item.date).format(formatDateConf);
       const timePlan = moment(item.time).format(formatTimeConf);
-      const isErrorRate = timeToMinutes(timePlan) % shedule.minutesStep;
+      const isErrorRate = timeToMinutes(timePlan) % minutesStep;
       const minutesStartPlan =
         isErrorRate > 0 ? timeToMinutes(String(timePlan)) - 30 : timeToMinutes(String(timePlan));
       const minutesPlan = isErrorRate > 0 ? item.minutes + 30 : item.minutes;
@@ -76,7 +90,7 @@ module.exports.getBookingPlanWeek = async (req, res) => {
       let counterMinutes = minutesStartPlan;
       while (counterMinutes < minutesStartPlan + minutesPlan) {
         sheduleWork[datePlan]['list'][String(counterMinutes)]['busy'] = true;
-        counterMinutes = counterMinutes + shedule.minutesStep;
+        counterMinutes = counterMinutes + minutesStep;
       }
     });
 
@@ -90,12 +104,13 @@ module.exports.getBookingPlanWeek = async (req, res) => {
         ? `${firstDate[0]} - ${lastDate[0]} ${lastDate[1]}`
         : `${firstDate[0]} ${firstDate[1]} - ${lastDate[0]} ${lastDate[1]}`;
 
+    // console.log(hall.step, idHall);
     res.json({
       sheduleWork,
-      minutesStep: shedule.minutesStep,
-      hourSize: shedule.hourSize,
-      minutesFrom: shedule.minutesFrom,
-      minutesTo: shedule.minutesTo,
+      minutesStep: minutesStep,
+      hourSize: hourSize,
+      minutesFrom: minutesFrom,
+      minutesTo: minutesTo,
       rangeDate,
       firstDate: dates[0]
     });

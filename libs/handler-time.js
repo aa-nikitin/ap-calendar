@@ -103,8 +103,42 @@ const calculateFreeDays = (plan, shedule) => {
   return listSheduleTime;
 };
 
+const creatingSchedule = (params) => {
+  let minutesFrom = Number(params.minutesFrom);
+  const minutesTo = Number(params.minutesTo);
+  const minutesStep = Number(params.minutesStep);
+  const hourSize = Number(params.hourSize);
+  const arrayTimeOfDay = ['night', 'morning', 'afternoon', 'evening'];
+  const list = [];
+  while (minutesFrom <= minutesTo) {
+    let timeOfDay = 0;
+    const timeH = Math.floor(minutesFrom / hourSize)
+      .toString()
+      .padStart(2, '0');
+    const timeM = Math.floor(minutesFrom % hourSize)
+      .toString()
+      .padStart(2, '0');
+    const timeHN = Number(timeH);
+
+    if (timeHN >= 4 && timeHN <= 11) timeOfDay = 1;
+    else if (timeHN >= 12 && timeHN <= 16) timeOfDay = 2;
+    else if (timeHN >= 17 && timeHN <= 23) timeOfDay = 3;
+
+    list.push({
+      timeH: timeH,
+      timeM: timeM,
+      minutes: minutesFrom,
+      timeOfDay: arrayTimeOfDay[timeOfDay]
+    });
+    minutesFrom = minutesFrom + minutesStep;
+  }
+
+  return list;
+};
+
 module.exports.timeToMinutes = timeToMinutes;
 module.exports.minutesToTime = minutesToTime;
 module.exports.minutesToTimeHour = minutesToTimeHour;
 module.exports.calculateFreeTime = calculateFreeTime;
 module.exports.calculateFreeDays = calculateFreeDays;
+module.exports.creatingSchedule = creatingSchedule;

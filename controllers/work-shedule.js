@@ -1,4 +1,5 @@
 const WorkShedule = require('../models/work-shedule');
+const { creatingSchedule } = require('../libs/handler-time');
 
 module.exports.changeWorkShedule = async (req, res) => {
   try {
@@ -6,31 +7,7 @@ module.exports.changeWorkShedule = async (req, res) => {
     const minutesTo = Number(req.body.minutesTo);
     const minutesStep = Number(req.body.minutesStep);
     const hourSize = Number(req.body.hourSize);
-    const arrayTimeOfDay = ['night', 'morning', 'afternoon', 'evening'];
-    const list = [];
-
-    while (minutesFrom <= minutesTo) {
-      let timeOfDay = 0;
-      const timeH = Math.floor(minutesFrom / hourSize)
-        .toString()
-        .padStart(2, '0');
-      const timeM = Math.floor(minutesFrom % hourSize)
-        .toString()
-        .padStart(2, '0');
-      const timeHN = Number(timeH);
-
-      if (timeHN >= 4 && timeHN <= 11) timeOfDay = 1;
-      else if (timeHN >= 12 && timeHN <= 16) timeOfDay = 2;
-      else if (timeHN >= 17 && timeHN <= 23) timeOfDay = 3;
-
-      list.push({
-        timeH: timeH,
-        timeM: timeM,
-        minutes: minutesFrom,
-        timeOfDay: arrayTimeOfDay[timeOfDay]
-      });
-      minutesFrom = minutesFrom + minutesStep;
-    }
+    const list = creatingSchedule({ minutesFrom, minutesTo, minutesStep, hourSize });
     const paramsShedule = {
       list,
       minutesStep,

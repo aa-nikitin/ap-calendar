@@ -1,9 +1,11 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import PropTypes from 'prop-types';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 import { TransitionsModal } from './';
 
@@ -23,7 +25,7 @@ const validationSchema = yup.object({
 });
 
 const HallForm = ({ captionButton, align, nameForm, hall, onClick, Icon }) => {
-  const { name, square, ceilingHeight, priceFrom, description, order } = hall;
+  const { name, square, ceilingHeight, priceFrom, description, order, step } = hall;
   const formik = useFormik({
     initialValues: {
       name: name,
@@ -31,13 +33,16 @@ const HallForm = ({ captionButton, align, nameForm, hall, onClick, Icon }) => {
       ceilingHeight: ceilingHeight,
       priceFrom: priceFrom,
       description: description,
-      order: order
+      order: order,
+      step: step ? step : 60
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
       onClick(values);
     }
   });
+
+  const handleChangeSelect = (value) => (elem) => formik.setFieldValue(value, elem.target.value);
 
   return (
     <TransitionsModal Icon={Icon} captionButton={captionButton} nameForm={nameForm} align={align}>
@@ -116,6 +121,19 @@ const HallForm = ({ captionButton, align, nameForm, hall, onClick, Icon }) => {
               error={formik.touched.maorderil && Boolean(formik.errors.order)}
               helperText={formik.touched.order && formik.errors.order}
             />
+          </div>
+          <div className="form-box__row">
+            <div className="form-box__head">Шаг</div>
+            <Select
+              labelId="step"
+              id="step"
+              value={formik.values.step}
+              label=""
+              onChange={handleChangeSelect('step')}
+              className="form-box__width-full">
+              <MenuItem value={30}>30 минут</MenuItem>
+              <MenuItem value={60}>1 час</MenuItem>
+            </Select>
           </div>
         </div>
         <div className="form-box__footer">

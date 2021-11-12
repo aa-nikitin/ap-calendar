@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { ButtonIcon, HallForm, HallPhotos, PriceHall } from '../componetns';
 
 const Hall = ({ params, prices, handleDelete, onClick }) => {
-  const { _id: id, name, priceFrom, ceilingHeight, square, cover, photos } = params;
+  const { _id: id, name, priceFrom, ceilingHeight, square, cover, photos, step } = params;
 
   return (
     <div className="hall">
@@ -27,6 +27,7 @@ const Hall = ({ params, prices, handleDelete, onClick }) => {
           площадь {square} м<sup>2</sup>
         </div>
         <div className="hall__param">цена от {priceFrom} руб.</div>
+        <div className="hall__param">шаг - {step === 60 ? '1 час' : `${step} минут`}</div>
       </div>
       <div className="hall__item hall--price">
         <PriceHall idHall={id} prices={prices} />
