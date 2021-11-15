@@ -8,6 +8,7 @@ const BtnAddPlan = ({ thisHourInfo, time, style }) => {
   ];
   const paidFor = thisHourInfo && thisHourInfo.paidFor ? parseInt(thisHourInfo.paidFor) : 0;
   const price = thisHourInfo ? parseInt(thisHourInfo.price) : 0;
+  const discount = thisHourInfo ? parseInt(thisHourInfo.discount) : 0;
   const status = thisHourInfo ? thisHourInfo.status : '';
   const paymentType = thisHourInfo ? thisHourInfo.paymentTypeObj : {};
 
@@ -54,15 +55,22 @@ const BtnAddPlan = ({ thisHourInfo, time, style }) => {
               <div className="shedule-booking__value">будет {thisHourInfo.persons} чел.</div>
             </div>
             {!!price && (
-              <div className="shedule-booking__item">
+              <div className="shedule-booking__item shedule-booking--price">
                 <div className="shedule-booking__value">Итого, {thisHourInfo.priceFormat} руб.</div>
               </div>
             )}
-            <div className="shedule-booking__item">
+            {!!discount && (
+              <div className="shedule-booking__item shedule-booking--discount">
+                <div className="shedule-booking__value">
+                  (Включая скидку {thisHourInfo.discountFormat} руб.)
+                </div>
+              </div>
+            )}
+            <div className="shedule-booking__item shedule-booking--status-pay">
               {paidFor >= price && paymentType.value === 'paid' ? (
                 <b>Оплачено полностью</b>
               ) : (
-                `Осталось оплатить: ${price - paidFor} руб.`
+                <b>Осталось оплатить: {price - paidFor} руб.</b>
               )}
             </div>
             {paymentType.value !== 'paid' && (

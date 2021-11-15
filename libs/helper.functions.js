@@ -16,4 +16,8 @@ module.exports.transformEmpty = (value) => {
   return value ? value : '';
 };
 
+module.exports.maxItemArray = (array) => {
+  return Math.max.apply(Math, array);
+};
+
 module.exports.formatPrice = (price) => price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');

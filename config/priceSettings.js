@@ -31,10 +31,10 @@ module.exports.conditionArr = [
 ];
 
 module.exports.daysBeforeBookingArr = [
-  { name: 'День в день', value: 'day-to-day' },
-  { name: '1 день', value: 'one-day' },
-  { name: '2 дня', value: 'two-day' },
-  { name: '3 дня', value: 'three-day' }
+  { name: 'День в день', value: 'day-to-day', valueNum: '0' },
+  { name: '1 день', value: 'one-day', valueNum: '1' },
+  { name: '2 дня', value: 'two-day', valueNum: '2' },
+  { name: '3 дня', value: 'three-day', valueNum: '3' }
 ];
 
 module.exports.priceArr = [

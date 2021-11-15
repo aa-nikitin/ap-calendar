@@ -14,6 +14,7 @@ const Holidays = require('../models/holidays');
 const Halls = require('../models/halls');
 const Clients = require('../models/clients');
 const WorkShedule = require('../models/work-shedule');
+const Discounts = require('../models/discounts');
 const {
   timeToMinutes,
   minutesToTime,
@@ -28,7 +29,13 @@ const {
 } = require('../config/priceSettings');
 const groupPrices = require('../libs/group-prices');
 const calcPrice = require('../libs/calc-price');
-const { arrToObj, parseFullName, transformEmpty } = require('../libs/helper.functions');
+const calcDiscount = require('../libs/calc-discount');
+const {
+  arrToObj,
+  parseFullName,
+  transformEmpty,
+  formatPrice
+} = require('../libs/helper.functions');
 const handleAddPlan = require('../libs/handler-add-plan');
 
 moment.locale('ru');
@@ -128,6 +135,7 @@ module.exports.getBookingPrice = async (req, res) => {
     const shedule = await WorkShedule.findOne({});
     const prices = await Price.find({}).sort('priority');
     const holidaysObj = await Holidays.find({});
+    const discounts = await Discounts.find({});
     const pricesSort = _.reverse(prices);
     const pricesObj = groupPrices(pricesSort);
     const purposeObj = arrToObj(purposeArr);
@@ -135,11 +143,23 @@ module.exports.getBookingPrice = async (req, res) => {
       pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
 
     const price = calcPrice(bookingObj, priceByPurpose, shedule, holidaysObj);
-    // console.log(date, minutes, minutesBusy, idHall, persons, key, purpose);
+
+    const discount = calcDiscount({
+      plan: bookingObj,
+      discounts,
+      shedule,
+      holidays: holidaysObj,
+      price
+    });
+    const diffPrice = price - discount;
+    const resultPrice = diffPrice > 0 ? diffPrice : 0;
+    // console.log(discount);
     res.json({
-      price,
+      price: resultPrice,
+      discount,
       key,
-      priceText: price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 '),
+      discountText: formatPrice(discount),
+      priceText: formatPrice(resultPrice),
       purposeText: purposeObj[purpose].text,
       timeRange: `${minutesToTime(minutes)}-${minutesToTime(minutes + minutesBusy)}`,
       timeBusy: minutesToTimeHour(minutesBusy)
@@ -151,7 +171,7 @@ module.exports.getBookingPrice = async (req, res) => {
 
 module.exports.addOrders = async (req, res) => {
   try {
-    const { firstName, phone, mail, comment, price, selected } = req.body;
+    const { firstName, phone, mail, comment, /*price,*/ selected } = req.body;
     let clientFromDB = {};
 
     const findClient = await Clients.findOne({

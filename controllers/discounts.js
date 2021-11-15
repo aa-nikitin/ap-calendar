@@ -1,5 +1,3 @@
-const config = require('config');
-
 const Discounts = require('../models/discounts');
 const Halls = require('../models/halls');
 const { converterDiscountToBase, converterDiscountFromBase } = require('../libs/helpers.discount');

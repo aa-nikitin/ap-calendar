@@ -18,6 +18,7 @@ const schema = new Schema({
   persons: { type: Number, require: true },
   comment: { type: String },
   price: { type: Number },
+  discount: { type: Number },
   paymentMethod: { type: String },
   paidFor: { type: String }
 });

@@ -6,6 +6,7 @@ const dateForTimeConf = config.get('dateForTime');
 const formatDateConf = config.get('formatDate');
 const formatTimeConf = config.get('formatTime');
 
+const Discounts = require('../models/discounts');
 const Plan = require('../models/plan');
 const WorkShedule = require('../models/work-shedule');
 const Holidays = require('../models/holidays');
@@ -13,6 +14,7 @@ const Price = require('../models/prices');
 const groupPrices = require('../libs/group-prices');
 const { calculateFreeTime } = require('../libs/handler-time');
 const calcPrice = require('../libs/calc-price');
+const calcDiscount = require('../libs/calc-discount');
 
 module.exports = async (params, client, clientID) => {
   try {
@@ -39,6 +41,7 @@ module.exports = async (params, client, clientID) => {
       date: formateDate,
       hall: idHall
     });
+    const discounts = await Discounts.find({});
     const shedule = await WorkShedule.findOne({});
     const planFiltered = idPlan
       ? plan.filter((item) => {
@@ -72,10 +75,28 @@ module.exports = async (params, client, clientID) => {
 
       const holidaysObj = await Holidays.find({});
       const price = calcPrice(newPlanObj, priceByPurpose, shedule, holidaysObj);
-      // console.log(newPlanObj);
-      newPlanObj.price = price;
-    } else newPlanObj.price = 0;
-    // console.log(newPlanObj);
+
+      const discount = calcDiscount({
+        plan: newPlanObj,
+        discounts,
+        shedule,
+        holidays: holidaysObj,
+        price
+      });
+      let priceNew = price;
+      let discountNew = discount;
+      if (!!idPlan) {
+        comparePlan = await Plan.findOne({ _id: idPlan });
+        console.log(comparePlan.price, price);
+        priceNew = comparePlan.price === price ? comparePlan.price : price;
+        discountNew = comparePlan.price === price ? comparePlan.discount : discount;
+      }
+      newPlanObj.price = priceNew;
+      newPlanObj.discount = discountNew;
+    } else {
+      newPlanObj.price = 0;
+      newPlanObj.discount = 0;
+    }
 
     let newPlan = {};
     if (!idPlan) {

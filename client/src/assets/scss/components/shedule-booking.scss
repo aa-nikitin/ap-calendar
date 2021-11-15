@@ -35,6 +35,16 @@
     align-items: center;
     line-height: 1.3;
   }
+  &--price {
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  &--discount {
+    font-size: 12px;
+  }
+  &--status-pay {
+    margin-top: 10px;
+  }
   &__name {
     margin-right: 5px;
   }

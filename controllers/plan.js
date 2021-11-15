@@ -11,7 +11,12 @@ const Plan = require('../models/plan');
 const Halls = require('../models/halls');
 const WorkShedule = require('../models/work-shedule');
 const { calculateFreeTime, calculateFreeDays } = require('../libs/handler-time');
-const { arrToObj, parseFullName, transformEmpty } = require('../libs/helper.functions');
+const {
+  arrToObj,
+  parseFullName,
+  transformEmpty,
+  formatPrice
+} = require('../libs/helper.functions');
 const handleAddPlan = require('../libs/handler-add-plan');
 
 module.exports.addPlanDate = async (req, res) => {
@@ -104,7 +109,8 @@ module.exports.getPlanHalls = async (req, res) => {
         comment,
         paidFor,
         paymentMethod,
-        price
+        price,
+        discount
       } = planItem;
       // console.log(client);
       // const formatTime =
@@ -114,6 +120,7 @@ module.exports.getPlanHalls = async (req, res) => {
       const formatTime = moment(time).format(formatTimeConf);
       const timeEnd = moment(time).add(minutes, 'm').format(formatTimeConf);
       const timeRange = `${formatTime} - ${timeEnd}`;
+      const priceDiscount = price - discount > 0 ? price - discount : 0;
       if (!!newPlan[idHall]) {
         newPlan[idHall].plans[formatTime] = {
           id,
@@ -131,8 +138,12 @@ module.exports.getPlanHalls = async (req, res) => {
           comment,
           paidFor,
           paymentMethod,
-          price,
-          priceFormat: price ? price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ') : ''
+          price: priceDiscount,
+          priceFormat: priceDiscount ? formatPrice(priceDiscount) : '',
+          discount,
+          discountFormat: discount ? formatPrice(discount) : ''
+          // priceDiscount,
+          // priceDiscountFormat: priceDiscount ? formatPrice(priceDiscount) : ''
         };
       }
     });
