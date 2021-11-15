@@ -1,0 +1,37 @@
+.discount-item {
+  display: flex;
+  &__column {
+    width: 25%;
+    padding: 12px 7px;
+    font-size: 14px;
+  }
+  &--goal {
+  }
+  &--condition {
+    width: 50%;
+  }
+  &--sale {
+    width: 15%;
+    text-align: right;
+  }
+  &--buttons {
+    width: 10%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+  &__condition-head {
+    text-transform: uppercase;
+    color: $gray-dark;
+  }
+  &__condition-info {
+    margin-top: 7px;
+  }
+  &__sale-head {
+    font-weight: bold;
+  }
+  &__sale-info {
+    margin-top: 7px;
+    color: $gray-dark;
+  }
+}

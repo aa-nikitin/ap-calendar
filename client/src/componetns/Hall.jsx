@@ -33,7 +33,6 @@ const Hall = ({ params, prices, handleDelete, onClick }) => {
         <PriceHall idHall={id} prices={prices} />
       </div>
       <div className="hall__item hall--buttons">
-        <ButtonIcon Icon={DeleteIcon} title="Удалить" onClick={handleDelete(id)} />
         <HallForm
           hall={params}
           onClick={onClick}
@@ -41,6 +40,7 @@ const Hall = ({ params, prices, handleDelete, onClick }) => {
           captionButton="Изменить"
           nameForm="Редактирование зала"
         />
+        <ButtonIcon Icon={DeleteIcon} title="Удалить" onClick={handleDelete(id)} />
       </div>
     </div>
   );

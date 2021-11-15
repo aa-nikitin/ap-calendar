@@ -1,6 +1,7 @@
-module.exports.arrToObj = (arr) =>
+module.exports.arrToObj = (arr, key) =>
   arr.reduce((newObj, item) => {
-    newObj[item.value] = item;
+    const newKey = key ? key : 'value';
+    newObj[item[newKey]] = item;
     return newObj;
   }, {});
 

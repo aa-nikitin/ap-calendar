@@ -7,6 +7,7 @@ import { hallsWatch } from './halls';
 import { planWatch } from './plan';
 import { pricesWatch } from './prices';
 import { settingsWatch } from './settings';
+import { discountsWatch } from './discounts';
 
 export function* sagas() {
   yield fork(adminWatch);
@@ -16,4 +17,5 @@ export function* sagas() {
   yield fork(planWatch);
   yield fork(pricesWatch);
   yield fork(settingsWatch);
+  yield fork(discountsWatch);
 }

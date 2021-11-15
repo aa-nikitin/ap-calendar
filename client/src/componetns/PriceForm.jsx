@@ -23,7 +23,7 @@ const validationSchema = yup.object({
   weekday: yup.string('Дни недели'),
   worktime: yup.string('Время'),
   fromHours: yup.number('От скольки часов').typeError('Должно быть числом'),
-  fromPersons: yup.number('От скольки часов').typeError('Должно быть числом'),
+  fromPersons: yup.number('От скольки человек').typeError('Должно быть числом'),
   validityPeriod: yup.string('Срок действия'),
   price: yup.string('Цена'),
   priceSum: yup.string('Цена').required('Поле обязательное для заполнения'),

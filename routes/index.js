@@ -44,6 +44,12 @@ const { getHolidays, addHolidays, deleteHolidays } = require('../controllers/hol
 const { getPaykeeper, changePaykeeper } = require('../controllers/paykeeper');
 const { getPrepayment, changePrepayment } = require('../controllers/prepayment');
 const { getMailPost, changeMailPost, sendMailTest } = require('../controllers/mail-post');
+const {
+  getDiscounts,
+  addDiscounts,
+  editDiscounts,
+  deleteDiscounts
+} = require('../controllers/discounts');
 
 const router = Router();
 
@@ -117,5 +123,10 @@ router.put('/prepayment', authJwt, changePrepayment);
 router.get('/mail-post', authJwt, getMailPost);
 router.put('/mail-post', authJwt, changeMailPost);
 router.get('/send-mail-post', authJwt, sendMailTest);
+
+router.get('/discounts', getDiscounts);
+router.post('/discounts', addDiscounts);
+router.put('/discounts/:id', editDiscounts);
+router.delete('/discounts/:id', deleteDiscounts);
 
 module.exports = router;

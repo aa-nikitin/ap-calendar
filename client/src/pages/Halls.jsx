@@ -52,11 +52,11 @@ const Halls = () => {
           </div>
           {halls.length > 0 && (
             <div className="content-page__info">
-              <div className="halls-list">
-                <div className="halls-list__head">
-                  <div className="halls-list__head-item halls-list--head-img"></div>
-                  <div className="halls-list__head-item halls-list--head-name">Название</div>
-                  <div className="halls-list__head-item halls-list--head-price">
+              <div className="table-list">
+                <div className="table-list__head">
+                  <div className="table-list__head-item table-list--head-img"></div>
+                  <div className="table-list__head-item table-list--head-name">Название</div>
+                  <div className="table-list__head-item table-list--head-price">
                     Цена
                     <ButtonIcon
                       Icon={LiveHelpIcon}
@@ -65,12 +65,12 @@ const Halls = () => {
                       }
                     />
                   </div>
-                  <div className="halls-list__head-item halls-list--head-buttons"></div>
+                  <div className="table-list__head-item table-list--head-buttons"></div>
                 </div>
-                <div className="halls-list__body">
+                <div className="table-list__body">
                   {halls.map((elem) => {
                     return (
-                      <div key={elem._id} className="halls-list__item">
+                      <div key={elem._id} className="table-list__item">
                         <Hall
                           params={elem}
                           prices={priceList[elem._id]}

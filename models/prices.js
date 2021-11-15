@@ -19,4 +19,4 @@ const schema = new Schema({
   idHall: { type: String, require: true }
 });
 
-module.exports = model('Price', schema);
+module.exports = model('price', schema);

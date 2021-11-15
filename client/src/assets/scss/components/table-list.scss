@@ -1,4 +1,4 @@
-.halls-list {
+.table-list {
   &__head {
     display: flex;
   }
@@ -26,5 +26,17 @@
     align-items: center;
   }
   &--head-buttons {
+  }
+  &--head-goal {
+  }
+  &--head-condition {
+    width: 50%;
+  }
+  &--head-sale {
+    width: 15%;
+    text-align: right;
+  }
+  &--head-buttons-discount {
+    width: 10%;
   }
 }

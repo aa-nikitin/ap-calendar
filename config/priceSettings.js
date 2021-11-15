@@ -1,9 +1,11 @@
-module.exports.purposeArr = [
+const purposeArr = [
   { name: 'Фото', value: 'photo', text: 'фото' },
   { name: 'Видео', value: 'video', text: 'видео' },
   { name: 'Мероприятие', value: 'event', text: 'мероприятия' },
   { name: 'Семинар', value: 'seminar', text: 'семинара' }
 ];
+module.exports.purposeArr = purposeArr;
+module.exports.goalArr = [{ name: 'Для всего', value: 'all', text: 'для всего' }, ...purposeArr];
 
 module.exports.weekdayArr = [
   { name: 'Всю неделю', value: 'all-week' },
@@ -20,6 +22,19 @@ module.exports.worktimeArr = [
 module.exports.validityPeriodArr = [
   { name: 'Всегда', value: 'always' },
   { name: 'Ограниченный', value: 'limited' }
+];
+
+module.exports.conditionArr = [
+  { name: 'Всегда', value: 'always' },
+  { name: 'По дате', value: 'limited' },
+  { name: 'Дней до брони', value: 'days-before-booking' }
+];
+
+module.exports.daysBeforeBookingArr = [
+  { name: 'День в день', value: 'day-to-day' },
+  { name: '1 день', value: 'one-day' },
+  { name: '2 дня', value: 'two-day' },
+  { name: '3 дня', value: 'three-day' }
 ];
 
 module.exports.priceArr = [

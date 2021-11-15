@@ -1,9 +1,11 @@
 var _ = require('lodash');
 
 const Price = require('../models/prices');
+const Halls = require('../models/halls');
 
 const {
   purposeArr,
+  goalArr,
   weekdayArr,
   worktimeArr,
   validityPeriodArr,
@@ -11,15 +13,21 @@ const {
   daysOfWeekArr,
   statusArr,
   paymentTypeArr,
-  paymentMethodArr
+  paymentMethodArr,
+  conditionArr,
+  daysBeforeBookingArr
 } = require('../config/priceSettings');
 const converterPrice = require('../libs/converter-price');
 const groupPrices = require('../libs/group-prices');
 
 module.exports.getPriceParams = async (req, res) => {
   try {
+    const halls = await Halls.find({});
+    const hallsArr = halls.map((item) => ({ name: item.name, value: item.id }));
+
     res.json({
       purposeArr,
+      goalArr,
       weekdayArr,
       worktimeArr,
       validityPeriodArr,
@@ -27,7 +35,10 @@ module.exports.getPriceParams = async (req, res) => {
       daysOfWeekArr,
       statusArr,
       paymentTypeArr,
-      paymentMethodArr
+      paymentMethodArr,
+      conditionArr,
+      daysBeforeBookingArr,
+      hallsArr
     });
   } catch (error) {
     res.status(500).json({ message: error });

@@ -6,3 +6,4 @@ export * from './params';
 export * from './plan';
 export * from './prices';
 export * from './settings';
+export * from './discounts';
