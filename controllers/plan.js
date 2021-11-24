@@ -22,7 +22,6 @@ const handleAddPlan = require('../libs/handler-add-plan');
 module.exports.addPlanDate = async (req, res) => {
   try {
     const { idClient, clientName, clientAlias, clientPhone, clientEmail, idPlan } = req.body;
-
     let clientFromDB = {};
 
     if (idClient) {
@@ -37,7 +36,7 @@ module.exports.addPlanDate = async (req, res) => {
           name: { first: clientNameArray.firstName, last: clientNameArray.lastName },
           nickname: transformEmpty(plan.clientInfo.alias),
           phone: transformEmpty(plan.clientInfo.phone),
-          mail: transformEmpty(plan.clientInfo.email)
+          mail: transformEmpty(plan.clientInfo.mail)
         };
       }
     } else {
@@ -56,7 +55,7 @@ module.exports.addPlanDate = async (req, res) => {
       name: trim(`${clientFromDB.name.first} ${clientFromDB.name.last}`),
       alias: clientFromDB.nickname,
       phone: clientFromDB.phone,
-      email: clientFromDB.email
+      mail: clientFromDB.mail
     };
     const plan = await handleAddPlan(req.body, client, clientFromDB.id);
 

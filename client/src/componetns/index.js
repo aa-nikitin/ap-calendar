@@ -22,3 +22,8 @@ export * from './SettingsPrepayment';
 export * from './SettingsMailPost';
 export * from './DiscountItem';
 export * from './DiscountForm';
+export * from './PlanHalls';
+export * from './PlanDetails';
+export * from './Socials';
+export * from './SocialsItem';
+export * from './PaymentsForm';

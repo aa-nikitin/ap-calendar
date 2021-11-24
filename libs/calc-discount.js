@@ -8,7 +8,7 @@ const formatTime = config.get('formatTime');
 const { arrToObj, maxItemArray } = require('../libs/helper.functions');
 const { daysBeforeBookingArr } = require('../config/priceSettings');
 
-module.exports = ({ plan, discounts, shedule, holidays, price }) => {
+module.exports = ({ plan, discounts, shedule, holidays, price, idHall }) => {
   // console.log(plan, discounts, shedule, holidays, price);
   const { date, minutes } = plan;
   const { hourSize } = shedule;
@@ -23,7 +23,7 @@ module.exports = ({ plan, discounts, shedule, holidays, price }) => {
     // console.log(itemDiscount);
     // console.log(plan.purpose, itemDiscount.purpose);
     if (itemDiscount.purpose !== 'all' && itemDiscount.purpose !== plan.purpose) return;
-    if (itemDiscount.hall !== 'all' && itemDiscount.hall !== plan.hall) return;
+    if (itemDiscount.hall !== 'all' && itemDiscount.hall !== idHall) return;
     if (itemDiscount.weekday === 'weekdays' && dayOfWeek > 4) return;
     if (
       itemDiscount.weekday === 'weekend' &&
@@ -56,8 +56,10 @@ module.exports = ({ plan, discounts, shedule, holidays, price }) => {
       parseInt(isDiscountPercent ? itemDiscount.discount.split('%')[0] : itemDiscount.discount)
     );
     const sumDiscount = isDiscountPercent ? (discountNumber * price) / 100 : discountNumber;
-    const resultDiscount = itemDiscount.everyHour ? sumDiscount * countHoursRound : sumDiscount;
-    // console.log(discountNumber, isDiscountPercent, itemDiscount.everyHour, countHoursRound);
+    const sumDiscountResult = sumDiscount > price ? price : sumDiscount;
+    const resultDiscount = itemDiscount.everyHour
+      ? sumDiscountResult * countHoursRound
+      : sumDiscountResult;
     discountsCommonArr.push(resultDiscount);
   });
 

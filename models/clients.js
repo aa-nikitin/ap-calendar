@@ -10,7 +10,17 @@ const schema = new Schema({
   phone: { type: String },
   mail: { type: String },
   // mail: { type: [String] },
-  comment: { type: String }
+  comment: { type: String },
+  socials: {
+    vk: { type: String },
+    fb: { type: String },
+    ins: { type: String }
+  },
+  dateOfBirth: {
+    day: { type: String },
+    month: { type: String },
+    year: { type: String }
+  }
 });
 
 module.exports = model('clients', schema);

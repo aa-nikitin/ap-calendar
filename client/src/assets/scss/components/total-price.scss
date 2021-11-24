@@ -1,0 +1,17 @@
+.total-price {
+  margin-top: 40px;
+  text-align: right;
+  border-top: 3px solid $cl-completed-head;
+  padding-top: 15px;
+  &__item {
+    font-size: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  &--green {
+    color: $lightseagreen;
+  }
+  &--red {
+    color: $cl-error;
+  }
+}

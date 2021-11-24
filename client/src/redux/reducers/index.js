@@ -9,6 +9,8 @@ import plan from './plan';
 import prices from './prices';
 import settings from './settings';
 import discounts from './discounts';
+import planDetails from './plan-details';
+import payments from './payments';
 
 export * from './admin';
 export * from './clients';
@@ -19,6 +21,8 @@ export * from './plan';
 export * from './prices';
 export * from './settings';
 export * from './discounts';
+export * from './plan-details';
+export * from './payments';
 
 export default combineReducers({
   admin,
@@ -29,5 +33,7 @@ export default combineReducers({
   plan,
   prices,
   settings,
-  discounts
+  discounts,
+  planDetails,
+  payments
 });

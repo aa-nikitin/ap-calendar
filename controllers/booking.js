@@ -149,10 +149,12 @@ module.exports.getBookingPrice = async (req, res) => {
       discounts,
       shedule,
       holidays: holidaysObj,
-      price
+      price,
+      idHall
     });
     const diffPrice = price - discount;
     const resultPrice = diffPrice > 0 ? diffPrice : 0;
+    console.log(formatPrice(resultPrice));
     // console.log(discount);
     res.json({
       price: resultPrice,
@@ -171,7 +173,7 @@ module.exports.getBookingPrice = async (req, res) => {
 
 module.exports.addOrders = async (req, res) => {
   try {
-    const { firstName, phone, mail, comment, /*price,*/ selected } = req.body;
+    const { firstName, phone, mail, comment, /*price,*/ selected, dateOrder } = req.body;
     let clientFromDB = {};
 
     const findClient = await Clients.findOne({
@@ -199,7 +201,7 @@ module.exports.addOrders = async (req, res) => {
     const client = {
       name: trim(`${clientFromDB.name.first} ${clientFromDB.name.last}`),
       phone: transformEmpty(clientFromDB.phone),
-      email: transformEmpty(clientFromDB.mail)
+      mail: transformEmpty(clientFromDB.mail)
     };
 
     const keysOrders = Object.keys(selected);
@@ -217,7 +219,8 @@ module.exports.addOrders = async (req, res) => {
         persons: itemOrders.persons,
         comment,
         paidFor: '',
-        paymentMethod: 'сashless'
+        paymentMethod: 'сashless',
+        dateOrder
       };
       const plan = handleAddPlan(newOrder, client, clientFromDB.id);
 

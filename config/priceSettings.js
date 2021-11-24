@@ -71,3 +71,8 @@ module.exports.paymentMethodArr = [
   { name: 'Безналичный', value: 'сashless' },
   { name: 'Наличный', value: 'сash' }
 ];
+
+module.exports.paymentArr = [
+  { name: 'Доходы', value: 'income' },
+  { name: 'Расходы', value: 'expenses' }
+];

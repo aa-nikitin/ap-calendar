@@ -42,13 +42,16 @@ const Client = ({ match, history }) => {
   return (
     <div className="content-page">
       <div className="content-page__panel content-page--panel-extend">
-        <div className="content-page__panel-item">
-          <div className="content-page__panel-btn">
-            <Button variant="outlined" color="primary" onClick={handleBack}>
-              Назад
-            </Button>
+        {history.length > 1 && (
+          <div className="content-page__panel-item">
+            <div className="content-page__panel-btn">
+              <Button variant="outlined" color="primary" onClick={handleBack}>
+                Назад
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
+
         <div className="content-page__panel-item">
           <div className="content-page__panel-btn">
             <Tooltip title="Обновить">

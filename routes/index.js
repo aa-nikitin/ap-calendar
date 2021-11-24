@@ -50,6 +50,13 @@ const {
   editDiscounts,
   deleteDiscounts
 } = require('../controllers/discounts');
+const { getPlanDetails } = require('../controllers/plan-details');
+const {
+  getPayments,
+  addPayments,
+  deletePayments,
+  getTotalPayments
+} = require('../controllers/payments');
 
 const router = Router();
 
@@ -124,9 +131,16 @@ router.get('/mail-post', authJwt, getMailPost);
 router.put('/mail-post', authJwt, changeMailPost);
 router.get('/send-mail-post', authJwt, sendMailTest);
 
-router.get('/discounts', getDiscounts);
-router.post('/discounts', addDiscounts);
-router.put('/discounts/:id', editDiscounts);
-router.delete('/discounts/:id', deleteDiscounts);
+router.get('/discounts', authJwt, getDiscounts);
+router.post('/discounts', authJwt, addDiscounts);
+router.put('/discounts/:id', authJwt, editDiscounts);
+router.delete('/discounts/:id', authJwt, deleteDiscounts);
+
+router.get('/plan-details/:id', authJwt, getPlanDetails);
+
+router.get('/payments/:id', getPayments);
+router.get('/payments-total/:id', getTotalPayments);
+router.post('/payments/', addPayments);
+router.delete('/payments/:id', deletePayments);
 
 module.exports = router;

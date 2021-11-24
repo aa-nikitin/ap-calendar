@@ -10,7 +10,7 @@ const schema = new Schema({
     name: { type: String, required: true },
     alias: { type: String },
     phone: { type: String },
-    email: { type: String }
+    mail: { type: String }
   },
   purpose: { type: String, require: true },
   status: { type: String, require: true },
@@ -20,7 +20,9 @@ const schema = new Schema({
   price: { type: Number },
   discount: { type: Number },
   paymentMethod: { type: String },
-  paidFor: { type: String }
+  paidFor: { type: String },
+  orderNumber: { type: Number, require: true },
+  dateOrder: { type: Date, require: true }
 });
 
 module.exports = model('plan', schema);

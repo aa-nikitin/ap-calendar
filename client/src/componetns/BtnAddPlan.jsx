@@ -54,26 +54,31 @@ const BtnAddPlan = ({ thisHourInfo, time, style }) => {
             <div className="shedule-booking__item">
               <div className="shedule-booking__value">будет {thisHourInfo.persons} чел.</div>
             </div>
-            {!!price && (
-              <div className="shedule-booking__item shedule-booking--price">
-                <div className="shedule-booking__value">Итого, {thisHourInfo.priceFormat} руб.</div>
-              </div>
-            )}
-            {!!discount && (
-              <div className="shedule-booking__item shedule-booking--discount">
-                <div className="shedule-booking__value">
-                  (Включая скидку {thisHourInfo.discountFormat} руб.)
+            {paymentType.value === 'paid' ? (
+              <>
+                {!!price && (
+                  <div className="shedule-booking__item shedule-booking--price">
+                    <div className="shedule-booking__value">
+                      Итого, {thisHourInfo.priceFormat} руб.
+                    </div>
+                  </div>
+                )}
+                {!!discount && (
+                  <div className="shedule-booking__item shedule-booking--discount">
+                    <div className="shedule-booking__value">
+                      (Включая скидку {thisHourInfo.discountFormat} руб.)
+                    </div>
+                  </div>
+                )}
+                <div className="shedule-booking__item shedule-booking--status-pay">
+                  {paidFor >= price && paymentType.value === 'paid' ? (
+                    <b>Оплачено полностью</b>
+                  ) : (
+                    <b>Осталось оплатить: {price - paidFor} руб.</b>
+                  )}
                 </div>
-              </div>
-            )}
-            <div className="shedule-booking__item shedule-booking--status-pay">
-              {paidFor >= price && paymentType.value === 'paid' ? (
-                <b>Оплачено полностью</b>
-              ) : (
-                <b>Осталось оплатить: {price - paidFor} руб.</b>
-              )}
-            </div>
-            {paymentType.value !== 'paid' && (
+              </>
+            ) : (
               <div className="shedule-booking__item">
                 <b className="shedule-booking__payment-type">{paymentType.name}</b>
               </div>

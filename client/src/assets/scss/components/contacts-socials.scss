@@ -1,0 +1,25 @@
+.contacts-socials {
+  &__head {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  &__body {
+    display: flex;
+  }
+  &__item {
+    padding-right: 10px;
+    margin-right: 10px;
+    border-right: solid 1px $cl-main;
+    &:last-child {
+      padding-right: 0px;
+      border-right: none;
+    }
+  }
+  &__link {
+    color: $cl-main2;
+    font-size: 15px;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}

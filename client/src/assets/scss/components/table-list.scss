@@ -39,4 +39,24 @@
   &--head-buttons-discount {
     width: 10%;
   }
+  &--row {
+    display: flex;
+    justify-content: space-between;
+  }
+  &__col {
+    width: 25%;
+    padding: 12px 7px;
+    font-size: 18px;
+  }
+  &--col-green {
+    color: $lightseagreen;
+  }
+  &--col-red {
+    color: $cl-error;
+  }
+  &--col-space-between {
+    justify-content: space-between;
+    display: flex;
+    align-items: flex-start;
+  }
 }

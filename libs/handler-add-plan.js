@@ -32,6 +32,8 @@ module.exports = async (params, client, clientID) => {
       paidFor,
       paymentMethod
     } = params;
+    const dateOrder = !params.dateOrder ? moment(new Date()) : params.dateOrder;
+    // console.log(dateOrder);
     const formateDate = moment(`${date}`, formatDateConf);
     const formateTime = moment(`${dateForTimeConf} ${time}`, `${formatDateConf} ${formatTimeConf}`);
     const prices = await Price.find({}).sort('priority');
@@ -49,7 +51,10 @@ module.exports = async (params, client, clientID) => {
         })
       : plan;
     const hoursCount = calculateFreeTime(planFiltered, time, shedule);
-
+    const comparePlan = await Plan.findOne({ _id: idPlan });
+    const planLast = await Plan.findOne().sort({ orderNumber: -1 }).limit(1);
+    const orderNumberNew = planLast.orderNumber + 1;
+    // console.log(comparePlan.orderNumber);
     if (!(hoursCount >= minutes)) throw 'Указанное время занято';
 
     const newPlanObj = {
@@ -65,38 +70,35 @@ module.exports = async (params, client, clientID) => {
       persons,
       comment,
       paidFor,
-      paymentMethod
+      paymentMethod,
+      orderNumber: !idPlan || !comparePlan.orderNumber ? orderNumberNew : comparePlan.orderNumber,
+      dateOrder: !idPlan || !comparePlan.dateOrder ? dateOrder : comparePlan.dateOrder
     };
     // console.log(newPlanObj);
 
-    if (paymentType === 'paid') {
-      const priceByPurpose =
-        pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
+    const priceByPurpose =
+      pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
 
-      const holidaysObj = await Holidays.find({});
-      const price = calcPrice(newPlanObj, priceByPurpose, shedule, holidaysObj);
+    const holidaysObj = await Holidays.find({});
+    const price = calcPrice(newPlanObj, priceByPurpose, shedule, holidaysObj);
 
-      const discount = calcDiscount({
-        plan: newPlanObj,
-        discounts,
-        shedule,
-        holidays: holidaysObj,
-        price
-      });
-      let priceNew = price;
-      let discountNew = discount;
-      if (!!idPlan) {
-        comparePlan = await Plan.findOne({ _id: idPlan });
-        console.log(comparePlan.price, price);
-        priceNew = comparePlan.price === price ? comparePlan.price : price;
-        discountNew = comparePlan.price === price ? comparePlan.discount : discount;
-      }
-      newPlanObj.price = priceNew;
-      newPlanObj.discount = discountNew;
-    } else {
-      newPlanObj.price = 0;
-      newPlanObj.discount = 0;
+    const discount = calcDiscount({
+      plan: newPlanObj,
+      discounts,
+      shedule,
+      holidays: holidaysObj,
+      price
+    });
+    let priceNew = price;
+    let discountNew = discount;
+    if (!!idPlan) {
+      // console.log(comparePlan.price, price);
+      priceNew = comparePlan.price === price ? comparePlan.price : price;
+      discountNew = comparePlan.price === price ? comparePlan.discount : discount;
     }
+
+    newPlanObj.price = priceNew;
+    newPlanObj.discount = discountNew > priceNew ? priceNew : discountNew;
 
     let newPlan = {};
     if (!idPlan) {
@@ -108,6 +110,7 @@ module.exports = async (params, client, clientID) => {
 
       newPlan = await Plan.findOne({ _id: idPlan });
     }
+    // console.log(newPlan.dateOrder);
     return newPlan;
     // res.status(201).json({});
   } catch (error) {

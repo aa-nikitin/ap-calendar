@@ -69,8 +69,8 @@ module.exports.addClient = async (req, res) => {
 
 module.exports.editClient = async (req, res) => {
   try {
+    console.log(req.body);
     const { id } = req.params;
-
     await Clients.updateOne({ _id: id }, req.body, { new: true });
 
     const clientChanged = await Clients.findOne({ _id: id });

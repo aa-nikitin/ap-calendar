@@ -13,6 +13,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import InputMask from 'react-input-mask';
+import moment from 'moment';
 
 import PropTypes from 'prop-types';
 
@@ -128,7 +129,7 @@ const PlanForm = ({
       if (tabValue === '2' && !clientName) return alert('Введите имя клиента');
 
       const planMinutes = positionTime > planFreeTime ? planFreeTime : positionTime;
-
+      const dateOrder = moment(new Date());
       const newPlan = {
         idHall,
         minutes: planMinutes,
@@ -146,7 +147,8 @@ const PlanForm = ({
         persons,
         comment,
         paidFor,
-        paymentMethod
+        paymentMethod,
+        dateOrder
       };
 
       onClick(newPlan);

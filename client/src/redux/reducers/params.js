@@ -1,5 +1,6 @@
 import { handleActions } from 'redux-actions';
 import { combineReducers } from 'redux';
+import { createSelector } from 'reselect';
 
 import { setWindowSize, setPageTplName, setPriceParams } from '../actions';
 
@@ -24,5 +25,13 @@ const priceParams = handleActions(
 
 export const getParams = ({ params }) => params;
 export const getPriceParams = ({ params }) => params.priceParams;
+export const getPaymentMethodObj = createSelector(
+  (state) => state.params.priceParams.paymentMethodArr,
+  (paymentMethods) =>
+    paymentMethods.reduce((newObj, item) => {
+      newObj[item['value']] = item;
+      return newObj;
+    }, {})
+);
 
 export default combineReducers({ sizeWindow, pageTplName, priceParams });

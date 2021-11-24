@@ -15,7 +15,8 @@ const {
   paymentTypeArr,
   paymentMethodArr,
   conditionArr,
-  daysBeforeBookingArr
+  daysBeforeBookingArr,
+  paymentArr
 } = require('../config/priceSettings');
 const converterPrice = require('../libs/converter-price');
 const groupPrices = require('../libs/group-prices');
@@ -38,7 +39,8 @@ module.exports.getPriceParams = async (req, res) => {
       paymentMethodArr,
       conditionArr,
       daysBeforeBookingArr,
-      hallsArr
+      hallsArr,
+      paymentArr
     });
   } catch (error) {
     res.status(500).json({ message: error });

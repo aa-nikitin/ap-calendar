@@ -7,3 +7,5 @@ export * from './plan';
 export * from './prices';
 export * from './settings';
 export * from './discounts';
+export * from './plan-details';
+export * from './payments';
