@@ -11,9 +11,9 @@ import ruLocale from 'date-fns/locale/ru';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 
-import { TransitionsModal, Loading, ButtonsSwitches } from '../componetns';
-import { getPriceParams, getPayments } from '../redux/reducers';
-import { paymentsAddRequest } from '../redux/actions';
+import { TransitionsModal, Loading, ButtonsSwitches } from '../../componetns';
+import { getPriceParams, getPayments } from '../../redux/reducers';
+import { paymentsAddRequest } from '../../redux/actions';
 
 const validationSchema = yup.object({
   paymentType: yup.string('Тип платежа'),

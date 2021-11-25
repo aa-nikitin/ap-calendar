@@ -7,9 +7,9 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
-import { TransitionsModal, Loading } from '../componetns';
-import { getHalls, getPrices } from '../redux/reducers';
-import { copyPricesRequest } from '../redux/actions';
+import { TransitionsModal, Loading } from '../../componetns';
+import { getHalls, getPrices } from '../../redux/reducers';
+import { copyPricesRequest } from '../../redux/actions';
 
 const validationSchema = yup.object({
   hall: yup.string('Зал')

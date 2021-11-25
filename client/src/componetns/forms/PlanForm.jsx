@@ -17,10 +17,10 @@ import moment from 'moment';
 
 import PropTypes from 'prop-types';
 
-import { clientsFetchRequest } from '../redux/actions';
-import { TransitionsModal } from './';
-import { getPriceParams, getClients, getPlan } from '../redux/reducers';
-import { ButtonIcon, ButtonsSwitches } from '../componetns';
+import { clientsFetchRequest } from '../../redux/actions';
+import { TransitionsModal } from '../';
+import { getPriceParams, getClients, getPlan } from '../../redux/reducers';
+import { ButtonIcon, ButtonsSwitches } from '../../componetns';
 
 const validationSchema = yup.object({
   status: yup.string('Статус'),

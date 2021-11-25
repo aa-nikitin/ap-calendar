@@ -20,6 +20,7 @@ import {
   SettingsPaykeeper,
   SettingsPrepayment,
   SettingsMailPost,
+  SettingsServices,
   Loading
 } from '../componetns';
 import { getSettings, getPaykeeper, getPrepayment, getMailPost } from '../redux/reducers';
@@ -68,6 +69,7 @@ const Settings = () => {
                   <Tab label="PayKeeper" value="paykeeper" />
                   <Tab label="Предоплата" value="prepayment" />
                   <Tab label="Почта" value="mailpost" />
+                  <Tab label="Услуги" value="services" />
                 </TabList>
               </Box>
               <TabPanel value="shedule">
@@ -88,6 +90,9 @@ const Settings = () => {
                   handleMailPost={handleMailPost}
                   handleSendMailPost={handleSendMailPost}
                 />
+              </TabPanel>
+              <TabPanel value="services">
+                <SettingsServices />
               </TabPanel>
             </TabContext>
           </Box>

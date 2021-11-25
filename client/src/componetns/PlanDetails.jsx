@@ -197,7 +197,7 @@ const PlanDetails = () => {
               )}
 
               <div className="total-price__item">Итого {totalPayments.totalText} руб.</div>
-              {totalPayments.total > detailsOrder.total.totalPrice ? (
+              {totalPayments.total >= detailsOrder.total.totalPrice ? (
                 <div className="total-price__item total-price--green">Оплачено полностью</div>
               ) : (
                 <div className="total-price__item total-price--red">

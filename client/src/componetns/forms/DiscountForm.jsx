@@ -15,9 +15,9 @@ import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
-import { ButtonsSwitches, Loading, TransitionsModal } from '../componetns';
-import { getPriceParams, getDiscounts } from '../redux/reducers';
-import { addDiscountsRequest, editDiscountsRequest } from '../redux/actions';
+import { ButtonsSwitches, Loading, TransitionsModal } from '../../componetns';
+import { getPriceParams, getDiscounts } from '../../redux/reducers';
+import { addDiscountsRequest, editDiscountsRequest } from '../../redux/actions';
 
 const validationSchema = yup.object({
   purpose: yup.string('Цель аренды'),

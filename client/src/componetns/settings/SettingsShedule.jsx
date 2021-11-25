@@ -7,8 +7,8 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Slider from '@mui/material/Slider';
 
-import { getWorkShedule } from '../redux/reducers';
-import { settingsSaveSheduleRequest } from '../redux/actions';
+import { getWorkShedule } from '../../redux/reducers';
+import { settingsSaveSheduleRequest } from '../../redux/actions';
 
 const validationSchema = yup.object({
   fromHours: yup.string('Время от'),

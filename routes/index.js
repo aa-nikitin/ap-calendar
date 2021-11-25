@@ -57,6 +57,12 @@ const {
   deletePayments,
   getTotalPayments
 } = require('../controllers/payments');
+const {
+  getServices,
+  addServices,
+  editServices,
+  deleteServices
+} = require('../controllers/services');
 
 const router = Router();
 
@@ -138,9 +144,14 @@ router.delete('/discounts/:id', authJwt, deleteDiscounts);
 
 router.get('/plan-details/:id', authJwt, getPlanDetails);
 
-router.get('/payments/:id', getPayments);
-router.get('/payments-total/:id', getTotalPayments);
-router.post('/payments/', addPayments);
-router.delete('/payments/:id', deletePayments);
+router.get('/payments/:id', authJwt, getPayments);
+router.get('/payments-total/:id', authJwt, getTotalPayments);
+router.post('/payments', authJwt, addPayments);
+router.delete('/payments/:id', authJwt, deletePayments);
+
+router.get('/services', getServices);
+router.post('/services', addServices);
+router.put('/services/:id', editServices);
+router.delete('/services/:id', deleteServices);
 
 module.exports = router;

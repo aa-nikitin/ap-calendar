@@ -13,8 +13,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import moment from 'moment';
 
-import { TransitionsModal } from './';
-import { daysConfig, monthsConfig } from '../config';
+import { TransitionsModal } from '../';
+import { daysConfig, monthsConfig } from '../../config';
 
 const validationSchema = yup.object({
   firstName: yup

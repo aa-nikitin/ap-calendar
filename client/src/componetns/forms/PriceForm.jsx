@@ -14,9 +14,9 @@ import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-import { ButtonsSwitches, Loading, TransitionsModal } from '../componetns';
-import { getPriceParams, getPrices } from '../redux/reducers';
-import { addPriceRequest, deletePriceRequest, editPriceRequest } from '../redux/actions';
+import { ButtonsSwitches, Loading, TransitionsModal } from '../../componetns';
+import { getPriceParams, getPrices } from '../../redux/reducers';
+import { addPriceRequest, deletePriceRequest, editPriceRequest } from '../../redux/actions';
 
 const validationSchema = yup.object({
   purpose: yup.string('Цель аренды'),

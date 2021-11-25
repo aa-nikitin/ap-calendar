@@ -9,3 +9,4 @@ export * from './settings';
 export * from './discounts';
 export * from './plan-details';
 export * from './payments';
+export * from './services';

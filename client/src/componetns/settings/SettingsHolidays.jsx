@@ -12,12 +12,12 @@ import ruLocale from 'date-fns/locale/ru';
 // import MenuItem from '@mui/material/MenuItem';
 // import Slider from '@mui/material/Slider';
 
-import { getHolidays } from '../redux/reducers';
+import { getHolidays } from '../../redux/reducers';
 import {
   settingsLoadHolidaysRequest,
   settingsDeleteHolidaysRequest,
   settingsSaveHolidaysRequest
-} from '../redux/actions';
+} from '../../redux/actions';
 
 const validationSchema = yup.object({
   dateHolliday: yup.date('Дата')
