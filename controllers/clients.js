@@ -1,8 +1,8 @@
 const Clients = require('../models/clients');
 
 const clietnsConverter = (clients) =>
-  clients.map(({ _id, name, nickname, company, phone, mail, comment }) => {
-    return { id: _id, name, nickname, company, phone, mail, comment };
+  clients.map(({ _id, name, nickname, company, phone, mail, comment, blacklist }) => {
+    return { id: _id, name, nickname, company, phone, mail, comment, blacklist };
   });
 
 module.exports.getClients = async (req, res) => {
@@ -69,8 +69,8 @@ module.exports.addClient = async (req, res) => {
 
 module.exports.editClient = async (req, res) => {
   try {
-    console.log(req.body);
     const { id } = req.params;
+
     await Clients.updateOne({ _id: id }, req.body, { new: true });
 
     const clientChanged = await Clients.findOne({ _id: id });

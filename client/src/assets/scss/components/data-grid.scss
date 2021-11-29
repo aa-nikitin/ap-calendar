@@ -8,4 +8,19 @@
       text-decoration: none;
     }
   }
+  &--blacklist {
+    background-color: $black;
+    color: $cl-white;
+    padding-left: 10px;
+    padding-right: 10px;
+    &:after {
+      display: inline-block;
+      margin-left: 5px;
+      content: '(в черном списке)';
+    }
+    &:hover {
+      color: $cl-white;
+      text-decoration: none;
+    }
+  }
 }

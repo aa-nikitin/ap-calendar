@@ -20,7 +20,8 @@ const schema = new Schema({
     day: { type: String },
     month: { type: String },
     year: { type: String }
-  }
+  },
+  blacklist: { type: Boolean, required: true, default: false }
 });
 
 module.exports = model('clients', schema);

@@ -11,10 +11,12 @@ const Plan = require('../models/plan');
 const WorkShedule = require('../models/work-shedule');
 const Holidays = require('../models/holidays');
 const Price = require('../models/prices');
+const Services = require('../models/services');
 const groupPrices = require('../libs/group-prices');
 const { calculateFreeTime } = require('../libs/handler-time');
 const calcPrice = require('../libs/calc-price');
 const calcDiscount = require('../libs/calc-discount');
+const calcServices = require('../libs/calc-services');
 
 module.exports = async (params, client, clientID) => {
   try {
@@ -30,7 +32,8 @@ module.exports = async (params, client, clientID) => {
       persons,
       comment,
       paidFor,
-      paymentMethod
+      paymentMethod,
+      services
     } = params;
     const dateOrder = !params.dateOrder ? moment(new Date()) : params.dateOrder;
     // console.log(dateOrder);
@@ -43,6 +46,7 @@ module.exports = async (params, client, clientID) => {
       date: formateDate,
       hall: idHall
     });
+    // console.log(plan[0].services);
     const discounts = await Discounts.find({});
     const shedule = await WorkShedule.findOne({});
     const planFiltered = idPlan
@@ -72,7 +76,8 @@ module.exports = async (params, client, clientID) => {
       paidFor,
       paymentMethod,
       orderNumber: !idPlan || !comparePlan.orderNumber ? orderNumberNew : comparePlan.orderNumber,
-      dateOrder: !idPlan || !comparePlan.dateOrder ? dateOrder : comparePlan.dateOrder
+      dateOrder: !idPlan || !comparePlan.dateOrder ? dateOrder : comparePlan.dateOrder,
+      services
     };
     // console.log(newPlanObj);
 
@@ -81,24 +86,40 @@ module.exports = async (params, client, clientID) => {
 
     const holidaysObj = await Holidays.find({});
     const price = calcPrice(newPlanObj, priceByPurpose, shedule, holidaysObj);
+    // console.log(services);
 
+    const servicesAll = await Services.find({});
+    const priceService = calcServices(services, servicesAll, minutes);
+    // console.log(priceService);
     const discount = calcDiscount({
       plan: newPlanObj,
       discounts,
       shedule,
       holidays: holidaysObj,
-      price
+      price,
+      idHall
     });
     let priceNew = price;
     let discountNew = discount;
+    let priceServiceNew = 0;
+
     if (!!idPlan) {
-      // console.log(comparePlan.price, price);
-      priceNew = comparePlan.price === price ? comparePlan.price : price;
-      discountNew = comparePlan.price === price ? comparePlan.discount : discount;
+      const comparePlanServices = comparePlan.services.map((item) => String(item));
+      const isChangedServices =
+        _.difference(services, comparePlanServices).length !== 0 ||
+        _.difference(comparePlanServices, services).length !== 0;
+
+      priceNew = comparePlan.minutes !== minutes ? price : comparePlan.price;
+      discountNew = comparePlan.minutes !== minutes ? discount : comparePlan.discount;
+      priceServiceNew =
+        comparePlan.minutes !== minutes || isChangedServices
+          ? priceService
+          : comparePlan.priceService;
     }
 
     newPlanObj.price = priceNew;
     newPlanObj.discount = discountNew > priceNew ? priceNew : discountNew;
+    newPlanObj.priceService = priceServiceNew;
 
     let newPlan = {};
     if (!idPlan) {
@@ -110,7 +131,7 @@ module.exports = async (params, client, clientID) => {
 
       newPlan = await Plan.findOne({ _id: idPlan });
     }
-    // console.log(newPlan.dateOrder);
+    // console.log(newPlan.priceService);
     return newPlan;
     // res.status(201).json({});
   } catch (error) {

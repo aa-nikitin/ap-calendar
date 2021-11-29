@@ -76,7 +76,6 @@ PriceCopyForm.propTypes = {
   captionButton: PropTypes.string,
   align: PropTypes.string,
   nameForm: PropTypes.string,
-  params: PropTypes.object,
   CustomBtn: PropTypes.func,
   handleClick: PropTypes.func
 };
@@ -86,8 +85,7 @@ PriceCopyForm.defaultProps = {
   align: '',
   nameForm: '',
   handleClick: null,
-  CustomBtn: null,
-  params: {}
+  CustomBtn: null
 };
 
 export { PriceCopyForm };

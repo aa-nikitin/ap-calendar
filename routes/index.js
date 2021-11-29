@@ -27,7 +27,8 @@ const {
   deletePlan,
   checkPlanFree,
   checkPlanTime,
-  planTimeForEdit
+  planTimeForEdit,
+  cancalledPlan
 } = require('../controllers/plan');
 const { changeWorkShedule, getWorkShedule } = require('../controllers/work-shedule');
 const { getBookingPlanWeek, getBookingPrice, addOrders } = require('../controllers/booking');
@@ -107,6 +108,7 @@ router.delete('/plan-date', authJwt, deletePlan);
 router.post('/plan-check-free', authJwt, checkPlanFree);
 router.post('/plan-check-time', authJwt, checkPlanTime);
 router.post('/plan-time-for-edit', authJwt, planTimeForEdit);
+router.put('/plan-canceled', cancalledPlan);
 
 router.post('/booking-plan-week', getBookingPlanWeek);
 router.post('/booking-price', getBookingPrice);
@@ -144,8 +146,8 @@ router.delete('/discounts/:id', authJwt, deleteDiscounts);
 
 router.get('/plan-details/:id', authJwt, getPlanDetails);
 
-router.get('/payments/:id', authJwt, getPayments);
-router.get('/payments-total/:id', authJwt, getTotalPayments);
+router.get('/payments/:id', getPayments);
+router.get('/payments-total/:id', getTotalPayments);
 router.post('/payments', authJwt, addPayments);
 router.delete('/payments/:id', authJwt, deletePayments);
 

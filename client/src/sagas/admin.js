@@ -7,6 +7,7 @@ import {
   loginFetchFromToken,
   logoutFetchFromToken,
   settingsLoadSheduleSuccess,
+  setServices,
   setPriceParams
 } from '../redux/actions';
 import { getLogin } from '../redux/reducers';
@@ -18,9 +19,11 @@ export function* loginAdmin() {
     const loginResult = yield call(fetchPost, `/api/login/`, { login, password: pass });
     const workShedule = yield call(fetchGet, `/api/work-shedule/`);
     const priceParams = yield call(fetchGet, `/api/price-params/`);
+    const services = yield call(fetchGet, '/api/services/');
 
     yield put(settingsLoadSheduleSuccess(workShedule));
     yield put(setPriceParams(priceParams));
+    yield put(setServices(services));
     yield put(loginFetchSuccess(loginResult));
     yield localStorage.setItem(storageName, loginResult.token);
   } catch (error) {
@@ -35,9 +38,11 @@ export function* loginAdminFromToken() {
     const loginToken = yield call(fetchPost, '/api/authFromToken/', {}, token);
     const workShedule = yield call(fetchGet, `/api/work-shedule/`);
     const priceParams = yield call(fetchGet, `/api/price-params/`);
+    const services = yield call(fetchGet, '/api/services', token);
 
     yield put(setPriceParams(priceParams));
     yield put(settingsLoadSheduleSuccess(workShedule));
+    yield put(setServices(services));
     yield put(loginFetchSuccess(loginToken));
   } catch (error) {
     yield put(loginFetchError(error));

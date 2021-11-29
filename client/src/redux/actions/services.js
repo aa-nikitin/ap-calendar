@@ -9,7 +9,8 @@ const {
       success: deleteServicesSuccess,
       error: deleteServicesError
     },
-    edit: { request: editServicesRequest, success: editServicesSuccess, error: editServicesError }
+    edit: { request: editServicesRequest, success: editServicesSuccess, error: editServicesError },
+    set: setServices
   }
 } = createActions({
   SERVICES: {
@@ -32,7 +33,8 @@ const {
       REQUEST: null,
       SUCCESS: null,
       ERROR: null
-    }
+    },
+    SET: null
   }
 });
 
@@ -48,5 +50,6 @@ export {
   deleteServicesError,
   editServicesRequest,
   editServicesSuccess,
-  editServicesError
+  editServicesError,
+  setServices
 };

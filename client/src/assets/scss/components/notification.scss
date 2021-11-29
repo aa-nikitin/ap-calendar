@@ -1,0 +1,32 @@
+.notification {
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  background-color: $yellow;
+  &__icon {
+    margin-right: 10px;
+  }
+  &__text {
+  }
+  &--black {
+    background-color: $black;
+    color: $cl-white;
+    & .notification {
+      &__icon {
+        color: $cl-white;
+      }
+    }
+  }
+  &--red {
+    background-color: $cl-error;
+    color: $cl-white;
+    & .notification {
+      &__icon {
+        color: $cl-white;
+      }
+    }
+  }
+}

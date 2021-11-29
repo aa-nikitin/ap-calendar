@@ -66,6 +66,18 @@
     font-weight: 600;
     margin-bottom: 10px;
   }
+  &__head-link {
+    color: $cl-main2;
+    margin-bottom: 10px;
+    text-decoration: underline;
+    cursor: pointer;
+    &:hover {
+      text-decoration: none;
+    }
+    &.active {
+      color: $cl-main;
+    }
+  }
   &__width-full {
     width: 100%;
   }

@@ -15,6 +15,11 @@ const {
       success: planFetchDeleteSuccess,
       error: planFetchDeleteError
     }
+  },
+  planCancalled: {
+    request: planCancalledRequest,
+    success: planCancalledSuccess,
+    error: planCancalledError
   }
 } = createActions({
   PLAN_HALLS: {
@@ -35,7 +40,8 @@ const {
   PLAN_FETCH: {
     ADD: { REQUEST: null, SUCCESS: null, ERROR: null },
     DELETE: { REQUEST: null, SUCCESS: null, ERROR: null }
-  }
+  },
+  PLAN_CANCALLED: { REQUEST: null, SUCCESS: null, ERROR: null }
 });
 
 export {
@@ -53,5 +59,8 @@ export {
   planFetchAddError,
   planFetchDeleteRequest,
   planFetchDeleteSuccess,
-  planFetchDeleteError
+  planFetchDeleteError,
+  planCancalledRequest,
+  planCancalledSuccess,
+  planCancalledError
 };

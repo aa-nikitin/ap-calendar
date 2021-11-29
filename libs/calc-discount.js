@@ -21,8 +21,8 @@ module.exports = ({ plan, discounts, shedule, holidays, price, idHall }) => {
   // console.log(price);
   discounts.forEach((itemDiscount) => {
     // console.log(itemDiscount);
-    // console.log(plan.purpose, itemDiscount.purpose);
     if (itemDiscount.purpose !== 'all' && itemDiscount.purpose !== plan.purpose) return;
+    // console.log(itemDiscount.hall !== 'all' && itemDiscount.hall !== idHall, idHall);
     if (itemDiscount.hall !== 'all' && itemDiscount.hall !== idHall) return;
     if (itemDiscount.weekday === 'weekdays' && dayOfWeek > 4) return;
     if (

@@ -72,7 +72,7 @@ const DiscountForm = ({
     onSubmit: (values) => {
       const dateFrom = moment(values.dateFrom).format('DD.MM.YYYY');
       const dateTo = moment(values.dateTo).format('DD.MM.YYYY');
-      // console.log(values);
+
       if (!priceId) {
         dispatch(addDiscountsRequest({ ...values, dateFrom, dateTo }));
         formik.setFieldValue('purpose', goalArr[0].value);

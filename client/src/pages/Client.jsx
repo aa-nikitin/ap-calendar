@@ -3,8 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import UpdateIcon from '@mui/icons-material/Update';
 import Tooltip from '@mui/material/Tooltip';
+import InfoIcon from '@mui/icons-material/Info';
 
-import { Loading, ClientForm } from '../componetns';
+import { Loading, ClientForm, Notification } from '../componetns';
 import { getClient } from '../redux/reducers';
 import { clientFetchRequest, clientChangeRequest, setPageTplName } from '../redux/actions';
 
@@ -13,7 +14,7 @@ const Client = ({ match, history }) => {
   const { client, clientFetch } = useSelector((state) => getClient(state));
   const firstName = client.name ? client.name.first : '';
   const lastName = client.name ? client.name.last : '';
-  const { nickname, company, phone, mail, comment } = client;
+  const { nickname, company, phone, mail, comment, blacklist } = client;
   const contactsList = [
     { name: 'Псевдоним/Название', value: nickname },
     { name: 'Компания', value: company },
@@ -21,7 +22,6 @@ const Client = ({ match, history }) => {
     { name: 'E-mail', value: mail },
     { name: 'Комментарий', value: comment }
   ];
-
   const handleBack = () => {
     history.goBack();
   };
@@ -74,6 +74,14 @@ const Client = ({ match, history }) => {
         <h1 className="content-page__title">
           {firstName} {lastName}
         </h1>
+        {blacklist && (
+          <Notification
+            Icon={InfoIcon}
+            text="Клиент в Черном списке"
+            dopClass="notification--black"
+          />
+        )}
+
         <div className="content-page__body client-page">
           <div className="client-page__contacts client-contacts">
             {contactsList.map(

@@ -16,7 +16,10 @@ import {
   planFetchAddError,
   planFetchDeleteRequest,
   planFetchDeleteSuccess,
-  planFetchDeleteError
+  planFetchDeleteError,
+  planCancalledRequest,
+  planCancalledSuccess,
+  planCancalledError
 } from '../actions';
 
 const plan = handleActions(
@@ -29,7 +32,10 @@ const plan = handleActions(
     [planFetchAddError]: (_state) => [],
     [planFetchDeleteRequest]: (_state) => [],
     [planFetchDeleteSuccess]: (_state, { payload }) => payload,
-    [planFetchDeleteError]: (_state) => []
+    [planFetchDeleteError]: (_state) => [],
+    [planCancalledRequest]: (_state) => [],
+    [planCancalledSuccess]: (_state, { payload }) => payload,
+    [planCancalledError]: (_state) => []
   },
   []
 );
@@ -43,7 +49,10 @@ const planFetch = handleActions(
     [planFetchAddError]: (_state) => false,
     [planFetchDeleteRequest]: (_state) => true,
     [planFetchDeleteSuccess]: (_state) => false,
-    [planFetchDeleteError]: (_state) => false
+    [planFetchDeleteError]: (_state) => false,
+    [planCancalledRequest]: (_state) => true,
+    [planCancalledSuccess]: (_state) => false,
+    [planCancalledError]: (_state) => false
   },
   false
 );
@@ -68,7 +77,10 @@ const error = handleActions(
     [planFetchAddError]: (_state, { payload }) => payload,
     [planFetchDeleteRequest]: (_state) => null,
     [planFetchDeleteSuccess]: (_state) => null,
-    [planFetchDeleteError]: (_state, { payload }) => payload
+    [planFetchDeleteError]: (_state, { payload }) => payload,
+    [planCancalledRequest]: (_state) => null,
+    [planCancalledSuccess]: (_state) => null,
+    [planCancalledError]: (_state, { payload }) => payload
   },
   null
 );
@@ -82,7 +94,10 @@ const dataPlan = handleActions(
     [planFetchAddError]: (_state) => {},
     [planFetchDeleteRequest]: (_state, { payload }) => payload,
     [planFetchDeleteSuccess]: (_state) => {},
-    [planFetchDeleteError]: (_state) => {}
+    [planFetchDeleteError]: (_state) => {},
+    [planCancalledRequest]: (_state, { payload }) => payload,
+    [planCancalledSuccess]: (_state) => {},
+    [planCancalledError]: (_state) => {}
   },
   {}
 );

@@ -12,6 +12,8 @@ import ruLocale from 'date-fns/locale/ru';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import moment from 'moment';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 import { TransitionsModal } from '../';
 import { daysConfig, monthsConfig } from '../../config';
@@ -32,12 +34,14 @@ const validationSchema = yup.object({
   day: yup.string('День'),
   vk: yup.string('вконтакте'),
   fb: yup.string('facebook'),
-  ins: yup.string('instagram')
+  ins: yup.string('instagram'),
+  blacklist: yup.boolean('Черный список')
 });
 
 const ClientForm = ({ captionButton, align, nameForm, client, onClick }) => {
   const firstName = client.name ? client.name.first : '';
   const lastName = client.name ? client.name.last : '';
+  const blacklist = client.blacklist ? client.blacklist : false;
   const nickname = client.nickname ? client.nickname : '';
   const company = client.company ? client.company : '';
   const phone = client.phone ? client.phone : '';
@@ -47,6 +51,7 @@ const ClientForm = ({ captionButton, align, nameForm, client, onClick }) => {
   const dateOfBirth = client.dateOfBirth ? client.dateOfBirth : {};
   const formik = useFormik({
     initialValues: {
+      blacklist: blacklist,
       firstName: firstName,
       lastName: lastName,
       nickname: nickname,
@@ -67,7 +72,7 @@ const ClientForm = ({ captionButton, align, nameForm, client, onClick }) => {
       const yearStr = year ? moment(year).format('YYYY') : '';
       const socials = { vk, fb, ins };
       const dateOfBirth = { day, month, year: yearStr };
-      // console.log(values, socials, dateOfBirth);
+
       onClick({ ...values, socials, dateOfBirth });
     }
   });
@@ -79,10 +84,24 @@ const ClientForm = ({ captionButton, align, nameForm, client, onClick }) => {
   // const handleChangeSelect = (nameField) => (elem) =>
   //   formik.setFieldValue(nameField, elem.target.value);
 
+  const handleChangeSwitcher = (switcher) => (elem, value) => {
+    if (switcher === 'blacklist') {
+      formik.setFieldValue('blacklist', value);
+    } else formik.handleChange(elem);
+  };
+
   return (
     <TransitionsModal captionButton={captionButton} nameForm={nameForm} align={align}>
       <form className="form-box" onSubmit={formik.handleSubmit}>
         <div className="form-box__body">
+          <div className="form-box__row">
+            <FormControlLabel
+              className="form-box__head"
+              control={<Checkbox checked={formik.values.blacklist} />}
+              onChange={handleChangeSwitcher('blacklist')}
+              label="В черном списке"
+            />
+          </div>
           <div className="form-box__row form-box--row-two">
             <div className="form-box__field">
               <TextField

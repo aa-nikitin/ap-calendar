@@ -28,7 +28,7 @@ const SettingsShedule = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       const { fromHours, toHours, step } = values;
-      // console.log(values);
+
       if (toHours <= fromHours)
         return alert(
           'конец рабочего дня должен быть как минимум на 1 час больше начала рабочего дня'

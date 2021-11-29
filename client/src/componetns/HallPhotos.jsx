@@ -14,7 +14,7 @@ import { ButtonIcon } from '../componetns';
 
 import { TransitionsModal } from './';
 
-const HallPhotos = ({ captionButton, align, nameForm, onClick, hall, Icon }) => {
+const HallPhotos = ({ captionButton, align, nameForm, hall, Icon }) => {
   const { _id: id, photos } = hall;
   const inputFile = useRef(null);
   const [files, setFiles] = useState('');
@@ -96,15 +96,15 @@ const HallPhotos = ({ captionButton, align, nameForm, onClick, hall, Icon }) => 
 HallPhotos.propTypes = {
   captionButton: PropTypes.string,
   align: PropTypes.string,
+  hall: PropTypes.string,
   nameForm: PropTypes.string,
-  onClick: PropTypes.func,
   Icon: PropTypes.object
 };
 HallPhotos.defaultProps = {
   captionButton: '',
   align: '',
+  hall: '',
   nameForm: '',
-  onClick: () => {},
   Icon: null
 };
 

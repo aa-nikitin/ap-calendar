@@ -9,7 +9,7 @@ const Discount = () => {
   const dispatch = useDispatch();
 
   const { list: listDiscounts } = useSelector((state) => getDiscounts(state));
-  // console.log(listDiscounts);
+
   useEffect(() => {
     dispatch(getDiscountsRequest());
     dispatch(setPageTplName('DISCOUNT'));

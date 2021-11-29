@@ -9,13 +9,14 @@ import Button from '@mui/material/Button';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ruLocale from 'date-fns/locale/ru';
+import PropTypes from 'prop-types';
 
 import { Loading, PlanForm, BtnAddPlan } from '../componetns';
 import {
   planHallsRequest,
   planDataRequest,
   planFetchAddRequest,
-  planFetchDeleteRequest,
+  // planFetchDeleteRequest,
   getPlanDetailsRequest
   // setPlanDetailsVisible
 } from '../redux/actions';
@@ -29,17 +30,16 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
   const handlePlan = (values) => {
     dispatch(planFetchAddRequest(values));
   };
-  const handleDeletePlan = (dataPlan) => () => {
-    if (window.confirm('Вы действительно хотите отменить заявку?')) {
-      dispatch(planFetchDeleteRequest(dataPlan));
-    }
-  };
+  // const handleDeletePlan = (dataPlan) => () => {
+  //   if (window.confirm('Вы действительно хотите отменить заявку?')) {
+  //     dispatch(planFetchDeleteRequest(dataPlan));
+  //   }
+  // };
   const handlePlanBtn = (obj, thisHourInfo) => (refreshObj) => {
     const workObj = refreshObj ? refreshObj : obj;
     if (!thisHourInfo) dispatch(planDataRequest(workObj));
     else {
       dispatch(planDataRequest({ ...workObj, idPlan: thisHourInfo.id }));
-      // console.log(thisHourInfo.id, obj);
     }
   };
   const handleDateChange = (newValue) => {
@@ -54,9 +54,6 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
   const handleDateToday = () => {
     setValueDate(new Date());
   };
-  // console.log(animals.slice(-2));
-  // console.log(halls.slice(2, 4));
-  // console.log(plan);
   const thisDate = moment(valueDate).format('DD.MM.YYYY');
 
   const handleDetailShedule = (idPlan) => () => {
@@ -65,7 +62,6 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
   useEffect(() => {
     dispatch(planHallsRequest(thisDate));
   }, [dispatch, thisDate]);
-
   if (planFetch) return <Loading />;
   return (
     <div className="content-page__main">
@@ -137,21 +133,20 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
                       {hoursArray.map((item, key) => {
                         const itemCount = item.minutes / minutesStep;
                         const thisTime = `${item.timeH}:${item.timeM}`;
-                        // console.log(hoursArray[key].timeH);
                         const thisTimeHalfHour =
                           !(minutesStep % hourSize) &&
                           !!planItem.plans[thisTime.replace('00', '30')]
                             ? thisTime.replace('00', '30')
                             : thisTime;
-                        // console.log(aaa);
-                        // console.log(minutesStep % hourSize);
                         const thisHourInfo = planItem.plans[thisTimeHalfHour];
                         const style = thisHourInfo && {
                           height: Math.ceil(thisHourInfo.minutes / minutesStep) * 26
                         };
                         const divisorCount =
                           hourSize / minutesStep > 2 ? hourSize / minutesStep : 2;
-                        // console.log(planItem.plans);
+                        const paidSumm =
+                          thisHourInfo && thisHourInfo.paidSumm > 0 ? thisHourInfo.paidSumm : 0;
+
                         return (
                           <div
                             className={`shedule__hour ${
@@ -173,7 +168,7 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
                                   nameForm="Аренда"
                                   params={workShedule}
                                   thisHourInfo={thisHourInfo}
-                                  handleDeletePlan={handleDeletePlan}
+                                  // handleDeletePlan={handleDeletePlan}
                                   handleClick={handlePlanBtn(
                                     {
                                       idHall: planItem.id,
@@ -186,7 +181,8 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
                                   CustomBtn={BtnAddPlan({
                                     thisHourInfo,
                                     time: thisTime,
-                                    style
+                                    style,
+                                    paidSumm
                                   })}
                                 />
                               </div>
@@ -221,6 +217,14 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
       </div>
     </div>
   );
+};
+PlanHalls.propTypes = {
+  valueDate: PropTypes.object,
+  setValueDate: PropTypes.func
+};
+PlanHalls.defaultProps = {
+  valueDate: {},
+  setValueDate: () => {}
 };
 
 export { PlanHalls };

@@ -14,7 +14,10 @@ import {
   planFetchAddError,
   planFetchDeleteRequest,
   planFetchDeleteSuccess,
-  planFetchDeleteError
+  planFetchDeleteError,
+  planCancalledRequest,
+  planCancalledSuccess,
+  planCancalledError
 } from '../redux/actions';
 import { getPlan } from '../redux/reducers';
 import { storageName } from '../config';
@@ -99,9 +102,30 @@ export function* deletePlan() {
   }
 }
 
+export function* cancalledPlan() {
+  try {
+    const token = localStorage.getItem(storageName);
+    const { dataPlan } = yield select(getPlan);
+
+    yield call(fetchPut, '/api/plan-canceled/', dataPlan, token);
+
+    const planHallsResult = yield call(
+      fetchPost,
+      '/api/plan-halls',
+      { date: dataPlan.date },
+      token
+    );
+    yield put(planCancalledSuccess(planHallsResult));
+  } catch (error) {
+    if (error === 'Unauthorized') yield put(logoutFetchFromToken());
+    yield put(planCancalledError(error));
+  }
+}
+
 export function* planWatch() {
   yield takeLatest(planHallsRequest, getPlanHalls);
   yield takeLatest(planDataRequest, getPlanData);
   yield takeLatest(planFetchAddRequest, addPlan);
   yield takeLatest(planFetchDeleteRequest, deletePlan);
+  yield takeLatest(planCancalledRequest, cancalledPlan);
 }

@@ -13,7 +13,8 @@ import {
   editServicesError,
   deleteServicesRequest,
   deleteServicesSuccess,
-  deleteServicesError
+  deleteServicesError,
+  setServices
 } from '../actions';
 
 const loading = handleActions(
@@ -63,7 +64,8 @@ const list = handleActions(
     [editServicesError]: (_state) => [],
     [deleteServicesRequest]: (_state) => [],
     [deleteServicesSuccess]: (_state, { payload }) => payload,
-    [deleteServicesError]: (_state) => []
+    [deleteServicesError]: (_state) => [],
+    [setServices]: (_state, { payload }) => payload
   },
   []
 );

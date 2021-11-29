@@ -76,3 +76,10 @@ module.exports.paymentArr = [
   { name: 'Доходы', value: 'income' },
   { name: 'Расходы', value: 'expenses' }
 ];
+
+module.exports.reasonArr = [
+  { name: 'Не пришел', value: 'notcome' },
+  { name: 'Не внес предоплату', value: 'notpayment' },
+  { name: 'Клиент отменил', value: 'canceled' },
+  { name: 'Внесен по ошибке', value: 'mistake' }
+];

@@ -17,13 +17,15 @@ ButtonIcon.propTypes = {
   Icon: PropTypes.object,
   title: PropTypes.string,
   fontSize: PropTypes.string,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  className: PropTypes.string
 };
 ButtonIcon.defaultProps = {
   Icon: {},
   title: '',
   fontSize: '',
-  alionClickgn: () => {}
+  alionClickgn: () => {},
+  className: ''
 };
 
 export { ButtonIcon };

@@ -44,8 +44,7 @@ const SettingsServices = () => {
             <div key={item._id} className="table-list__item table-list--row">
               <div className="table-list__col table-list--col-percent-70">{item.name}</div>
               <div className="table-list__col table-list--col-space-between table-list--col-percent-30">
-                {item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} руб.{' '}
-                {item.hourly ? '/ ч' : ''}
+                {item.priceText} руб. {item.hourly ? '/ ч' : ''}
                 <div className="table-list__buttons">
                   <ServiceForm
                     service={item}

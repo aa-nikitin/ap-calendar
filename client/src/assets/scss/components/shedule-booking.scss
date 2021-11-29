@@ -66,4 +66,10 @@
     background-color: rgba($color: $black, $alpha: 0.2);
     color: rgba($color: $black, $alpha: 0.8);
   }
+  &--blacklist {
+    background-color: $black;
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 5px;
+  }
 }

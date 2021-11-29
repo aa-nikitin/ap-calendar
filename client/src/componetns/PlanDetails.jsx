@@ -3,14 +3,22 @@ import { useSelector, useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
+import InfoIcon from '@mui/icons-material/Info';
 
-import { Loading, Socials, PaymentsForm, ButtonIcon } from '../componetns';
-import { setPlanDetailsVisible, paymentsGetRequest, paymentsDeleteRequest } from '../redux/actions';
+import { Loading, Socials, PaymentsForm, PlanForm, ButtonIcon, Notification } from '../componetns';
+import {
+  setPlanDetailsVisible,
+  paymentsGetRequest,
+  paymentsDeleteRequest,
+  planDataRequest,
+  getRefreshDetailsRequest
+} from '../redux/actions';
 import {
   getPlanDetails,
   getDetailsOrder,
   getPayments,
-  getPaymentMethodObj
+  getPaymentMethodObj,
+  getWorkShedule
 } from '../redux/reducers';
 
 const PlanDetails = () => {
@@ -18,6 +26,7 @@ const PlanDetails = () => {
   const { loading } = useSelector((state) => getPlanDetails(state));
   const detailsOrder = useSelector((state) => getDetailsOrder(state));
   const paymentMethodObj = useSelector((state) => getPaymentMethodObj(state));
+  const workShedule = useSelector((state) => getWorkShedule(state));
   const {
     loading: loadingPayments,
     list,
@@ -35,12 +44,26 @@ const PlanDetails = () => {
       dispatch(paymentsDeleteRequest({ id, idPlan }));
     }
   };
+  const handlePlan = (values) => {
+    dispatch(getRefreshDetailsRequest(values));
+    // setTimeout(() => {
+    //   dispatch(getPlanDetailsRequest(detailsOrder.idPlan));
+    // }, 2000);
+  };
+  const handlePlanBtn = (obj, thisHourInfo) => (refreshObj) => {
+    const workObj = refreshObj ? refreshObj : obj;
+    if (!thisHourInfo) dispatch(planDataRequest(workObj));
+    else {
+      dispatch(planDataRequest({ ...workObj, idPlan: thisHourInfo.id }));
+    }
+  };
+
   useEffect(() => {
     dispatch(paymentsGetRequest({ id: detailsOrder.idPlan }));
   }, [dispatch, detailsOrder.idPlan]);
 
   if (loading || loadingPayments) return <Loading />;
-  // console.log(totalPayments);
+
   return (
     <div className="content-page">
       <div className="content-page__panel content-page--panel-extend">
@@ -50,9 +73,30 @@ const PlanDetails = () => {
               Назад
             </Button>
           </div>
+          <div className="content-page__panel-btn">
+            <PlanForm
+              onClick={handlePlan}
+              captionButton={`Изменить мероприятие`}
+              nameForm="Аренда"
+              params={workShedule}
+              thisHourInfo={detailsOrder.planInfo}
+              handleClick={handlePlanBtn(
+                {
+                  idHall: detailsOrder.hall.idHall,
+                  date: detailsOrder.date,
+                  time: detailsOrder.time,
+                  minutes: detailsOrder.minutesStart
+                },
+                detailsOrder.planInfo
+              )}
+            />
+          </div>
         </div>
       </div>
       <div className="content-page__main">
+        {detailsOrder && detailsOrder.idPlan && (
+          <div className="content-page__item">ID заказа - {detailsOrder.idPlan}</div>
+        )}
         {detailsOrder && detailsOrder.orderNumber && (
           <h1 className="content-page__head">
             Заказ №{detailsOrder.orderNumber} от {detailsOrder.dateOrder}{' '}
@@ -60,6 +104,15 @@ const PlanDetails = () => {
               <span className="content-page__highlight">({detailsOrder.paymentType.name})</span>
             )}
           </h1>
+        )}
+        {detailsOrder && detailsOrder.clientInfo && detailsOrder.clientInfo.blacklist ? (
+          <Notification
+            Icon={InfoIcon}
+            text="Клиент в Черном списке"
+            dopClass="notification--black"
+          />
+        ) : (
+          ''
         )}
         {detailsOrder && detailsOrder.clientInfo && detailsOrder.clientInfo.idClient ? (
           <Link
@@ -91,11 +144,17 @@ const PlanDetails = () => {
             ДР: <span className="content-page--cl-main">{detailsOrder.clientInfo.birthday}</span>
           </div>
         )}
+        {detailsOrder && detailsOrder.comment && (
+          <div className="content-page__comment">
+            <b>Комментарий к заказу:</b> {detailsOrder.comment}
+          </div>
+        )}
         {detailsOrder && detailsOrder.clientInfo && countSocials > 0 && (
           <div className="content-page__socials">
             <Socials socials={detailsOrder.clientInfo.socials} />
           </div>
         )}
+
         {detailsOrder && detailsOrder.hall && detailsOrder.servicePrice && (
           <>
             <h2 className="content-page__title">Аренда</h2>
@@ -123,6 +182,9 @@ const PlanDetails = () => {
         {detailsOrder && detailsOrder.total && (
           <div className="content-page__total">
             <div className="total-price">
+              <div className="total-price__item">
+                Доп услуги {detailsOrder.servicePrice.priceService} руб.
+              </div>
               <div className="total-price__item">
                 Итого с учетом скидок {detailsOrder.total.totalPriceText} руб.
               </div>

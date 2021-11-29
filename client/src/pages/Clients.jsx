@@ -52,10 +52,13 @@ const Clients = () => {
       flex: 1,
       cellClassName: 'super-app-theme--cell',
       headerClassName: 'super-app-theme--header',
-      renderCell: ({ row: { name, id } }) => {
+      renderCell: ({ row: { name, id, blacklist } }) => {
         const { first: firstName, last: lastName } = name;
+
         return (
-          <Link className="data-grid-link" to={`/clients/${id}`}>
+          <Link
+            className={`data-grid-link ${blacklist ? 'data-grid--blacklist' : ''}`}
+            to={`/clients/${id}`}>
             {firstName} {lastName}
           </Link>
         );

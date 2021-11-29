@@ -72,7 +72,6 @@ export function* delHoliday() {
   try {
     const token = localStorage.getItem(storageName);
     const { query } = yield select(getSettings);
-    // console.log(query);
     const holidays = yield call(fetchDelete, `/api/holidays/${query}`, {}, token);
 
     yield put(settingsDeleteHolidaysSuccess(holidays));

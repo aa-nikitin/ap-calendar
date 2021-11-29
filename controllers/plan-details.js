@@ -7,10 +7,13 @@ const formatTimeConf = config.get('formatTime');
 const Plan = require('../models/plan');
 const Clients = require('../models/clients');
 const Halls = require('../models/halls');
-const { daysOfWeekArr, paymentTypeArr } = require('../config/priceSettings');
+const { daysOfWeekArr, paymentTypeArr, purposeArr, statusArr } = require('../config/priceSettings');
 const { arrToObj, formatPrice } = require('../libs/helper.functions');
+const { timeToMinutes } = require('../libs/handler-time');
 const daysOfWeekObj = arrToObj(daysOfWeekArr);
 const paymentTypeObj = arrToObj(paymentTypeArr);
+const purposeObj = arrToObj(purposeArr);
+const statusObj = arrToObj(statusArr);
 
 module.exports.getPlanDetails = async (req, res) => {
   try {
@@ -22,11 +25,12 @@ module.exports.getPlanDetails = async (req, res) => {
     const servicePrice = {
       price: formatPrice(plan.price),
       discount: formatPrice(plan.discount),
-      total: formatPrice(priceDiscount)
+      total: formatPrice(priceDiscount),
+      priceService: formatPrice(plan.priceService)
     };
-    const discount = paymentType.value === 'paid' ? plan.discount : plan.price;
-    const totalDiscount = (discount / plan.price) * 100;
-    const totalPrice = plan.price - discount;
+    const discount = paymentType.value === 'paid' ? plan.discount : plan.priceService + plan.price;
+    const totalDiscount = (discount / (plan.priceService + plan.price)) * 100;
+    const totalPrice = plan.priceService + plan.price - discount;
     const total = {
       price: formatPrice(plan.price),
       discountPercent: Math.floor(totalDiscount),
@@ -34,7 +38,6 @@ module.exports.getPlanDetails = async (req, res) => {
       totalPrice: totalPrice,
       totalPriceText: formatPrice(totalPrice)
     };
-    // console.log(total);
     const clientInfo = client
       ? {
           name: `${client.name.first} ${client.name.last}`.trim(),
@@ -45,7 +48,8 @@ module.exports.getPlanDetails = async (req, res) => {
           mail: client.mail,
           idClient: client.id,
           socials: client.socials,
-          dateOfBirth: client.dateOfBirth
+          dateOfBirth: client.dateOfBirth,
+          blacklist: client.blacklist
         }
       : {
           name: plan.clientInfo.name,
@@ -67,6 +71,28 @@ module.exports.getPlanDetails = async (req, res) => {
     const dateOfBirthText = `${dayMonthBirth}${yearBirth}`.trim();
     clientInfo.birthday = dateOfBirthText;
 
+    planInfo = {
+      client: plan.client,
+      clientInfo: plan.clientInfo,
+      comment: plan.comment,
+      discount: plan.discount,
+      id: plan._id,
+      minutes: plan.minutes,
+      paymentType: plan.paymentType,
+      paymentTypeObj: paymentType,
+      persons: plan.persons,
+      price: plan.price - plan.discount,
+      priceService: plan.priceService,
+      purpose: plan.purpose,
+      purposeText: purposeObj[plan.purpose].name,
+      services: plan.services,
+      status: plan.status,
+      statusText: statusObj[plan.status].name,
+      timeRange: `${moment(plan.time).format(formatTimeConf)} - ${moment(plan.time)
+        .add(plan.minutes, 'm')
+        .format(formatTimeConf)}`
+    };
+
     const planDetail = {
       idPlan: plan.id,
       date: moment(plan.date).format(formatDateConf),
@@ -87,11 +113,11 @@ module.exports.getPlanDetails = async (req, res) => {
       } ${moment(plan.dateOrder).format(formatTimeConf)}`,
       clientInfo: clientInfo,
       hall: hallInfo,
-      total
+      total,
+      minutes: plan.minutes,
+      minutesStart: timeToMinutes(moment(plan.time).format(formatTimeConf)),
+      planInfo
     };
-    // console.log(planDetail);
-
-    // console.log(planDetail);
 
     // const planDetails = {
     //   name: `${client.name.first} ${client.name.last}`.trim(),
@@ -99,8 +125,6 @@ module.exports.getPlanDetails = async (req, res) => {
     //   mail: client.mail
     // };
     // planDetails.phone = client.phone;
-    // console.log(planDetail);
-    // console.log(plan);
     // const hallsArr = await Halls.find({});
     // const hallsObj = arrToObj(hallsArr, 'id');
     // const planNew = converterDiscountFromBase(plan, hallsObj);

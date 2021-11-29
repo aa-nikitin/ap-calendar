@@ -140,7 +140,6 @@ const PaymentsForm = ({ captionButton, align, nameForm, CustomBtn, handleClick, 
 };
 
 PaymentsForm.propTypes = {
-  idHall: PropTypes.string,
   captionButton: PropTypes.string,
   align: PropTypes.string,
   nameForm: PropTypes.string,
@@ -150,7 +149,6 @@ PaymentsForm.propTypes = {
   idPlan: PropTypes.string
 };
 PaymentsForm.defaultProps = {
-  idHall: '',
   captionButton: '',
   align: '',
   nameForm: '',

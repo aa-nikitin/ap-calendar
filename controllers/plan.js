@@ -9,15 +9,12 @@ const { purposeArr, paymentTypeArr, statusArr } = require('../config/priceSettin
 const Clients = require('../models/clients');
 const Plan = require('../models/plan');
 const Halls = require('../models/halls');
+const Payments = require('../models/payments');
 const WorkShedule = require('../models/work-shedule');
 const { calculateFreeTime, calculateFreeDays } = require('../libs/handler-time');
-const {
-  arrToObj,
-  parseFullName,
-  transformEmpty,
-  formatPrice
-} = require('../libs/helper.functions');
+const { arrToObj, parseFullName, transformEmpty } = require('../libs/helper.functions');
 const handleAddPlan = require('../libs/handler-add-plan');
+const calcPayments = require('../libs/payments-calc');
 
 module.exports.addPlanDate = async (req, res) => {
   try {
@@ -74,7 +71,7 @@ module.exports.getPlanHalls = async (req, res) => {
     const newPlan = {};
     const plan = await Plan.find({
       date: moment(date, formatDateConf)
-    });
+    }).populate('client');
     const halls = await Halls.find({}).sort('order');
     // const { minutesStep, hourSize } = shedule;
 
@@ -92,8 +89,20 @@ module.exports.getPlanHalls = async (req, res) => {
       };
     });
 
+    const remainSumm = await Promise.all(
+      plan.map(async (planItem) => {
+        const { price, discount, priceService } = planItem;
+        const payments = await Payments.find({ idPlan: planItem._id });
+        const { total: paidSum } = calcPayments(payments);
+        const remainPay = price - discount + priceService - paidSum;
+        const summ = remainPay > 0 ? remainPay : 0;
+        return { summ, id: planItem.id };
+      })
+    );
+    // await Promise.all(imagesPromise);
+
+    const remainSummObj = arrToObj(remainSumm, 'id');
     plan.forEach((planItem) => {
-      // console.log(planItem);
       const idHall = planItem.hall._id.toString();
       const {
         id,
@@ -106,12 +115,11 @@ module.exports.getPlanHalls = async (req, res) => {
         purpose,
         persons,
         comment,
-        paidFor,
-        paymentMethod,
         price,
-        discount
+        discount,
+        services,
+        priceService
       } = planItem;
-      // console.log(client);
       // const formatTime =
       //   Number(moment(time).format('mm')) !== minutesStep % hourSize
       //     ? moment(time).subtract(30, 'minutes').format(formatTimeConf)
@@ -120,12 +128,18 @@ module.exports.getPlanHalls = async (req, res) => {
       const timeEnd = moment(time).add(minutes, 'm').format(formatTimeConf);
       const timeRange = `${formatTime} - ${timeEnd}`;
       const priceDiscount = price - discount > 0 ? price - discount : 0;
-      if (!!newPlan[idHall]) {
+
+      // const payments = await Payments.find({ idPlan: id });
+
+      // const { total: paidSum } = calcPayments(payments);
+      // cancelled
+      if (!!newPlan[idHall] && planItem.status !== 'cancelled') {
         newPlan[idHall].plans[formatTime] = {
           id,
           minutes,
           timeRange,
-          client: client && client.toString(),
+          client: client && client._id && client._id.toString(),
+          clientBlacklist: !!client && client.blacklist,
           clientInfo: { ...clientInfo },
           status,
           statusText: statusObj[status].name,
@@ -135,12 +149,11 @@ module.exports.getPlanHalls = async (req, res) => {
           purposeText: purposeObj[purpose].text,
           persons,
           comment,
-          paidFor,
-          paymentMethod,
           price: priceDiscount,
-          priceFormat: priceDiscount ? formatPrice(priceDiscount) : '',
           discount,
-          discountFormat: discount ? formatPrice(discount) : ''
+          services,
+          priceService,
+          paidSumm: remainSummObj[id].summ
           // priceDiscount,
           // priceDiscountFormat: priceDiscount ? formatPrice(priceDiscount) : ''
         };
@@ -162,7 +175,7 @@ module.exports.checkPlanFree = async (req, res) => {
     });
     const shedule = await WorkShedule.findOne({});
     const resultFreeDays = calculateFreeDays(plan, shedule);
-    // console.log(resultFreeDays);
+
     res.status(201).json(resultFreeDays);
   } catch (error) {
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
@@ -179,7 +192,7 @@ module.exports.checkPlanTime = async (req, res) => {
     });
     const shedule = await WorkShedule.findOne({});
     const resultFreeDays = calculateFreeTime(plan, time, shedule);
-    // console.log(resultFreeDays);
+
     res.status(201).json(resultFreeDays);
   } catch (error) {
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
@@ -214,6 +227,29 @@ module.exports.deletePlan = async (req, res) => {
     const resultDelete = await Plan.deleteOne({ _id: idPlan });
 
     res.json(resultDelete);
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+module.exports.cancalledPlan = async (req, res) => {
+  try {
+    const { idPlan, comment, reason, idClient, blacklist } = req.body;
+    // const { idPlan } = req.body.params;
+    // const resultDelete = await Plan.updateOne({ _id: idPlan });
+
+    const resultUpdate = await Plan.updateOne(
+      { _id: idPlan },
+      { status: 'cancelled', comment, reason },
+      { new: true }
+    );
+
+    if (blacklist) await Clients.updateOne({ _id: idClient }, { blacklist: true }, { new: true });
+
+    // { name: 'Заявка', value: 'application' },
+    // { name: 'Бронь', value: 'booking' },
+    // { name: 'Завершено', value: 'completed' }
+    res.json(resultUpdate);
   } catch (error) {
     res.status(500).json({ message: error });
   }

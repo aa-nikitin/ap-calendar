@@ -7,6 +7,11 @@ const {
       success: getPlanDetailsSuccess,
       error: getPlanDetailsError
     },
+    refresh: {
+      request: getRefreshDetailsRequest,
+      success: getRefreshDetailsSuccess,
+      error: getRefreshDetailsError
+    },
     setVisible: setPlanDetailsVisible
   }
 } = createActions({
@@ -16,8 +21,21 @@ const {
       SUCCESS: null,
       ERROR: null
     },
+    REFRESH: {
+      REQUEST: null,
+      SUCCESS: null,
+      ERROR: null
+    },
     SET_VISIBLE: null
   }
 });
 
-export { getPlanDetailsRequest, getPlanDetailsSuccess, getPlanDetailsError, setPlanDetailsVisible };
+export {
+  getPlanDetailsRequest,
+  getPlanDetailsSuccess,
+  getPlanDetailsError,
+  setPlanDetailsVisible,
+  getRefreshDetailsRequest,
+  getRefreshDetailsSuccess,
+  getRefreshDetailsError
+};

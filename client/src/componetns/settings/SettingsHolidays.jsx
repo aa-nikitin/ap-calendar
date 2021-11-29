@@ -8,9 +8,6 @@ import TextField from '@mui/material/TextField';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import ruLocale from 'date-fns/locale/ru';
-// import Select from '@mui/material/Select';
-// import MenuItem from '@mui/material/MenuItem';
-// import Slider from '@mui/material/Slider';
 
 import { getHolidays } from '../../redux/reducers';
 import {
@@ -49,7 +46,6 @@ const SettingsHolidays = () => {
   useEffect(() => {
     dispatch(settingsLoadHolidaysRequest());
   }, [dispatch]);
-  // console.log(dateHoliday);
 
   return (
     <div className="hollidays">

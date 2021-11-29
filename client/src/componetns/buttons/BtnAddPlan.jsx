@@ -1,12 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-const BtnAddPlan = ({ thisHourInfo, time, style }) => {
+const BtnAddPlan = ({ thisHourInfo, time, style, paidSumm }) => {
   const contactsList = [
     { name: 'Компания', value: 'company' },
     { name: 'Телефон', value: 'phone' },
     { name: 'E-mail', value: 'mail' }
   ];
-  const paidFor = thisHourInfo && thisHourInfo.paidFor ? parseInt(thisHourInfo.paidFor) : 0;
   const price = thisHourInfo ? parseInt(thisHourInfo.price) : 0;
   const discount = thisHourInfo ? parseInt(thisHourInfo.discount) : 0;
   const status = thisHourInfo ? thisHourInfo.status : '';
@@ -25,7 +25,12 @@ const BtnAddPlan = ({ thisHourInfo, time, style }) => {
             status === 'application' ? 'shedule-booking--application' : ''
           } ${status === 'completed' ? 'shedule-booking--completed' : ''}`}>
           <div className="shedule-booking__head">
-            {thisHourInfo.timeRange} {thisHourInfo.clientInfo.name}
+            {thisHourInfo.timeRange}{' '}
+            {thisHourInfo.clientBlacklist ? (
+              <span className="shedule-booking--blacklist">{thisHourInfo.clientInfo.name}</span>
+            ) : (
+              thisHourInfo.clientInfo.name
+            )}
           </div>
           <div className="shedule-booking__status">
             <b>{thisHourInfo.statusText}</b>
@@ -59,22 +64,30 @@ const BtnAddPlan = ({ thisHourInfo, time, style }) => {
                 {!!price && (
                   <div className="shedule-booking__item shedule-booking--price">
                     <div className="shedule-booking__value">
-                      Итого, {thisHourInfo.priceFormat} руб.
+                      Итого,{' '}
+                      {(thisHourInfo.priceService + thisHourInfo.price)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}{' '}
+                      руб.
                     </div>
                   </div>
                 )}
                 {!!discount && (
                   <div className="shedule-booking__item shedule-booking--discount">
                     <div className="shedule-booking__value">
-                      (Включая скидку {thisHourInfo.discountFormat} руб.)
+                      (Включая скидку{' '}
+                      {thisHourInfo.discount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} руб.)
                     </div>
                   </div>
                 )}
                 <div className="shedule-booking__item shedule-booking--status-pay">
-                  {paidFor >= price && paymentType.value === 'paid' ? (
+                  {paidSumm === 0 && paymentType.value === 'paid' ? (
                     <b>Оплачено полностью</b>
                   ) : (
-                    <b>Осталось оплатить: {price - paidFor} руб.</b>
+                    <b>
+                      Осталось оплатить: {paidSumm.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}{' '}
+                      руб.{' '}
+                    </b>
                   )}
                 </div>
               </>
@@ -92,6 +105,19 @@ const BtnAddPlan = ({ thisHourInfo, time, style }) => {
 
     // return <button className="shedule__button" data-hour={time} onClick={onClick}></button>;
   };
+};
+
+Notification.BtnAddPlan = {
+  thisHourInfo: PropTypes.object,
+  time: PropTypes.string,
+  style: PropTypes.string,
+  paidSumm: PropTypes.string
+};
+Notification.BtnAddPlan = {
+  thisHourInfo: {},
+  time: '',
+  style: '',
+  paidSumm: ''
 };
 
 export { BtnAddPlan };

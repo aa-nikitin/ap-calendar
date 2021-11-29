@@ -19,10 +19,11 @@ const schema = new Schema({
   comment: { type: String },
   price: { type: Number },
   discount: { type: Number },
-  paymentMethod: { type: String },
-  paidFor: { type: String },
+  priceService: { type: Number },
   orderNumber: { type: Number, require: true },
-  dateOrder: { type: Date, require: true }
+  dateOrder: { type: Date, require: true },
+  services: [{ type: Schema.Types.ObjectId, ref: 'services' }],
+  reason: { type: String }
 });
 
 module.exports = model('plan', schema);

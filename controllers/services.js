@@ -1,4 +1,5 @@
 const Services = require('../models/services');
+const { formatPrice } = require('../libs/helper.functions');
 
 module.exports.getServices = async (req, res) => {
   try {
@@ -15,7 +16,12 @@ module.exports.addServices = async (req, res) => {
     const { name, price, hourly } = req.body;
     const priceInt = parseInt(price);
     const newPrice = priceInt ? priceInt : 0;
-    const newServices = new Services({ name, price: newPrice, hourly });
+    const newServices = new Services({
+      name,
+      price: newPrice,
+      hourly,
+      priceText: formatPrice(price)
+    });
 
     await newServices.save();
 
@@ -33,9 +39,9 @@ module.exports.editServices = async (req, res) => {
     const priceInt = parseInt(price);
     const newPrice = priceInt ? priceInt : 0;
 
-    const aaa = await Services.updateOne(
+    await Services.updateOne(
       { _id: id },
-      { name, price: newPrice, hourly },
+      { name, price: newPrice, hourly, priceText: formatPrice(price) },
       { new: true }
     );
     const services = await Services.find();

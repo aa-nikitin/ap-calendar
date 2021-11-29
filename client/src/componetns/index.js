@@ -11,6 +11,7 @@ export * from './PlanHalls';
 export * from './PlanDetails';
 export * from './Socials';
 export * from './SocialsItem';
+export * from './Notification';
 export * from './settings/';
 export * from './buttons/';
 export * from './forms/';

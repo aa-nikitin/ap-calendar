@@ -35,8 +35,13 @@ const ServiceForm = ({ captionButton, align, nameForm, CustomBtn, handleClick, s
     onSubmit: (values) => {
       // const { paymentDate, paymentMethod, paymentPurpose, paymentSum, paymentType } = values;
       // const paymentDateFormat = moment(paymentDate).format('DD.MM.YYYY');
-      if (!service._id) dispatch(addServicesRequest(values));
-      else {
+      if (!service._id) {
+        dispatch(addServicesRequest(values));
+
+        formik.setFieldValue('name', '');
+        formik.setFieldValue('price', '');
+        formik.setFieldValue('hourly', false);
+      } else {
         dispatch(editServicesRequest({ params: values, id: service._id }));
       }
     }
@@ -106,7 +111,6 @@ const ServiceForm = ({ captionButton, align, nameForm, CustomBtn, handleClick, s
 };
 
 ServiceForm.propTypes = {
-  idHall: PropTypes.string,
   captionButton: PropTypes.string,
   align: PropTypes.string,
   nameForm: PropTypes.string,
@@ -117,7 +121,6 @@ ServiceForm.propTypes = {
   Icon: PropTypes.object
 };
 ServiceForm.defaultProps = {
-  idHall: '',
   captionButton: '',
   align: '',
   nameForm: '',
