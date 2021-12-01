@@ -20,6 +20,7 @@ module.exports = (plan, price, shedule, holidaysObj) => {
   let counterMinutes = timeFromInMinutes;
   const arrSumByHours = [];
   const surchargeCommonArr = [];
+  const checkPersons = persons > 0 ? persons : 1;
 
   while (counterMinutes < timeFromInMinutes + minutes) {
     arrSumByHours.push({ timePoint: counterMinutes, price: 0, surcharge: [] });
@@ -29,6 +30,7 @@ module.exports = (plan, price, shedule, holidaysObj) => {
   const holidays = holidaysObj.map((itemHoliday) => itemHoliday.date);
 
   let commonPrice = { price: 0, roundUp: false };
+
   price.forEach(({ obj: itemPrice }) => {
     const { roundUp, priceSum, timeFrom, timeTo } = itemPrice;
     const datePriceFrom = moment(itemPrice.dateFrom);
@@ -41,7 +43,7 @@ module.exports = (plan, price, shedule, holidaysObj) => {
     )
       return;
     if (itemPrice.weekday === 'by-days' && !itemPrice.daysOfWeek.includes(dayOfWeek)) return;
-    if (!(persons >= itemPrice.fromPersons)) return;
+    if (!(checkPersons >= itemPrice.fromPersons)) return;
     if (!(Math.ceil(countHours) >= itemPrice.fromHours)) return;
 
     if (
@@ -60,9 +62,9 @@ module.exports = (plan, price, shedule, holidaysObj) => {
       if (itemPrice.price === 'surcharge') {
         surchargePrice = (itemPrice.priceSum / divider) * arrSumByHours.length;
       } else if (itemPrice.price === 'surcharge-per') {
-        surchargePrice = persons * itemPrice.priceSum;
+        surchargePrice = checkPersons * itemPrice.priceSum;
       } else if (itemPrice.price === 'surcharge-per-hour') {
-        const priceSurchargeStep = (persons * itemPrice.priceSum) / divider;
+        const priceSurchargeStep = (checkPersons * itemPrice.priceSum) / divider;
         const roundUpPrice = countSteps % 2 > 0 && roundUp ? priceSurchargeStep : 0;
         surchargePrice = priceSurchargeStep * countSteps + roundUpPrice;
       }
@@ -98,7 +100,7 @@ module.exports = (plan, price, shedule, holidaysObj) => {
           if (itemPrice.price === 'surcharge') {
             const isPercent = itemPrice.priceSum.indexOf('%') > -1 ? true : false;
             surchargePrice = isPercent ? parseInt(itemPrice.priceSum) / divider + '%' : newPrice;
-          } else surchargePrice = persons * newPrice;
+          } else surchargePrice = checkPersons * newPrice;
 
           if (surchargePrice !== 0) arrSumByHours[key].surcharge.push(surchargePrice);
         }

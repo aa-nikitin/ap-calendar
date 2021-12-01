@@ -57,7 +57,7 @@ module.exports = async (params, client, clientID) => {
     const hoursCount = calculateFreeTime(planFiltered, time, shedule);
     const comparePlan = await Plan.findOne({ _id: idPlan });
     const planLast = await Plan.findOne().sort({ orderNumber: -1 }).limit(1);
-    const orderNumberNew = planLast.orderNumber + 1;
+    const orderNumberNew = planLast && planLast.orderNumber ? planLast.orderNumber + 1 : 1;
     // console.log(comparePlan.orderNumber);
     if (!(hoursCount >= minutes)) throw 'Указанное время занято';
 
@@ -89,7 +89,7 @@ module.exports = async (params, client, clientID) => {
     // console.log(services);
 
     const servicesAll = await Services.find({});
-    const priceService = calcServices(services, servicesAll, minutes);
+    const priceService = calcServices(services ? services : [], servicesAll, minutes);
     // console.log(priceService);
     const discount = calcDiscount({
       plan: newPlanObj,

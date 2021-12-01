@@ -31,7 +31,13 @@ const {
   cancalledPlan
 } = require('../controllers/plan');
 const { changeWorkShedule, getWorkShedule } = require('../controllers/work-shedule');
-const { getBookingPlanWeek, getBookingPrice, addOrders } = require('../controllers/booking');
+const {
+  getBookingPlanWeek,
+  getBookingPrice,
+  addOrders,
+  bookingFetch,
+  bookingNotice
+} = require('../controllers/booking');
 const {
   getPriceParams,
   addPrice,
@@ -113,6 +119,8 @@ router.put('/plan-canceled', cancalledPlan);
 router.post('/booking-plan-week', getBookingPlanWeek);
 router.post('/booking-price', getBookingPrice);
 router.post('/booking-add-orders', addOrders);
+router.post('/booking-fetch', bookingFetch);
+router.post('/booking-notice', bookingNotice);
 
 router.put('/work-shedule', authJwt, changeWorkShedule);
 router.get('/work-shedule', getWorkShedule);

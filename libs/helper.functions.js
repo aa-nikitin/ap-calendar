@@ -1,3 +1,5 @@
+const request = require('request');
+
 module.exports.arrToObj = (arr, key) =>
   arr.reduce((newObj, item) => {
     const newKey = key ? key : 'value';
@@ -21,3 +23,14 @@ module.exports.maxItemArray = (array) => {
 };
 
 module.exports.formatPrice = (price) => price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');
+
+module.exports.requestFunc = (params) => {
+  return new Promise((resolve, reject) => {
+    request(params, function (error, response, body) {
+      if (error) reject(error);
+      if (!error && response.statusCode == 200) {
+        resolve(response.body);
+      }
+    });
+  });
+};

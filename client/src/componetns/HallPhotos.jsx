@@ -96,14 +96,14 @@ const HallPhotos = ({ captionButton, align, nameForm, hall, Icon }) => {
 HallPhotos.propTypes = {
   captionButton: PropTypes.string,
   align: PropTypes.string,
-  hall: PropTypes.string,
+  hall: PropTypes.object,
   nameForm: PropTypes.string,
   Icon: PropTypes.object
 };
 HallPhotos.defaultProps = {
   captionButton: '',
   align: '',
-  hall: '',
+  hall: {},
   nameForm: '',
   Icon: null
 };

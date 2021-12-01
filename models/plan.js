@@ -23,6 +23,7 @@ const schema = new Schema({
   orderNumber: { type: Number, require: true },
   dateOrder: { type: Date, require: true },
   services: [{ type: Schema.Types.ObjectId, ref: 'services' }],
+  invoices: [{ type: Schema.Types.ObjectId, ref: 'invoices' }],
   reason: { type: String }
 });
 
