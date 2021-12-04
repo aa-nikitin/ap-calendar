@@ -72,6 +72,9 @@ module.exports.getPlanHalls = async (req, res) => {
     const plan = await Plan.find({
       date: moment(date, formatDateConf)
     }).populate('client');
+    const planFiltered = plan.filter((item) => {
+      return item.status !== 'cancelled';
+    });
     const halls = await Halls.find({}).sort('order');
     // const { minutesStep, hourSize } = shedule;
 
@@ -90,7 +93,7 @@ module.exports.getPlanHalls = async (req, res) => {
     });
 
     const remainSumm = await Promise.all(
-      plan.map(async (planItem) => {
+      planFiltered.map(async (planItem) => {
         const { price, discount, priceService } = planItem;
         const payments = await Payments.find({ idPlan: planItem._id });
         const { total: paidSum } = calcPayments(payments);
@@ -102,7 +105,7 @@ module.exports.getPlanHalls = async (req, res) => {
     // await Promise.all(imagesPromise);
 
     const remainSummObj = arrToObj(remainSumm, 'id');
-    plan.forEach((planItem) => {
+    planFiltered.forEach((planItem) => {
       const idHall = planItem.hall._id.toString();
       const {
         id,
@@ -173,8 +176,11 @@ module.exports.checkPlanFree = async (req, res) => {
       date: formateDate,
       hall: idHall
     });
+    const planFiltered = plan.filter((item) => {
+      return item.status !== 'cancelled';
+    });
     const shedule = await WorkShedule.findOne({});
-    const resultFreeDays = calculateFreeDays(plan, shedule);
+    const resultFreeDays = calculateFreeDays(planFiltered, shedule);
 
     res.status(201).json(resultFreeDays);
   } catch (error) {
@@ -190,8 +196,11 @@ module.exports.checkPlanTime = async (req, res) => {
       date: formateDate,
       hall: idHall
     });
+    const planFiltered = plan.filter((item) => {
+      return item.status !== 'cancelled';
+    });
     const shedule = await WorkShedule.findOne({});
-    const resultFreeDays = calculateFreeTime(plan, time, shedule);
+    const resultFreeDays = calculateFreeTime(planFiltered, time, shedule);
 
     res.status(201).json(resultFreeDays);
   } catch (error) {
@@ -210,14 +219,33 @@ module.exports.planTimeForEdit = async (req, res) => {
     const planFiltered = plan.filter((item) => {
       return item.id !== idPlan;
     });
+    const planFiltered2 = planFiltered.filter((item) => {
+      return item.status !== 'cancelled';
+    });
 
     const shedule = await WorkShedule.findOne({});
-    const planFreeTime = calculateFreeTime(planFiltered, time, shedule);
-    const planFree = calculateFreeDays(planFiltered, shedule);
+    const planFreeTime = calculateFreeTime(planFiltered2, time, shedule);
+    const planFree = calculateFreeDays(planFiltered2, shedule);
 
     res.status(201).json({ planFreeTime, date, time, idHall, minutes, idPlan, planFree });
   } catch (error) {
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
+  }
+};
+
+module.exports.clientPlan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const plan = await Plan.find({
+      client: id
+    }).populate('hall');
+    // const planFiltered = plan.filter((item) => {
+    //   return item.status !== 'cancelled';
+    // });
+
+    res.json(plan);
+  } catch (error) {
+    res.status(500).json({ message: error });
   }
 };
 

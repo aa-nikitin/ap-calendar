@@ -8,6 +8,7 @@ import {
   clientChangeRequest,
   clientChangeSuccess,
   clientChangeError,
+  planClientSuccess,
   logoutFetchFromToken
 } from '../redux/actions';
 import { getClient } from '../redux/reducers';
@@ -18,7 +19,9 @@ export function* getClientDetail() {
     const token = localStorage.getItem(storageName);
     const { clientId } = yield select(getClient);
     const clientResult = yield call(fetchGet, `/api/client/${clientId}`, token);
+    const clientPlans = yield call(fetchGet, `/api/plan-client/${clientId}`, token);
 
+    yield put(planClientSuccess(clientPlans));
     yield put(clientFetchSuccess(clientResult));
   } catch (error) {
     if (error === 'Unauthorized') yield put(logoutFetchFromToken());

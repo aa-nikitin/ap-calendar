@@ -4,6 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const app = express();
+const { checkPaymentTimeout } = require('./controllers/checkPay');
 
 app.use(cors());
 
@@ -20,6 +21,9 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
 }
+
+checkPaymentTimeout();
+// setInterval(checkPayment, 1000);
 
 const PORT = config.get('port') || 5000;
 

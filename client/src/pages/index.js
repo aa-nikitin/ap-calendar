@@ -6,3 +6,4 @@ export * from './Finance';
 export * from './Discount';
 export * from './Halls';
 export * from './Settings';
+export * from './DetailPlan';

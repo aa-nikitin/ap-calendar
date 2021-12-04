@@ -6,6 +6,8 @@ var md5 = require('md5');
 const config = require('config');
 const formatDateConf = config.get('formatDate');
 const formatTimeConf = config.get('formatTime');
+const hostname = config.get('hostname');
+const secretSeed = config.get('secretSeed');
 const _ = require('lodash');
 // const weekDaysConf = config.get('weekDays');
 
@@ -19,6 +21,7 @@ const WorkShedule = require('../models/work-shedule');
 const Discounts = require('../models/discounts');
 const Paykeeper = require('../models/paykeeper');
 const Prepayment = require('../models/prepayment');
+const Payments = require('../models/payments');
 const {
   timeToMinutes,
   minutesToTime,
@@ -34,6 +37,7 @@ const {
 const groupPrices = require('../libs/group-prices');
 const calcPrice = require('../libs/calc-price');
 const calcDiscount = require('../libs/calc-discount');
+const sendMailer = require('../libs/sendmailer');
 const {
   arrToObj,
   parseFullName,
@@ -249,9 +253,6 @@ module.exports.bookingFetch = async (req, res) => {
     const halls = await Halls.find({});
     const hallsObj = arrToObj(halls, '_id');
     let isAppExist = false;
-    // const { firstName, phone, mail, comment, typePay, price } = req.body;
-
-    // console.log(listOrders);
 
     const isSingleOrder = listOrders.length === 1;
     let serviceName = isSingleOrder ? 'Аренда зала:' : 'Аренда залов:';
@@ -270,17 +271,13 @@ module.exports.bookingFetch = async (req, res) => {
     });
     const prepayment = await Prepayment.findOne({});
     const expiryPrepayment = moment().add(prepayment.hours, 'h');
-    // console.log(isAppExist);
     if (isAppExist) {
       res.json({ error: true, message: '' });
     } else {
-      // console.log(listPlanId);
       const { loginPK, passPK, serverPK } = await Paykeeper.findOne({});
-      const payAmount =
-        prepayment.percent === 100 || typePay === 'full'
-          ? price
-          : Math.ceil((price / 100) * prepayment.percent);
-      // console.log(typePay);
+      const percentResult =
+        prepayment.percent === 100 || typePay === 'full' ? 100 : prepayment.percent;
+      const payAmount = Math.ceil((price / 100) * percentResult);
 
       let encodedAuthorization = base64encode(`${loginPK}:${passPK}`); // "aGV5ICB0aGVyZQ=="
       const { token } = JSON.parse(
@@ -317,13 +314,13 @@ module.exports.bookingFetch = async (req, res) => {
       const invoicesNew = new Invoices({
         invoiceID: invoice_id,
         invoiceUrl: invoice_url,
-        listPlans: [],
-        orderId: parseInt(invoicesOrderId)
+        listPlans: listPlanId,
+        orderId: parseInt(invoicesOrderId),
+        percent: percentResult
       });
-      // console.log(invoicesNew);
 
       await invoicesNew.save();
-      // console.log(invoicesNew);
+
       const listOrdersWithInvoicesPromise = listOrders.map(async (item) => {
         await Plan.updateOne(
           { _id: item._id },
@@ -364,10 +361,65 @@ module.exports.bookingFetch = async (req, res) => {
 
 module.exports.bookingNotice = async (req, res) => {
   try {
-    console.log(req.body);
-    console.log('req.body');
-    console.log(md5('message'));
-    const hash = md5('2bz8782sJXfNDAX');
+    const { id, orderid, sum } = req.body;
+
+    const invoice = await Invoices.findOne({ orderId: orderid });
+    const { listPlans, percent } = invoice;
+    let textPlans = '';
+    let textClient = '';
+    const allPaymentsPlans = listPlans.map(async (item, key) => {
+      const plan = await Plan.findOne({ _id: item }).populate('hall').populate('client');
+      const dateFormat = moment(plan.date).format(formatDateConf);
+      const timeFormat = moment(plan.time).format(formatTimeConf);
+      const timeToFormat = moment(plan.time).add(plan.minutes, 'm').format(formatTimeConf);
+      const priceCalc = plan.price - plan.discount;
+      const priceCalcPercent = parseInt((priceCalc / 100) * percent);
+
+      const textPlan = `<div><a href="${hostname}/detail-plan/${plan.id}">${plan.hall.name} (${dateFormat} ${timeFormat} - ${timeToFormat})</a></div>`;
+      textPlans += textPlan;
+      if (key === 0) {
+        textClient = `<a href="${hostname}/clients/${plan.client.id}">${plan.client.name.first} ${plan.client.name.last}</a>`;
+      }
+
+      const payment = new Payments({
+        paymentType: 'income',
+        paymentDate: moment(),
+        paymentWay: 'сashless',
+        paymentSum: priceCalcPercent,
+        paymentPurpose: '',
+        idPlan: item
+      });
+
+      await payment.save();
+
+      // console.log(plan);
+
+      return payment;
+    });
+    await Promise.all(allPaymentsPlans);
+
+    const priceFormat = formatPrice(parseInt(sum));
+    // console.log(req.body);
+    await sendMailer({
+      subject: `Оплата заказа на сумму ${priceFormat} руб.`,
+      html: `
+        <h2>Оплачено от ${moment().format(formatDateConf)} в ${moment().format(formatTimeConf)}</h2>
+        <h2>Номер заказа в PayKeeper - ${id}</h2>
+        <h2>Клиент: ${textClient}</h2>
+        <hr>
+        <br>
+        <h2>Заказы:</h2>
+        ${textPlans}
+        <br>
+        <hr>
+        <br>
+        <h2>Внесена предоплата <b>${percent}%</b> в размере <b>${priceFormat} руб.</b></h2>
+      `
+    });
+    // console.log(hostname);
+    // console.log(resultSending);
+    // console.log(invoice);
+    const hash = md5(`${id}${secretSeed}`);
     res.send(`ОК ${hash}`);
   } catch (error) {
     res.status(500).json({ message: error });

@@ -4,14 +4,16 @@ import Button from '@mui/material/Button';
 import UpdateIcon from '@mui/icons-material/Update';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
+import { Link } from 'react-router-dom';
 
 import { Loading, ClientForm, Notification } from '../componetns';
-import { getClient } from '../redux/reducers';
+import { getClient, getClientPlans } from '../redux/reducers';
 import { clientFetchRequest, clientChangeRequest, setPageTplName } from '../redux/actions';
 
 const Client = ({ match, history }) => {
   const dispatch = useDispatch();
   const { client, clientFetch } = useSelector((state) => getClient(state));
+  const plansClient = useSelector((state) => getClientPlans(state));
   const firstName = client.name ? client.name.first : '';
   const lastName = client.name ? client.name.last : '';
   const { nickname, company, phone, mail, comment, blacklist } = client;
@@ -93,6 +95,49 @@ const Client = ({ match, history }) => {
                   </div>
                 )
             )}
+          </div>
+
+          <div className="content-page__info">
+            <div className="table-list">
+              <div className="table-list__head">
+                <div className="table-list__head-item table-list--head-goal">Цель брони</div>
+                <div className="table-list__head-item table-list--head-condition">Условие</div>
+                <div className="table-list__head-item table-list--head-sale">Скидка </div>
+                <div className="table-list__head-item table-list--head-sale">Сумма</div>
+                <div className="table-list__head-item table-list--head-sale">Итого, руб.</div>
+              </div>
+              <div className="table-list__body">
+                {plansClient.map((item) => {
+                  return (
+                    !!item && (
+                      <div key={item.id} className="table-list__item">
+                        <div className="discount-item">
+                          <div className="discount-item__column discount-item--goal">
+                            {item.nameHall}
+                          </div>
+                          <div className="discount-item__column discount-item--condition">
+                            <Link target="_blank" to={`/detail-plan/${item.id}`}>
+                              №{item.orderNumber}
+                            </Link>
+                            , {item.dateFrom} - {item.timeFrom}, {item.minutes}(<b>{item.status}</b>
+                            )
+                          </div>
+                          <div className="discount-item__column discount-item--sale">
+                            {item.discount ? item.discount : '-'}
+                          </div>
+                          <div className="discount-item__column discount-item--sale">
+                            {item.price ? item.price : '-'}
+                          </div>
+                          <div className="discount-item__column discount-item--sale">
+                            {item.totalPrice ? item.totalPrice : '-'}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </div>

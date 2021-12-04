@@ -28,7 +28,8 @@ const {
   checkPlanFree,
   checkPlanTime,
   planTimeForEdit,
-  cancalledPlan
+  cancalledPlan,
+  clientPlan
 } = require('../controllers/plan');
 const { changeWorkShedule, getWorkShedule } = require('../controllers/work-shedule');
 const {
@@ -70,6 +71,7 @@ const {
   editServices,
   deleteServices
 } = require('../controllers/services');
+const { checkPayment } = require('../controllers/checkPay');
 
 const router = Router();
 
@@ -114,7 +116,8 @@ router.delete('/plan-date', authJwt, deletePlan);
 router.post('/plan-check-free', authJwt, checkPlanFree);
 router.post('/plan-check-time', authJwt, checkPlanTime);
 router.post('/plan-time-for-edit', authJwt, planTimeForEdit);
-router.put('/plan-canceled', cancalledPlan);
+router.put('/plan-canceled', authJwt, cancalledPlan);
+router.get('/plan-client/:id', clientPlan); // authJwt
 
 router.post('/booking-plan-week', getBookingPlanWeek);
 router.post('/booking-price', getBookingPrice);
@@ -152,7 +155,7 @@ router.post('/discounts', authJwt, addDiscounts);
 router.put('/discounts/:id', authJwt, editDiscounts);
 router.delete('/discounts/:id', authJwt, deleteDiscounts);
 
-router.get('/plan-details/:id', authJwt, getPlanDetails);
+router.get('/plan-details/:id', getPlanDetails);
 
 router.get('/payments/:id', getPayments);
 router.get('/payments-total/:id', getTotalPayments);
@@ -160,8 +163,10 @@ router.post('/payments', authJwt, addPayments);
 router.delete('/payments/:id', authJwt, deletePayments);
 
 router.get('/services', getServices);
-router.post('/services', addServices);
-router.put('/services/:id', editServices);
-router.delete('/services/:id', deleteServices);
+router.post('/services', authJwt, addServices);
+router.put('/services/:id', authJwt, editServices);
+router.delete('/services/:id', authJwt, deleteServices);
+
+router.get('/check-pay', checkPayment);
 
 module.exports = router;

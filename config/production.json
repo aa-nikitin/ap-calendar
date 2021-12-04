@@ -2,11 +2,14 @@
   "port": 80,
   "mongoUri": "mongodb://localhost:27017/calendarApp",
   "secret": "99*bN@fc",
+  "secretSeed": "2bz8782sJXfNDAX",
   "imgWidthResize": 340,
   "imgHeightResize": 200,
   "uniqueImages": true,
   "formatDate": "DD.MM.YYYY",
   "formatTime": "HH:mm",
   "dateForTime": "01.01.1970",
-  "hourSize": 60
+  "hourSize": 60,
+  "hostname": "http://81.163.30.95",
+  "hourCheck": 2
 }

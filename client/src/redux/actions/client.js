@@ -4,7 +4,8 @@ const {
   client: {
     fetch: { request: clientFetchRequest, success: clientFetchSuccess, error: clientFetchError },
     change: { request: clientChangeRequest, success: clientChangeSuccess, error: clientChangeError }
-  }
+  },
+  planClient: { request: planClientRequest, success: planClientSuccess, error: planClientError }
 } = createActions({
   CLIENT: {
     FETCH: {
@@ -17,6 +18,11 @@ const {
       SUCCESS: null,
       ERROR: null
     }
+  },
+  PLAN_CLIENT: {
+    REQUEST: null,
+    SUCCESS: null,
+    ERROR: null
   }
 });
 
@@ -26,5 +32,8 @@ export {
   clientFetchError,
   clientChangeRequest,
   clientChangeSuccess,
-  clientChangeError
+  clientChangeError,
+  planClientRequest,
+  planClientSuccess,
+  planClientError
 };

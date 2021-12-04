@@ -36,7 +36,6 @@ module.exports = async (params, client, clientID) => {
       services
     } = params;
     const dateOrder = !params.dateOrder ? moment(new Date()) : params.dateOrder;
-    // console.log(dateOrder);
     const formateDate = moment(`${date}`, formatDateConf);
     const formateTime = moment(`${dateForTimeConf} ${time}`, `${formatDateConf} ${formatTimeConf}`);
     const prices = await Price.find({}).sort('priority');
@@ -54,7 +53,12 @@ module.exports = async (params, client, clientID) => {
           return item.id !== idPlan;
         })
       : plan;
-    const hoursCount = calculateFreeTime(planFiltered, time, shedule);
+    const planFiltered2 = planFiltered.filter((item) => {
+      return item.status !== 'cancelled';
+    });
+    console.log(planFiltered2);
+    const hoursCount = calculateFreeTime(planFiltered2, time, shedule);
+    console.log(hoursCount);
     const comparePlan = await Plan.findOne({ _id: idPlan });
     const planLast = await Plan.findOne().sort({ orderNumber: -1 }).limit(1);
     const orderNumberNew = planLast && planLast.orderNumber ? planLast.orderNumber + 1 : 1;

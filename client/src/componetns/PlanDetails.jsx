@@ -18,12 +18,14 @@ import {
   getDetailsOrder,
   getPayments,
   getPaymentMethodObj,
-  getWorkShedule
+  getWorkShedule,
+  getPlan
 } from '../redux/reducers';
 
 const PlanDetails = () => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => getPlanDetails(state));
+  const { planFetch } = useSelector((state) => getPlan(state));
   const detailsOrder = useSelector((state) => getDetailsOrder(state));
   const paymentMethodObj = useSelector((state) => getPaymentMethodObj(state));
   const workShedule = useSelector((state) => getWorkShedule(state));
@@ -64,7 +66,9 @@ const PlanDetails = () => {
 
   if (loading || loadingPayments) return <Loading />;
 
-  return (
+  return planFetch ? (
+    <Loading />
+  ) : (
     <div className="content-page">
       <div className="content-page__panel content-page--panel-extend">
         <div className="content-page__panel-item">
@@ -102,7 +106,8 @@ const PlanDetails = () => {
             Заказ №{detailsOrder.orderNumber} от {detailsOrder.dateOrder}{' '}
             {detailsOrder.paymentType && (
               <span className="content-page__highlight">({detailsOrder.paymentType.name})</span>
-            )}
+            )}{' '}
+            {detailsOrder.statusText ? detailsOrder.statusText : ''}
           </h1>
         )}
         {detailsOrder && detailsOrder.clientInfo && detailsOrder.clientInfo.blacklist ? (
@@ -275,29 +280,29 @@ const PlanDetails = () => {
         )}
 
         {/* {detailsOrder && detailsOrder.hall && detailsOrder.servicePrice && (
-          <>
-            <h2 className="content-page__title">Доп. услуги</h2>
-            <div className="table-list">
-              <div className="table-list__head">
-                <div className="table-list__head-item">Зал</div>
-                <div className="table-list__head-item">Цена, руб.</div>
-                <div className="table-list__head-item">Скидка, руб. </div>
-                <div className="table-list__head-item">Сумма, руб.</div>
-              </div>
-              <div className="table-list__body">
-                <div className="table-list__item table-list--row">
-                  <div className="table-list__col">{detailsOrder.hall.name}</div>
-                  <div className="table-list__col">{detailsOrder.servicePrice.price}</div>
-                  <div className="table-list__col">{detailsOrder.servicePrice.discount}</div>
-                  <div className="table-list__col">
-                    <b>{detailsOrder.servicePrice.total}</b>
-                  </div>
+        <>
+          <h2 className="content-page__title">Доп. услуги</h2>
+          <div className="table-list">
+            <div className="table-list__head">
+              <div className="table-list__head-item">Зал</div>
+              <div className="table-list__head-item">Цена, руб.</div>
+              <div className="table-list__head-item">Скидка, руб. </div>
+              <div className="table-list__head-item">Сумма, руб.</div>
+            </div>
+            <div className="table-list__body">
+              <div className="table-list__item table-list--row">
+                <div className="table-list__col">{detailsOrder.hall.name}</div>
+                <div className="table-list__col">{detailsOrder.servicePrice.price}</div>
+                <div className="table-list__col">{detailsOrder.servicePrice.discount}</div>
+                <div className="table-list__col">
+                  <b>{detailsOrder.servicePrice.total}</b>
                 </div>
               </div>
             </div>
-            <div className="content-page__sep"></div>
-          </>
-        )} */}
+          </div>
+          <div className="content-page__sep"></div>
+        </>
+      )} */}
       </div>
     </div>
   );

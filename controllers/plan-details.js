@@ -87,7 +87,7 @@ module.exports.getPlanDetails = async (req, res) => {
       purposeText: purposeObj[plan.purpose].name,
       services: plan.services,
       status: plan.status,
-      statusText: statusObj[plan.status].name,
+      statusText: plan.status === 'cancelled' ? 'Отменен' : statusObj[plan.status].name,
       timeRange: `${moment(plan.time).format(formatTimeConf)} - ${moment(plan.time)
         .add(plan.minutes, 'm')
         .format(formatTimeConf)}`
@@ -114,6 +114,7 @@ module.exports.getPlanDetails = async (req, res) => {
       clientInfo: clientInfo,
       hall: hallInfo,
       total,
+      statusText: plan.status === 'cancelled' ? 'Отменен' : statusObj[plan.status].name,
       minutes: plan.minutes,
       minutesStart: timeToMinutes(moment(plan.time).format(formatTimeConf)),
       planInfo
