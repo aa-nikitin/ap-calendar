@@ -270,7 +270,8 @@ module.exports.bookingFetch = async (req, res) => {
       }
     });
     const prepayment = await Prepayment.findOne({});
-    const expiryPrepayment = moment().add(prepayment.hours, 'h');
+    const expiryPrepayment = moment(form.dateOrder).add(prepayment.hours, 'h');
+
     if (isAppExist) {
       res.json({ error: true, message: '' });
     } else {
