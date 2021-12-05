@@ -18,7 +18,8 @@ const validationSchema = yup.object({
 const SettingsShedule = () => {
   const dispatch = useDispatch();
   const workShedule = useSelector((state) => getWorkShedule(state));
-  const { minutesFrom, minutesTo, minutesStep, hourSize } = workShedule;
+  const { minutesFrom, minutesTo, minutesStep } = workShedule;
+  const hourSize = workShedule.hourSize ? workShedule.hourSize : 60;
   const formik = useFormik({
     initialValues: {
       fromHours: minutesFrom >= 0 ? minutesFrom / hourSize : 9,
