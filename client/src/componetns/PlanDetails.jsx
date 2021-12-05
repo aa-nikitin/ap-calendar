@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
@@ -22,7 +23,7 @@ import {
   getPlan
 } from '../redux/reducers';
 
-const PlanDetails = () => {
+const PlanDetails = ({ isSeparatePage }) => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => getPlanDetails(state));
   const { planFetch } = useSelector((state) => getPlan(state));
@@ -72,11 +73,13 @@ const PlanDetails = () => {
     <div className="content-page">
       <div className="content-page__panel content-page--panel-extend">
         <div className="content-page__panel-item">
-          <div className="content-page__panel-btn">
-            <Button variant="outlined" color="primary" onClick={backToPlan}>
-              Назад
-            </Button>
-          </div>
+          {isSeparatePage && (
+            <div className="content-page__panel-btn">
+              <Button variant="outlined" color="primary" onClick={backToPlan}>
+                Назад
+              </Button>
+            </div>
+          )}
           <div className="content-page__panel-btn">
             <PlanForm
               onClick={handlePlan}
@@ -306,6 +309,13 @@ const PlanDetails = () => {
       </div>
     </div>
   );
+};
+
+PlanDetails.propTypes = {
+  isSeparatePage: PropTypes.string
+};
+PlanDetails.defaultProps = {
+  isSeparatePage: ''
 };
 
 export { PlanDetails };

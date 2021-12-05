@@ -362,47 +362,50 @@ module.exports.bookingFetch = async (req, res) => {
 module.exports.bookingNotice = async (req, res) => {
   try {
     const { id, orderid, sum } = req.body;
-
+    const hash = md5(`${id}${secretSeed}`);
     const invoice = await Invoices.findOne({ orderId: orderid });
-    const { listPlans, percent } = invoice;
+    const { listPlans, percent, invoiceID } = invoice;
+    const isAddPayment = !(await Payments.findOne({ invoiceID }));
+
     let textPlans = '';
     let textClient = '';
-    const allPaymentsPlans = listPlans.map(async (item, key) => {
-      const plan = await Plan.findOne({ _id: item }).populate('hall').populate('client');
-      const dateFormat = moment(plan.date).format(formatDateConf);
-      const timeFormat = moment(plan.time).format(formatTimeConf);
-      const timeToFormat = moment(plan.time).add(plan.minutes, 'm').format(formatTimeConf);
-      const priceCalc = plan.price - plan.discount;
-      const priceCalcPercent = parseInt((priceCalc / 100) * percent);
+    if (isAddPayment) {
+      const allPaymentsPlans = listPlans.map(async (item, key) => {
+        const plan = await Plan.findOne({ _id: item }).populate('hall').populate('client');
+        const dateFormat = moment(plan.date).format(formatDateConf);
+        const timeFormat = moment(plan.time).format(formatTimeConf);
+        const timeToFormat = moment(plan.time).add(plan.minutes, 'm').format(formatTimeConf);
+        const priceCalc = plan.price - plan.discount;
+        const priceCalcPercent = parseInt(Math.ceil((priceCalc / 100) * percent));
 
-      const textPlan = `<div><a href="${hostname}/detail-plan/${plan.id}">${plan.hall.name} (${dateFormat} ${timeFormat} - ${timeToFormat})</a></div>`;
-      textPlans += textPlan;
-      if (key === 0) {
-        textClient = `<a href="${hostname}/clients/${plan.client.id}">${plan.client.name.first} ${plan.client.name.last}</a>`;
-      }
+        const textPlan = `<div><a href="${hostname}/detail-plan/${plan.id}">${plan.hall.name} (${dateFormat} ${timeFormat} - ${timeToFormat})</a></div>`;
+        textPlans += textPlan;
+        if (key === 0) {
+          textClient = `<a href="${hostname}/clients/${plan.client.id}">${plan.client.name.first} ${plan.client.name.last}</a>`;
+        }
+        const payment = new Payments({
+          paymentType: 'income',
+          paymentDate: moment(),
+          paymentWay: 'сashless',
+          paymentSum: priceCalcPercent,
+          paymentPurpose: '',
+          idPlan: item,
+          invoiceID: invoiceID
+        });
 
-      const payment = new Payments({
-        paymentType: 'income',
-        paymentDate: moment(),
-        paymentWay: 'сashless',
-        paymentSum: priceCalcPercent,
-        paymentPurpose: '',
-        idPlan: item
+        await payment.save();
+
+        // console.log(plan);
+
+        return payment;
       });
+      // console.log(allPaymentsPlans);
+      await Promise.all(allPaymentsPlans);
 
-      await payment.save();
-
-      // console.log(plan);
-
-      return payment;
-    });
-    await Promise.all(allPaymentsPlans);
-
-    const priceFormat = formatPrice(parseInt(sum));
-    // console.log(req.body);
-    await sendMailer({
-      subject: `Оплата заказа на сумму ${priceFormat} руб.`,
-      html: `
+      const priceFormat = formatPrice(parseInt(sum));
+      await sendMailer({
+        subject: `Оплата заказа на сумму ${priceFormat} руб.`,
+        html: `
         <h2>Оплачено от ${moment().format(formatDateConf)} в ${moment().format(formatTimeConf)}</h2>
         <h2>Номер заказа в PayKeeper - ${id}</h2>
         <h2>Клиент: ${textClient}</h2>
@@ -415,12 +418,12 @@ module.exports.bookingNotice = async (req, res) => {
         <br>
         <h2>Внесена предоплата <b>${percent}%</b> в размере <b>${priceFormat} руб.</b></h2>
       `
-    });
+      });
+    }
     // console.log(hostname);
     // console.log(resultSending);
-    // console.log(invoice);
-    const hash = md5(`${id}${secretSeed}`);
-    res.send(`ОК ${hash}`);
+
+    res.send(`OK ${hash}`);
   } catch (error) {
     res.status(500).json({ message: error });
   }

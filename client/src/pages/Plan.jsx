@@ -15,7 +15,7 @@ const Plan = () => {
   //   dispatch(planHallsRequest(thisDate));
   // }, [dispatch, thisDate]);
 
-  if (isVisiblePlanDetails) return <PlanDetails />;
+  if (isVisiblePlanDetails) return <PlanDetails isSeparatePage={true} />;
 
   return (
     <>

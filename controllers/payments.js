@@ -65,13 +65,11 @@ module.exports.addPayments = async (req, res) => {
       idPlan
     });
 
-    // console.log(payments);
-
     await payments.save();
 
     const paymentsFind = await Payments.find({ idPlan });
     const formatPayments = handlerPayments(paymentsFind);
-    // console.log(payments);
+
     res.json(formatPayments);
   } catch (error) {
     res.status(500).json({ message: error });
@@ -80,7 +78,7 @@ module.exports.addPayments = async (req, res) => {
 module.exports.deletePayments = async (req, res) => {
   try {
     const payments = await Payments.deleteOne({ _id: req.params.id });
-    // console.log(req.params.id);
+
     res.json(payments);
   } catch (error) {
     res.status(500).json({ message: error });

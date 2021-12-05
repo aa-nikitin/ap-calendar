@@ -62,7 +62,7 @@ module.exports = (prices) => {
       id: itemPrice.id,
       obj: itemPrice
     };
-    // console.log({ ...itemPrice });
+
     if (!pricesObj[itemPrice.idHall]) {
       pricesObj[itemPrice.idHall] = {};
       pricesObj[itemPrice.idHall][itemPrice.purpose] = {

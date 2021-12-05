@@ -33,7 +33,7 @@ module.exports.getHallsPurpose = async (req, res) => {
           newPurpose[itemPurpose.purpose].list.push(itemPurpose.idHall);
       }
     });
-    // console.log(Object.values(newPurpose));
+
     res.json(newPurpose);
   } catch (error) {
     res.status(500).json({ message: error });

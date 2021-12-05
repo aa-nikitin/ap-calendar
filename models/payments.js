@@ -6,7 +6,8 @@ const schema = new Schema({
   paymentWay: { type: String, required: true },
   paymentSum: { type: String, required: true },
   paymentPurpose: { type: String },
-  idPlan: { type: String, required: true }
+  idPlan: { type: String, required: true },
+  invoiceID: { type: String }
 });
 
 module.exports = model('payments', schema);

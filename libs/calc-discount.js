@@ -9,7 +9,6 @@ const { arrToObj, maxItemArray } = require('../libs/helper.functions');
 const { daysBeforeBookingArr } = require('../config/priceSettings');
 
 module.exports = ({ plan, discounts, shedule, holidays, price, idHall }) => {
-  // console.log(plan, discounts, shedule, holidays, price);
   const { date, minutes } = plan;
   const { hourSize } = shedule;
   const datePlan = moment(date);
@@ -18,11 +17,9 @@ module.exports = ({ plan, discounts, shedule, holidays, price, idHall }) => {
   const countHours = minutes / hourSize;
   const countHoursRound = Math.ceil(countHours);
   const discountsCommonArr = [];
-  // console.log(price);
+
   discounts.forEach((itemDiscount) => {
-    // console.log(itemDiscount);
     if (itemDiscount.purpose !== 'all' && itemDiscount.purpose !== plan.purpose) return;
-    // console.log(itemDiscount.hall !== 'all' && itemDiscount.hall !== idHall, idHall);
     if (itemDiscount.hall !== 'all' && itemDiscount.hall !== idHall) return;
     if (itemDiscount.weekday === 'weekdays' && dayOfWeek > 4) return;
     if (
@@ -45,8 +42,7 @@ module.exports = ({ plan, discounts, shedule, holidays, price, idHall }) => {
         countDaysAdd,
         'd'
       );
-      // const newDateFrom = moment(`${dateFrom} 00:00`, `${formatDateConf} ${formatTimeConf}`);
-      // console.log(moment(datePlan).isSame(dateDiscountNow));
+
       if (!moment(datePlan).isSame(dateDiscountNow)) return;
     }
     if (!(Math.ceil(countHours) >= itemDiscount.fromHours)) return;

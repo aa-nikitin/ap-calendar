@@ -45,7 +45,7 @@ module.exports = async (params, client, clientID) => {
       date: formateDate,
       hall: idHall
     });
-    // console.log(plan[0].services);
+
     const discounts = await Discounts.find({});
     const shedule = await WorkShedule.findOne({});
     const planFiltered = idPlan
@@ -56,13 +56,11 @@ module.exports = async (params, client, clientID) => {
     const planFiltered2 = planFiltered.filter((item) => {
       return item.status !== 'cancelled';
     });
-    console.log(planFiltered2);
     const hoursCount = calculateFreeTime(planFiltered2, time, shedule);
-    console.log(hoursCount);
     const comparePlan = await Plan.findOne({ _id: idPlan });
     const planLast = await Plan.findOne().sort({ orderNumber: -1 }).limit(1);
     const orderNumberNew = planLast && planLast.orderNumber ? planLast.orderNumber + 1 : 1;
-    // console.log(comparePlan.orderNumber);
+
     if (!(hoursCount >= minutes)) throw 'Указанное время занято';
 
     const newPlanObj = {
@@ -83,18 +81,15 @@ module.exports = async (params, client, clientID) => {
       dateOrder: !idPlan || !comparePlan.dateOrder ? dateOrder : comparePlan.dateOrder,
       services
     };
-    // console.log(newPlanObj);
 
     const priceByPurpose =
       pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
 
     const holidaysObj = await Holidays.find({});
     const price = calcPrice(newPlanObj, priceByPurpose, shedule, holidaysObj);
-    // console.log(services);
 
     const servicesAll = await Services.find({});
     const priceService = calcServices(services ? services : [], servicesAll, minutes);
-    // console.log(priceService);
     const discount = calcDiscount({
       plan: newPlanObj,
       discounts,
@@ -135,7 +130,7 @@ module.exports = async (params, client, clientID) => {
 
       newPlan = await Plan.findOne({ _id: idPlan });
     }
-    // console.log(newPlan.priceService);
+
     return newPlan;
     // res.status(201).json({});
   } catch (error) {

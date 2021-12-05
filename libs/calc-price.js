@@ -7,7 +7,6 @@ const formatTime = config.get('formatTime');
 const { timeToMinutes } = require('../libs/handler-time');
 
 module.exports = (plan, price, shedule, holidaysObj) => {
-  // console.log(plan, price, shedule);
   const { date, time, minutes, persons } = plan;
   const { minutesStep, hourSize } = shedule;
   const countHours = minutes / hourSize;

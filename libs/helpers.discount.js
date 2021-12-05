@@ -30,7 +30,6 @@ module.exports.converterDiscountToBase = (fields) => {
     discount,
     everyHour
   } = fields;
-  //   console.log(fields);
 
   const newDateFrom = moment(`${dateFrom} 00:00`, `${formatDateConf} ${formatTimeConf}`);
   const newDateTo = moment(`${dateTo} 00:00`, `${formatDateConf} ${formatTimeConf}`);
@@ -81,7 +80,6 @@ module.exports.converterDiscountFromBase = (discounts, hallsObj) => {
       discount,
       everyHour
     } = item;
-    // console.log(purpose);
     const purposeText =
       purpose === 'all' ? goalObj[purpose].name : `Аренда для ${goalObj[purpose].text}`;
     const weekdayText =
