@@ -5,6 +5,9 @@ import {
   planHallsRequest,
   planHallsSuccess,
   planHallsError,
+  planMonthRequest,
+  planMonthSuccess,
+  planMonthError,
   logoutFetchFromToken,
   planDataRequest,
   planDataSuccess,
@@ -37,6 +40,22 @@ export function* getPlanHalls() {
     yield put(planHallsError(error));
   }
 }
+export function* getPlanMonth() {
+  try {
+    const token = localStorage.getItem(storageName);
+    const { datePlanHalls } = yield select(getPlan);
+    const planHallsResult = yield call(
+      fetchPost,
+      '/api/plan-month',
+      { date: datePlanHalls },
+      token
+    );
+    yield put(planMonthSuccess(planHallsResult));
+  } catch (error) {
+    if (error === 'Unauthorized') yield put(logoutFetchFromToken());
+    yield put(planMonthError(error));
+  }
+}
 
 export function* getPlanData() {
   try {
@@ -50,6 +69,7 @@ export function* getPlanData() {
 
       yield put(planDataSuccess({ planFreeTime, planFree, date, time, idHall, minutes }));
     } else {
+      // console.log(dataPlan);
       const planTimeForEdit = yield call(fetchPost, '/api/plan-time-for-edit/', dataPlan, token);
       yield put(planDataSuccess(planTimeForEdit));
     }
@@ -69,13 +89,23 @@ export function* addPlan() {
     } else {
       yield call(fetchPut, '/api/plan-date/', dataPlan, token);
     }
-    const planHallsResult = yield call(
-      fetchPost,
-      '/api/plan-halls',
-      { date: dataPlan.date },
-      token
-    );
-    yield put(planFetchAddSuccess(planHallsResult));
+    if (dataPlan.typePlan === 'planHalls') {
+      const planHallsResult = yield call(
+        fetchPost,
+        '/api/plan-halls',
+        { date: dataPlan.date },
+        token
+      );
+      yield put(planFetchAddSuccess(planHallsResult));
+    } else if (dataPlan.typePlan === 'planMonth') {
+      const planHallsResult = yield call(
+        fetchPost,
+        '/api/plan-month',
+        { date: dataPlan.date },
+        token
+      );
+      yield put(planMonthSuccess(planHallsResult));
+    }
   } catch (error) {
     if (error === 'Unauthorized') yield put(logoutFetchFromToken());
     yield put(planFetchAddError(error));
@@ -124,6 +154,7 @@ export function* cancalledPlan() {
 
 export function* planWatch() {
   yield takeLatest(planHallsRequest, getPlanHalls);
+  yield takeLatest(planMonthRequest, getPlanMonth);
   yield takeLatest(planDataRequest, getPlanData);
   yield takeLatest(planFetchAddRequest, addPlan);
   yield takeLatest(planFetchDeleteRequest, deletePlan);

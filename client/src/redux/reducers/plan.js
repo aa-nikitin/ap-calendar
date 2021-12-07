@@ -1,5 +1,6 @@
 import { handleActions } from 'redux-actions';
 import { combineReducers } from 'redux';
+import { createSelector } from 'reselect';
 
 import {
   setActiveParamHall,
@@ -8,6 +9,9 @@ import {
   planHallsRequest,
   planHallsSuccess,
   planHallsError,
+  planMonthRequest,
+  planMonthSuccess,
+  planMonthError,
   planDataRequest,
   planDataSuccess,
   planDataError,
@@ -27,7 +31,6 @@ const plan = handleActions(
     [planHallsRequest]: (_state) => [],
     [planHallsSuccess]: (_state, { payload }) => payload,
     [planHallsError]: (_state) => [],
-    [planFetchAddRequest]: (_state) => [],
     [planFetchAddSuccess]: (_state, { payload }) => payload,
     [planFetchAddError]: (_state) => [],
     [planFetchDeleteRequest]: (_state) => [],
@@ -39,11 +42,22 @@ const plan = handleActions(
   },
   []
 );
+const planMonth = handleActions(
+  {
+    [planMonthRequest]: (_state) => [],
+    [planMonthSuccess]: (_state, { payload }) => payload,
+    [planMonthError]: (_state) => []
+  },
+  []
+);
 const planFetch = handleActions(
   {
     [planHallsRequest]: (_state) => true,
     [planHallsSuccess]: (_state) => false,
     [planHallsError]: (_state) => false,
+    [planMonthRequest]: (_state) => true,
+    [planMonthSuccess]: (_state) => false,
+    [planMonthError]: (_state) => false,
     [planFetchAddRequest]: (_state) => true,
     [planFetchAddSuccess]: (_state) => false,
     [planFetchAddError]: (_state) => false,
@@ -69,6 +83,9 @@ const error = handleActions(
     [planHallsRequest]: (_state) => null,
     [planHallsSuccess]: (_state) => null,
     [planHallsError]: (_state, { payload }) => payload,
+    [planMonthRequest]: (_state) => null,
+    [planMonthSuccess]: (_state) => null,
+    [planMonthError]: (_state, { payload }) => payload,
     [planDataRequest]: (_state) => null,
     [planDataSuccess]: (_state) => null,
     [planDataError]: (_state, { payload }) => payload,
@@ -113,7 +130,10 @@ const datePlanHalls = handleActions(
   {
     [planHallsRequest]: (_state, { payload }) => payload,
     [planHallsSuccess]: (_state) => '',
-    [planHallsError]: (_state) => ''
+    [planHallsError]: (_state) => '',
+    [planMonthRequest]: (_state, { payload }) => payload,
+    [planMonthSuccess]: (_state) => '',
+    [planMonthError]: (_state) => ''
   },
   ''
 );
@@ -128,10 +148,23 @@ const params = handleActions(
 );
 
 export const getPlan = ({ plan }) => plan;
+export const getPlanMonth = createSelector(
+  (state) => state.plan.planMonth.listPlanMonth,
+  (listPlanMonth) => {
+    return listPlanMonth;
+  }
+);
+export const getPlanCalendar = createSelector(
+  (state) => state.plan.planMonth.calendarMonth,
+  (calendarMonth) => {
+    return calendarMonth;
+  }
+);
 
 export default combineReducers({
   params,
   plan,
+  planMonth,
   datePlanHalls,
   planFetch,
   error,

@@ -312,10 +312,10 @@ const PlanDetails = ({ isSeparatePage }) => {
 };
 
 PlanDetails.propTypes = {
-  isSeparatePage: PropTypes.string
+  isSeparatePage: PropTypes.bool
 };
 PlanDetails.defaultProps = {
-  isSeparatePage: ''
+  isSeparatePage: false
 };
 
 export { PlanDetails };

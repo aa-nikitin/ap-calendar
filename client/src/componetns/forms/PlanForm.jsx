@@ -341,7 +341,7 @@ const PlanForm = ({
                   {planFree.map(({ time: timeFree, minutes, busy }) => {
                     const activeTimeItem =
                       minutes >= minutesAvailable && minutes < minutesAvailable + positionTime;
-
+                    // console.log(minutes, minutesAvailable);
                     return (
                       <div
                         onClick={refreshParamsPlan(

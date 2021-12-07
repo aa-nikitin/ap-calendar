@@ -12,6 +12,7 @@ export * from './PlanDetails';
 export * from './Socials';
 export * from './SocialsItem';
 export * from './Notification';
+export * from './PlanMonth';
 export * from './settings/';
 export * from './buttons/';
 export * from './forms/';

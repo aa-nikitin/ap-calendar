@@ -11,10 +11,13 @@ const Plan = require('../models/plan');
 const Halls = require('../models/halls');
 const Payments = require('../models/payments');
 const WorkShedule = require('../models/work-shedule');
-const { calculateFreeTime, calculateFreeDays } = require('../libs/handler-time');
+const { calculateFreeTime, calculateFreeDays, timeToMinutes } = require('../libs/handler-time');
 const { arrToObj, parseFullName, transformEmpty } = require('../libs/helper.functions');
 const handleAddPlan = require('../libs/handler-add-plan');
 const calcPayments = require('../libs/payments-calc');
+const { daysOfWeekArr } = require('../config/priceSettings');
+const daysOfWeekObj = arrToObj(daysOfWeekArr);
+const purposeObj = arrToObj(purposeArr);
 
 module.exports.addPlanDate = async (req, res) => {
   try {
@@ -280,5 +283,134 @@ module.exports.cancalledPlan = async (req, res) => {
     res.json(resultUpdate);
   } catch (error) {
     res.status(500).json({ message: error });
+  }
+};
+
+module.exports.getPlanMonth = async (req, res) => {
+  try {
+    const { date } = req.body;
+    const dateFrom = moment(`${date}`, formatDateConf).startOf('month');
+    const dateTo = moment(`${date}`, formatDateConf).endOf('month');
+    const listPlanMonth = {};
+    const calendarMonth = [];
+    let dateThis = moment(`${date}`, formatDateConf).startOf('month');
+
+    while (dateThis.isSameOrBefore(dateTo)) {
+      const dayOfWeek = daysOfWeekObj[moment(dateThis).isoWeekday() - 1].name;
+      listPlanMonth[dateThis.format(formatDateConf)] = [];
+      if (dateThis.isSame(dateFrom)) {
+        let counterWekdaysBefore = moment(dateFrom).isoWeekday() - 1;
+        while (counterWekdaysBefore > 0) {
+          const dateThisWekdaysBefore = moment(`${date}`, formatDateConf)
+            .startOf('month')
+            .subtract(counterWekdaysBefore, 'd');
+
+          const dayOfWeekBefore = daysOfWeekObj[dateThisWekdaysBefore.isoWeekday() - 1].name;
+
+          calendarMonth.push({
+            date: dateThisWekdaysBefore.format(formatDateConf),
+            dayOfWeek: dayOfWeekBefore,
+            thisMonth: false,
+            day: dateThisWekdaysBefore.format('D')
+          });
+          counterWekdaysBefore -= 1;
+        }
+      }
+      calendarMonth.push({
+        date: dateThis.format(formatDateConf),
+        dayOfWeek,
+        thisMonth: true,
+        day: dateThis.format('D')
+      });
+      dateThis.add(1, 'd');
+    }
+
+    let counterWekdaysAfter = moment(dateTo).isoWeekday() + 1;
+    let counterAddDaysAfter = 1;
+    while (counterWekdaysAfter <= 7) {
+      const dateThisWekdaysAfter = moment(`${date}`, formatDateConf)
+        .endOf('month')
+        .add(counterAddDaysAfter, 'd');
+
+      const dayOfWeekAfter = daysOfWeekObj[dateThisWekdaysAfter.isoWeekday() - 1].name;
+
+      // console.log(dateThisWekdaysAfter.format(formatDateConf), dayOfWeekAfter);
+      calendarMonth.push({
+        date: dateThisWekdaysAfter.format(formatDateConf),
+        dayOfWeek: dayOfWeekAfter,
+        thisMonth: false,
+        day: dateThisWekdaysAfter.format('D')
+      });
+      counterAddDaysAfter += 1;
+      counterWekdaysAfter += 1;
+    }
+
+    const plan = await Plan.find({
+      date: {
+        $gte: dateFrom,
+        $lt: dateTo
+      }
+    })
+      .populate('hall')
+      .populate('client');
+
+    plan.forEach((item) => {
+      const {
+        client,
+        clientInfo,
+        comment,
+        date,
+        dateOrder,
+        discount,
+        hall,
+        invoices,
+        minutes,
+        orderNumber,
+        paymentType,
+        persons,
+        price,
+        priceService,
+        purpose,
+        reason,
+        services,
+        status,
+        time,
+        _id
+      } = item;
+      const datePlan = moment(item.date).format(formatDateConf);
+      // console.log(purposeObj[item.purpose].text);
+      // item['timeFrom'] = moment(item.time).format(formatTimeConf);
+      if (status !== 'cancelled')
+        listPlanMonth[datePlan].push({
+          client,
+          clientInfo,
+          comment,
+          date,
+          dateOrder,
+          discount,
+          hall,
+          invoices,
+          minutes,
+          orderNumber,
+          paymentType,
+          persons,
+          price,
+          priceService,
+          purpose,
+          reason,
+          services,
+          status,
+          time,
+          id: _id,
+          timeFrom: moment(item.time).format(formatTimeConf),
+          timeMinutes: timeToMinutes(moment(item.time).format(formatTimeConf)),
+          timeTo: moment(item.time).add(item.minutes, 'm').format(formatTimeConf),
+          purposeText: purposeObj[item.purpose].text
+        });
+    });
+    // console.log(plan);
+    res.json({ listPlanMonth, calendarMonth });
+  } catch (error) {
+    res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
   }
 };

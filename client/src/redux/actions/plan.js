@@ -2,6 +2,7 @@ import { createActions } from 'redux-actions';
 
 const {
   planHalls: { request: planHallsRequest, success: planHallsSuccess, error: planHallsError },
+  planMonth: { request: planMonthRequest, success: planMonthSuccess, error: planMonthError },
   planParams: {
     activeHall: setActiveParamHall,
     stepHall: setStepParamHall,
@@ -27,6 +28,11 @@ const {
     SUCCESS: null,
     ERROR: null
   },
+  PLAN_MONTH: {
+    REQUEST: null,
+    SUCCESS: null,
+    ERROR: null
+  },
   PLAN_PARAMS: {
     ACTIVE_HALL: null,
     STEP_HALL: null,
@@ -48,6 +54,9 @@ export {
   planHallsRequest,
   planHallsSuccess,
   planHallsError,
+  planMonthRequest,
+  planMonthSuccess,
+  planMonthError,
   setActiveParamHall,
   setStepParamHall,
   setCountParamHall,

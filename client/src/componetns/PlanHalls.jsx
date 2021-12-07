@@ -28,7 +28,7 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
   const workShedule = useSelector((state) => getWorkShedule(state));
   const { list: hoursArray, minutesStep, hourSize } = workShedule;
   const handlePlan = (values) => {
-    dispatch(planFetchAddRequest(values));
+    dispatch(planFetchAddRequest({ ...values, typePlan: 'planHalls' }));
   };
   // const handleDeletePlan = (dataPlan) => () => {
   //   if (window.confirm('Вы действительно хотите отменить заявку?')) {

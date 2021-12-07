@@ -24,6 +24,7 @@ const { uploadHallPhotos, deleteHallPhoto } = require('../controllers/hall-photo
 const {
   addPlanDate,
   getPlanHalls,
+  getPlanMonth,
   deletePlan,
   checkPlanFree,
   checkPlanTime,
@@ -110,6 +111,7 @@ router.post('/upload-photos', authJwt, uploadHallPhotos);
 router.delete('/delete-photo', authJwt, deleteHallPhoto);
 
 router.post('/plan-halls', authJwt, getPlanHalls);
+router.post('/plan-month', getPlanMonth); // authJwt
 router.post('/plan-date', authJwt, addPlanDate);
 router.put('/plan-date', authJwt, addPlanDate);
 router.delete('/plan-date', authJwt, deletePlan);
@@ -117,7 +119,7 @@ router.post('/plan-check-free', authJwt, checkPlanFree);
 router.post('/plan-check-time', authJwt, checkPlanTime);
 router.post('/plan-time-for-edit', authJwt, planTimeForEdit);
 router.put('/plan-canceled', authJwt, cancalledPlan);
-router.get('/plan-client/:id', clientPlan); // authJwt
+router.get('/plan-client/:id', clientPlan);
 
 router.post('/booking-plan-week', getBookingPlanWeek);
 router.post('/booking-price', getBookingPrice);

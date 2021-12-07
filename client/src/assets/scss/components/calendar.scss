@@ -1,0 +1,60 @@
+.calendar {
+  background-color: $cl-main2;
+  width: 548px;
+  padding: 15px;
+  color: $cl-white;
+  &__body {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  &__head {
+    display: flex;
+  }
+  &__head-item {
+    width: 74px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  &__item {
+    width: 70px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    border: solid 1px transparent;
+    &:hover {
+      border-color: $cl-main;
+    }
+  }
+  &__item-wrap {
+    width: 74px;
+    height: 34px;
+    padding: 2px;
+  }
+  &--dim {
+    opacity: 0.3;
+  }
+  &--border {
+    border-left: solid 1px $cl-white;
+  }
+  &--active {
+    background-color: $cl-white;
+    color: $black;
+    font-weight: bold;
+  }
+  &--plan-day {
+    background-color: $orange;
+    &.calendar {
+      &--active {
+        border-color: $cl-white;
+        color: $cl-main2;
+      }
+    }
+  }
+}
