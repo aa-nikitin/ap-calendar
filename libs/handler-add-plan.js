@@ -36,7 +36,7 @@ module.exports = async (params, client, clientID) => {
       services
     } = params;
 
-    const dateOrder = moment(params.dateOrder);
+    const dateOrder = moment(params.dateOrderFormat, 'DD.MM.YYYY HH:mm');
     const formateDate = moment(`${date}`, formatDateConf);
     const formateTime = moment(`${dateForTimeConf} ${time}`, `${formatDateConf} ${formatTimeConf}`);
     const prices = await Price.find({}).sort('priority');

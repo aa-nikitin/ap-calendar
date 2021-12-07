@@ -1,4 +1,5 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
+import moment from 'moment';
 
 import { fetchPost, fetchPut, fetchDelete } from '../api';
 import {
@@ -83,11 +84,12 @@ export function* addPlan() {
   try {
     const token = localStorage.getItem(storageName);
     const { dataPlan } = yield select(getPlan);
+    const dateOrderFormat = moment(dataPlan.dateOrder).format('DD.MM.YYYY HH:mm');
 
     if (!dataPlan.idPlan) {
-      yield call(fetchPost, '/api/plan-date/', dataPlan, token);
+      yield call(fetchPost, '/api/plan-date/', { ...dataPlan, dateOrderFormat }, token);
     } else {
-      yield call(fetchPut, '/api/plan-date/', dataPlan, token);
+      yield call(fetchPut, '/api/plan-date/', { ...dataPlan, dateOrderFormat }, token);
     }
     if (dataPlan.typePlan === 'planHalls') {
       const planHallsResult = yield call(
