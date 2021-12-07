@@ -184,7 +184,8 @@ module.exports.getBookingPrice = async (req, res) => {
 
 module.exports.addOrders = async (req, res) => {
   try {
-    const { firstName, phone, mail, comment, /*price,*/ selected, dateOrder } = req.body;
+    const { firstName, phone, mail, comment, /*price,*/ selected, dateOrder, dateOrderFormat } =
+      req.body;
     let clientFromDB = {};
 
     const findClient = await Clients.findOne({
@@ -230,7 +231,8 @@ module.exports.addOrders = async (req, res) => {
         comment,
         paidFor: '',
         paymentMethod: 'сashless',
-        dateOrder
+        dateOrder,
+        dateOrderFormat
       };
       const plan = handleAddPlan(newOrder, client, clientFromDB.id);
 
@@ -404,6 +406,7 @@ module.exports.bookingNotice = async (req, res) => {
       await Promise.all(allPaymentsPlans);
 
       const priceFormat = formatPrice(parseInt(sum));
+      console.log(priceFormat);
       await sendMailer({
         subject: `Оплата заказа на сумму ${priceFormat} руб.`,
         html: `
@@ -420,6 +423,7 @@ module.exports.bookingNotice = async (req, res) => {
         <h2>Внесена предоплата <b>${percent}%</b> в размере <b>${priceFormat} руб.</b></h2>
       `
       });
+      console.log(priceFormat);
     }
     // console.log(hostname);
     // console.log(resultSending);
