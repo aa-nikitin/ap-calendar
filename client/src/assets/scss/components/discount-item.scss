@@ -34,4 +34,16 @@
     margin-top: 7px;
     color: $gray-dark;
   }
+  &__item {
+    margin-bottom: 5px;
+  }
+  &--gray-item {
+    color: $gray-dark;
+  }
+  &--green {
+    color: $lightseagreen;
+  }
+  &--price {
+    font-size: 18px;
+  }
 }

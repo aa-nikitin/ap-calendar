@@ -10,3 +10,4 @@ export * from './discounts';
 export * from './plan-details';
 export * from './payments';
 export * from './services';
+export * from './finance';

@@ -1,4 +1,5 @@
 const Payments = require('../models/payments');
+const Plan = require('../models/plan');
 const moment = require('moment');
 const config = require('config');
 
@@ -34,7 +35,6 @@ module.exports.getPayments = async (req, res) => {
 module.exports.getTotalPayments = async (req, res) => {
   try {
     const payments = await Payments.find({ idPlan: req.params.id });
-
     const { income, expense, total } = calcPayments(payments);
     const totalPayments = {
       income,
@@ -53,6 +53,7 @@ module.exports.getTotalPayments = async (req, res) => {
 module.exports.addPayments = async (req, res) => {
   try {
     const { paymentType, paymentDate, paymentWay, paymentSum, paymentPurpose, idPlan } = req.body;
+    const plan = await Plan.findOne({ _id: idPlan });
     const formatPaymentDate = moment(paymentDate, formatDateConf);
     const paymentSumInt = parseInt(paymentSum);
     const formatPaymentSum = paymentSumInt ? paymentSumInt : 0;
@@ -62,7 +63,9 @@ module.exports.addPayments = async (req, res) => {
       paymentWay,
       paymentSum: formatPaymentSum,
       paymentPurpose,
-      idPlan
+      idPlan,
+      plan: idPlan,
+      orderDate: plan.dateOrder
     });
 
     await payments.save();

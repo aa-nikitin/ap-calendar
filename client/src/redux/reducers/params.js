@@ -24,6 +24,7 @@ const priceParams = handleActions(
 );
 
 export const getParams = ({ params }) => params;
+export const getParamsHalls = ({ params }) => params.priceParams.hallsArr;
 export const getPriceParams = ({ params }) => params.priceParams;
 export const getPaymentMethodObj = createSelector(
   (state) => state.params.priceParams.paymentMethodArr,

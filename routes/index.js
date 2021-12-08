@@ -73,6 +73,7 @@ const {
   deleteServices
 } = require('../controllers/services');
 const { checkPayment } = require('../controllers/checkPay');
+const { getFinance } = require('../controllers/finance');
 
 const router = Router();
 
@@ -111,7 +112,7 @@ router.post('/upload-photos', authJwt, uploadHallPhotos);
 router.delete('/delete-photo', authJwt, deleteHallPhoto);
 
 router.post('/plan-halls', authJwt, getPlanHalls);
-router.post('/plan-month', getPlanMonth); // authJwt
+router.post('/plan-month', authJwt, getPlanMonth); // authJwt
 router.post('/plan-date', authJwt, addPlanDate);
 router.put('/plan-date', authJwt, addPlanDate);
 router.delete('/plan-date', authJwt, deletePlan);
@@ -170,5 +171,7 @@ router.put('/services/:id', authJwt, editServices);
 router.delete('/services/:id', authJwt, deleteServices);
 
 router.get('/check-pay', checkPayment);
+
+router.post('/finance', getFinance); // authJwt,
 
 module.exports = router;

@@ -1,0 +1,32 @@
+.calc-info {
+  display: flex;
+  width: 100%;
+  &__item {
+    padding: 15px;
+    border: solid 1px $gray;
+    width: 100%;
+  }
+  &__head {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: $gray-dark;
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+  &__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__num {
+    padding-right: 10px;
+    font-size: 36px;
+  }
+  &__dop-info {
+    line-height: 1.5;
+  }
+  &__dop-info-item {
+    color: $gray-dark;
+    font-size: 12px;
+  }
+}
