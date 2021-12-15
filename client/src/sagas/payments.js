@@ -1,4 +1,5 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
+import moment from 'moment';
 
 import { fetchGet, fetchPost, fetchDelete } from '../api';
 import {
@@ -11,7 +12,10 @@ import {
   paymentsAddRequest,
   paymentsAddSuccess,
   paymentsAddError,
-  logoutFetchFromToken
+  logoutFetchFromToken,
+  paymentsSendBillRequest,
+  paymentsSendBillSuccess,
+  paymentsSendBillError
 } from '../redux/actions';
 import { getPayments } from '../redux/reducers';
 import { storageName } from '../config';
@@ -62,8 +66,23 @@ export function* deletePayments() {
   }
 }
 
+export function* sendBill() {
+  try {
+    const token = localStorage.getItem(storageName);
+    const { query } = yield select(getPayments);
+    const dateOrder = moment().format('DD.MM.YYYY HH:mm');
+    const resultBill = yield call(fetchPost, `/api/send-bill`, { ...query, dateOrder }, token);
+
+    yield put(paymentsSendBillSuccess(resultBill));
+  } catch (error) {
+    if (error === 'Unauthorized') yield put(logoutFetchFromToken());
+    yield put(paymentsSendBillError(error));
+  }
+}
+
 export function* paymentsWatch() {
   yield takeLatest(paymentsAddRequest, addPayments);
   yield takeLatest(paymentsGetRequest, allPayments);
   yield takeLatest(paymentsDeleteRequest, deletePayments);
+  yield takeLatest(paymentsSendBillRequest, sendBill);
 }

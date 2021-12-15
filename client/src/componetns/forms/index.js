@@ -7,3 +7,4 @@ export * from './DiscountForm';
 export * from './PaymentsForm';
 export * from './ServiceForm';
 export * from './CancelledForm';
+export * from './BillForm';

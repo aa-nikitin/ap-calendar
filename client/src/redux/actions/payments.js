@@ -8,7 +8,12 @@ const {
       success: paymentsDeleteSuccess,
       error: paymentsDeleteError
     },
-    add: { request: paymentsAddRequest, success: paymentsAddSuccess, error: paymentsAddError }
+    add: { request: paymentsAddRequest, success: paymentsAddSuccess, error: paymentsAddError },
+    sendBill: {
+      request: paymentsSendBillRequest,
+      success: paymentsSendBillSuccess,
+      error: paymentsSendBillError
+    }
   }
 } = createActions({
   PAYMENTS: {
@@ -26,6 +31,11 @@ const {
       REQUEST: null,
       SUCCESS: null,
       ERROR: null
+    },
+    SEND_BILL: {
+      REQUEST: null,
+      SUCCESS: null,
+      ERROR: null
     }
   }
 });
@@ -39,5 +49,8 @@ export {
   paymentsDeleteError,
   paymentsAddRequest,
   paymentsAddSuccess,
-  paymentsAddError
+  paymentsAddError,
+  paymentsSendBillRequest,
+  paymentsSendBillSuccess,
+  paymentsSendBillError
 };

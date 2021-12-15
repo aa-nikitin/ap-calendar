@@ -64,7 +64,8 @@ const {
   getPayments,
   addPayments,
   deletePayments,
-  getTotalPayments
+  getTotalPayments,
+  sendBill
 } = require('../controllers/payments');
 const {
   getServices,
@@ -164,6 +165,7 @@ router.get('/payments/:id', getPayments);
 router.get('/payments-total/:id', getTotalPayments);
 router.post('/payments', authJwt, addPayments);
 router.delete('/payments/:id', authJwt, deletePayments);
+router.post('/send-bill', authJwt, sendBill);
 
 router.get('/services', getServices);
 router.post('/services', authJwt, addServices);

@@ -282,7 +282,7 @@ module.exports.bookingFetch = async (req, res) => {
         prepayment.percent === 100 || typePay === 'full' ? 100 : prepayment.percent;
       const payAmount = Math.ceil((price / 100) * percentResult);
 
-      let encodedAuthorization = base64encode(`${loginPK}:${passPK}`); // "aGV5ICB0aGVyZQ=="
+      let encodedAuthorization = base64encode(`${loginPK}:${passPK}`);
       const { token } = JSON.parse(
         await requestFunc({
           method: 'GET',
@@ -424,7 +424,6 @@ module.exports.bookingNotice = async (req, res) => {
         <h2>Внесена предоплата <b>${percent}%</b> в размере <b>${priceFormat} руб.</b></h2>
       `
       });
-      console.log(priceFormat);
     }
     // console.log(hostname);
     // console.log(resultSending);

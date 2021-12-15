@@ -6,7 +6,15 @@ import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
 
-import { Loading, Socials, PaymentsForm, PlanForm, ButtonIcon, Notification } from '../componetns';
+import {
+  Loading,
+  Socials,
+  PaymentsForm,
+  BillForm,
+  PlanForm,
+  ButtonIcon,
+  Notification
+} from '../componetns';
 import {
   setPlanDetailsVisible,
   paymentsGetRequest,
@@ -33,7 +41,8 @@ const PlanDetails = ({ isSeparatePage }) => {
   const {
     loading: loadingPayments,
     list,
-    total: totalPayments
+    total: totalPayments,
+    resultBill
   } = useSelector((state) => getPayments(state));
   const countSocials =
     detailsOrder && detailsOrder.clientInfo && detailsOrder.clientInfo.socials
@@ -211,13 +220,36 @@ const PlanDetails = ({ isSeparatePage }) => {
               <h2 className="content-page__title content-page--no-margin content-page--indent-right">
                 Платежи
               </h2>
-              <PaymentsForm
-                // onClick={handlePayment}
-                idPlan={detailsOrder.idPlan}
-                captionButton="+ Добавить платеж"
-                nameForm="Новый платеж"
-              />
+              <div className="content-page__btn">
+                <PaymentsForm
+                  // onClick={handlePayment}
+                  idPlan={detailsOrder.idPlan}
+                  captionButton="+ Добавить платеж"
+                  nameForm="Новый платеж"
+                />
+              </div>
+              <div className="content-page__btn">
+                <BillForm
+                  // onClick={handlePayment}
+                  priceBill={detailsOrder.total.totalPrice - totalPayments.total}
+                  idPlan={detailsOrder.idPlan}
+                  captionButton="Отправить счет"
+                  nameForm="Счет"
+                />
+              </div>
             </div>
+            {!!resultBill.invoice_url && (
+              <div className="content-page__payments-info">
+                <div>
+                  <b>Счет успешно сформирован и отправлен на почту клиенту</b>
+                </div>
+                <br />
+                <div>
+                  Ссылка на оплату которую можно отправить клиенту: <b>{resultBill.invoice_url}</b>
+                </div>
+              </div>
+            )}
+
             {!!totalPayments.total ? (
               <div className="table-list">
                 <div className="table-list__head">
