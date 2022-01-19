@@ -74,6 +74,7 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
               nameForm="Аренда"
               params={workShedule}
               handleClick={handlePlanBtn({ date: thisDate })}
+              setValueDate={setValueDate}
             />
           </div>
           <div className="content-page__panel-btn">
@@ -168,6 +169,8 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
                                   nameForm="Аренда"
                                   params={workShedule}
                                   thisHourInfo={thisHourInfo}
+                                  thisDate={thisDate}
+                                  setValueDate={setValueDate}
                                   // handleDeletePlan={handleDeletePlan}
                                   handleClick={handlePlanBtn(
                                     {

@@ -17,6 +17,10 @@ import moment from 'moment';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import ruLocale from 'date-fns/locale/ru';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import MobileDatePicker from '@mui/lab/MobileDatePicker';
 
 import PropTypes from 'prop-types';
 
@@ -50,7 +54,9 @@ const PlanForm = ({
   params,
   handleClick,
   // handleDeletePlan,
-  thisHourInfo
+  thisHourInfo,
+  thisDate,
+  setValueDate
 }) => {
   const contactsList = [
     { name: 'Имя', value: 'name' },
@@ -83,6 +89,7 @@ const PlanForm = ({
   } = availableDataPlan;
 
   const initialValues = {
+    dateFrom: thisDate ? moment(thisDate, 'DD.MM.YYYY') : moment(new Date()),
     status: thisHourInfo.status ? thisHourInfo.status : statusArr[0].value,
     paymentType: paymentType ? paymentType : paymentTypeArr[0].value,
     purpose: thisHourInfo.purpose ? thisHourInfo.purpose : purposeArr[0].value,
@@ -95,7 +102,6 @@ const PlanForm = ({
     clientEmail: '',
     isChecked: thisHourInfo.services ? thisHourInfo.services : []
   };
-
   const handleShowService = () => {
     setShowServices(!showServices);
   };
@@ -114,7 +120,8 @@ const PlanForm = ({
         purpose,
         persons,
         comment,
-        isChecked
+        isChecked,
+        dateFrom
       } = values;
 
       if (!idHall) return alert('Зал не выбран');
@@ -127,7 +134,7 @@ const PlanForm = ({
       const newPlan = {
         idHall,
         minutes: planMinutes,
-        date,
+        date: moment(dateFrom).format('DD.MM.YYYY'),
         time: timeChoice,
         idClient: clientSelected.id,
         clientName,
@@ -143,8 +150,9 @@ const PlanForm = ({
         dateOrder,
         services: isChecked
       };
-
+      // console.log(dateOrder);
       onClick(newPlan);
+      setValueDate(dateFrom);
     }
   });
 
@@ -155,6 +163,17 @@ const PlanForm = ({
   const handleClientSeclect = (clientObj) => () => {
     setSearchName('');
     setClientSelected({ ...clientObj, name: `${clientObj.name.first} ${clientObj.name.last}` });
+  };
+
+  const handleChangeByTime = (nameField) => (elem) => formik.setFieldValue(nameField, elem);
+
+  const handleAcceptByDate = (elem) => {
+    handleClick({
+      date: moment(elem).format('DD.MM.YYYY'),
+      idHall: idHall ? idHall : formik.values.hall,
+      minutes: minutesAvailable,
+      time: timeChoice
+    });
   };
 
   const clearSearchName = () => {
@@ -174,7 +193,13 @@ const PlanForm = ({
     if (refresh) handleClick(obj);
   };
   const handleChangeSect = (elem) => {
-    if (!!elem.target.value) handleClick({ date: date, idHall: elem.target.value });
+    if (!!elem.target.value)
+      handleClick({
+        date: moment(formik.values.dateFrom).format('DD.MM.YYYY'),
+        idHall: elem.target.value,
+        minutes: minutesAvailable,
+        time: timeChoice
+      });
 
     formik.handleChange(elem);
   };
@@ -218,6 +243,19 @@ const PlanForm = ({
         <form className="form-box" onSubmit={formik.handleSubmit}>
           <div className="form-box__body form-box--body-columns">
             <div className="form-box__column form-box--column-plan-left">
+              <div className="form-box__row">
+                <div className="form-box__head">Дата</div>
+                <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+                  <MobileDatePicker
+                    label=""
+                    inputFormat="dd.MM.yyyy"
+                    value={formik.values.dateFrom}
+                    onChange={handleChangeByTime('dateFrom')}
+                    onAccept={handleAcceptByDate}
+                    renderInput={(params) => <TextField style={{ width: '100%' }} {...params} />}
+                  />
+                </LocalizationProvider>
+              </div>
               <div className="form-box__row">
                 <div className="form-box__head">Статус</div>
                 <ButtonsSwitches
@@ -341,7 +379,6 @@ const PlanForm = ({
                   {planFree.map(({ time: timeFree, minutes, busy }) => {
                     const activeTimeItem =
                       minutes >= minutesAvailable && minutes < minutesAvailable + positionTime;
-                    // console.log(minutes, minutesAvailable);
                     return (
                       <div
                         onClick={refreshParamsPlan(
@@ -534,7 +571,9 @@ PlanForm.propTypes = {
   params: PropTypes.object,
   CustomBtn: PropTypes.func,
   handleClick: PropTypes.func,
-  thisHourInfo: PropTypes.object
+  thisHourInfo: PropTypes.object,
+  thisDate: PropTypes.string,
+  setValueDate: PropTypes.func
   // handleDeletePlan: PropTypes.func
 };
 PlanForm.defaultProps = {
@@ -545,7 +584,9 @@ PlanForm.defaultProps = {
   handleClick: null,
   CustomBtn: null,
   params: {},
-  thisHourInfo: {}
+  thisHourInfo: {},
+  thisDate: '',
+  setValueDate: () => {}
   // handleDeletePlan: () => {}
 };
 
