@@ -24,6 +24,7 @@ const validationSchema = yup.object({
   worktime: yup.string('Время'),
   fromHours: yup.number('От скольки часов').typeError('Должно быть числом'),
   fromPersons: yup.number('От скольки человек').typeError('Должно быть числом'),
+  toPersons: yup.number('До скольки человек').typeError('Должно быть числом'),
   validityPeriod: yup.string('Срок действия'),
   price: yup.string('Цена'),
   priceSum: yup.string('Цена').required('Поле обязательное для заполнения'),
@@ -64,6 +65,7 @@ const PriceForm = ({ idHall, prices, captionButton, align, nameForm, CustomBtn, 
     timeTo: prices && prices.timeTo ? prices.timeTo : new Date(),
     fromHours: prices ? prices.fromHours : '',
     fromPersons: prices ? prices.fromPersons : '',
+    toPersons: prices ? prices.toPersons : '',
     validityPeriod: prices ? prices.validityPeriod : validityPeriodArr[0].value,
     dateFrom: prices && prices.dateFrom ? prices.dateFrom : new Date(),
     dateTo: prices && prices.dateTo ? prices.dateTo : new Date(),
@@ -91,6 +93,7 @@ const PriceForm = ({ idHall, prices, captionButton, align, nameForm, CustomBtn, 
         formik.setFieldValue('timeTo', new Date());
         formik.setFieldValue('fromHours', '');
         formik.setFieldValue('fromPersons', '');
+        formik.setFieldValue('toPersons', '');
         formik.setFieldValue('validityPeriod', validityPeriodArr[0].value);
         formik.setFieldValue('dateFrom', new Date());
         formik.setFieldValue('dateTo', new Date());
@@ -245,6 +248,19 @@ const PriceForm = ({ idHall, prices, captionButton, align, nameForm, CustomBtn, 
               onChange={formik.handleChange}
               error={formik.touched.fromPersons && Boolean(formik.errors.fromPersons)}
               helperText={formik.touched.fromPersons && formik.errors.fromPersons}
+            />
+          </div>
+          <div className="form-box__row">
+            <div className="form-box__head">До скольки человек включительно</div>
+            <TextField
+              fullWidth
+              id="toPersons"
+              name="toPersons"
+              label="пусто, если нет ограничений"
+              value={formik.values.toPersons}
+              onChange={formik.handleChange}
+              error={formik.touched.toPersons && Boolean(formik.errors.toPersons)}
+              helperText={formik.touched.toPersons && formik.errors.toPersons}
             />
           </div>
 

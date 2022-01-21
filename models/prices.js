@@ -9,6 +9,7 @@ const schema = new Schema({
   timeTo: { type: Date },
   fromHours: { type: Number },
   fromPersons: { type: Number },
+  toPersons: { type: Number },
   validityPeriod: { type: String, require: true },
   dateFrom: { type: Date },
   dateTo: { type: Date },

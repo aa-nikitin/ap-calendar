@@ -41,6 +41,7 @@ module.exports = (prices) => {
       : worktimeObj[itemPrice.worktime].name; // время работы
     const strFromHours = itemPrice.fromHours > 1 ? `от ${itemPrice.fromHours} ч.` : ''; // количество часов
     const strFromPersons = itemPrice.fromPersons > 1 ? `от ${itemPrice.fromPersons} чел.` : ''; // количество человек
+    const strToPersons = itemPrice.toPersons > 1 ? `до ${itemPrice.toPersons} чел.` : ''; // количество человек
 
     // формирование цены
     const strPriceMeasure = itemPrice.price === 'surcharge-per' ? `` : `/ч.`;
@@ -53,7 +54,7 @@ module.exports = (prices) => {
         ? `${priceObj[itemPrice.price].text} ${strPriceSum}`
         : `${strPriceSum}`;
 
-    const strInfo = `${strWeekday} ${strValidityPeriodLimited} ${strWorktime} ${strFromPersons}`;
+    const strInfo = `${strWeekday} ${strValidityPeriodLimited} ${strWorktime} ${strFromPersons} ${strToPersons} `;
 
     const objPriceStr = {
       info: strInfo,

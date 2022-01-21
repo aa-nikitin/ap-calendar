@@ -43,6 +43,7 @@ module.exports = (plan, price, shedule, holidaysObj) => {
       return;
     if (itemPrice.weekday === 'by-days' && !itemPrice.daysOfWeek.includes(dayOfWeek)) return;
     if (!(checkPersons >= itemPrice.fromPersons)) return;
+    if (itemPrice.toPersons && !(checkPersons <= itemPrice.toPersons)) return;
     if (!(Math.ceil(countHours) >= itemPrice.fromHours)) return;
 
     if (
