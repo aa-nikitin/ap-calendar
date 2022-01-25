@@ -1,6 +1,11 @@
 .link {
   color: $cl-main2;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  background-color: transparent;
+  font-size: 16px;
   &:hover {
-    text-decoration: none;
+    text-decoration: underline;
   }
 }

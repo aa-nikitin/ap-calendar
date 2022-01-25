@@ -75,6 +75,12 @@ const {
 } = require('../controllers/services');
 const { checkPayment } = require('../controllers/checkPay');
 const { getFinance } = require('../controllers/finance');
+const {
+  addPlanPrice,
+  getPlanPriceById,
+  deletePlanPriceById,
+  editPlanPrice
+} = require('../controllers/plan-price');
 
 const router = Router();
 
@@ -175,5 +181,10 @@ router.delete('/services/:id', authJwt, deleteServices);
 router.get('/check-pay', checkPayment);
 
 router.post('/finance', getFinance); // authJwt,
+
+router.post('/plan-price', addPlanPrice); // authJwt,
+router.get('/plan-price/:id', getPlanPriceById); // authJwt,
+router.delete('/plan-price/:id', deletePlanPriceById); // authJwt,
+router.put('/plan-price/:id', editPlanPrice);
 
 module.exports = router;

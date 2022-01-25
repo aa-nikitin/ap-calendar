@@ -1,0 +1,20 @@
+.plan-service {
+  &__item {
+    cursor: pointer;
+    transition-property: all;
+    transition-duration: 0.5s;
+    &:hover {
+      color: $orange;
+    }
+  }
+  &__multiplier {
+    margin-right: 10px;
+  }
+  &--flex {
+    display: flex;
+    align-items: center;
+  }
+  &--count {
+    margin-left: 10px;
+  }
+}

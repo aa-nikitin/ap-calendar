@@ -12,6 +12,7 @@ import { planDetailsWatch } from './plan-details';
 import { paymentsWatch } from './payments';
 import { servicesWatch } from './services';
 import { financeWatch } from './finance';
+import { planPriceWatch } from './plan-price';
 
 export function* sagas() {
   yield fork(adminWatch);
@@ -26,4 +27,5 @@ export function* sagas() {
   yield fork(paymentsWatch);
   yield fork(servicesWatch);
   yield fork(financeWatch);
+  yield fork(planPriceWatch);
 }

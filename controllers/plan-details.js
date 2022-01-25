@@ -70,7 +70,7 @@ module.exports.getPlanDetails = async (req, res) => {
       dayBirth && monthBirth ? moment(`${dayBirth}.${monthBirth}`, 'DD.MM').format('D MMMM') : ``;
     const dateOfBirthText = `${dayMonthBirth}${yearBirth}`.trim();
     clientInfo.birthday = dateOfBirthText;
-
+    // console.log(servicePrice);
     planInfo = {
       client: plan.client,
       clientInfo: plan.clientInfo,

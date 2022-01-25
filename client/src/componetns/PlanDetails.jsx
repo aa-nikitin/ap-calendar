@@ -1,10 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
+import TextField from '@mui/material/TextField';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 
 import {
   Loading,
@@ -20,7 +25,10 @@ import {
   paymentsGetRequest,
   paymentsDeleteRequest,
   planDataRequest,
-  getRefreshDetailsRequest
+  getRefreshDetailsRequest,
+  addPlanPriceRequest,
+  delPlanPriceRequest,
+  editPlanPriceRequest
 } from '../redux/actions';
 import {
   getPlanDetails,
@@ -28,16 +36,60 @@ import {
   getPayments,
   getPaymentMethodObj,
   getWorkShedule,
-  getPlan
+  getPlan,
+  getPlanPrice,
+  getPlanPriceList
 } from '../redux/reducers';
+// import { forEach } from 'lodash';
+
+const validationSchema = yup.object({
+  nameService: yup.string('Товар / Услуга').required('Поле обязательное для заполнения'),
+  priceService: yup.string('Цена'),
+  countService: yup.string('Количество'),
+  discountService: yup.string('Скидка')
+});
 
 const PlanDetails = ({ isSeparatePage }) => {
+  const [activeAddServise, setActiveAddServise] = useState(false);
+  const [planPriceVal, setPlanPriceVal] = useState('');
+  const [activePlanPrice, setActivePlanPrice] = useState('');
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => getPlanDetails(state));
   const { planFetch } = useSelector((state) => getPlan(state));
   const detailsOrder = useSelector((state) => getDetailsOrder(state));
   const paymentMethodObj = useSelector((state) => getPaymentMethodObj(state));
   const workShedule = useSelector((state) => getWorkShedule(state));
+  const { loading: loadingService } = useSelector((state) => getPlanPrice(state));
+  const planPrice = useSelector((state) => getPlanPriceList(state));
+  const initialValues = {
+    nameService: '',
+    priceService: '',
+    countService: '',
+    discountService: ''
+  };
+  const formik = useFormik({
+    initialValues,
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      const { countService, discountService, nameService, priceService } = values;
+      formik.setFieldValue('nameService', '');
+      formik.setFieldValue('priceService', '');
+      formik.setFieldValue('countService', '');
+      formik.setFieldValue('discountService', '');
+      setActiveAddServise(false);
+      dispatch(
+        addPlanPriceRequest({
+          count: countService,
+          discount: discountService,
+          name: nameService,
+          price: priceService,
+          idPlan: detailsOrder.idPlan
+        })
+      );
+      // console.log(values, detailsOrder.idPlan);
+    }
+  });
+
   const {
     loading: loadingPayments,
     list,
@@ -70,11 +122,48 @@ const PlanDetails = ({ isSeparatePage }) => {
     }
   };
 
+  const handleAddService = () => {
+    setActiveAddServise(true);
+  };
+
+  const handleDeleteService = (id) => () => {
+    if (window.confirm('Вы действительно хотите удалить позицию?'))
+      dispatch(delPlanPriceRequest(id));
+  };
+
+  const handleChangeService = (e) => {
+    setPlanPriceVal(e.target.value);
+    // console.log(e.target.value);
+  };
+
+  const handleBlurService = (id, field, value) => (e) => {
+    if (parseInt(planPriceVal)) {
+      // console.log(id, field, parseInt(planPriceVal));
+      dispatch(editPlanPriceRequest({ id, field, value: parseInt(planPriceVal) }));
+    }
+    setPlanPriceVal('');
+    setActivePlanPrice('');
+  };
+
+  const handleActivePlanPrice = (id, field, value) => () => {
+    // console.log(`${id}-${field}`);
+    // setPlanPriceVal(value);
+    setActivePlanPrice(`${id}-${field}`);
+  };
+
+  const handleCancelService = () => {
+    formik.setFieldValue('nameService', '');
+    formik.setFieldValue('priceService', '');
+    formik.setFieldValue('countService', '');
+    formik.setFieldValue('discountService', '');
+    setActiveAddServise(false);
+  };
+
   useEffect(() => {
     dispatch(paymentsGetRequest({ id: detailsOrder.idPlan }));
   }, [dispatch, detailsOrder.idPlan]);
 
-  if (loading || loadingPayments) return <Loading />;
+  if (loading || loadingPayments || loadingService) return <Loading />;
 
   return planFetch ? (
     <Loading />
@@ -174,10 +263,10 @@ const PlanDetails = ({ isSeparatePage }) => {
 
         {detailsOrder && detailsOrder.hall && detailsOrder.servicePrice && (
           <>
-            <h2 className="content-page__title">Аренда</h2>
+            <h2 className="content-page__title">Смета</h2>
             <div className="table-list">
               <div className="table-list__head">
-                <div className="table-list__head-item">Зал</div>
+                <div className="table-list__head-item">Услуга</div>
                 <div className="table-list__head-item">Цена, руб.</div>
                 <div className="table-list__head-item">Скидка, руб. </div>
                 <div className="table-list__head-item">Сумма, руб.</div>
@@ -191,6 +280,142 @@ const PlanDetails = ({ isSeparatePage }) => {
                     <b>{detailsOrder.servicePrice.total}</b>
                   </div>
                 </div>
+                {planPrice.map((element) => {
+                  const { _id, name, count, price, discount, total } = element;
+                  // console.log(element);
+                  return (
+                    <div key={_id} className="table-list__item table-list--row">
+                      <div className="table-list__col">{name}</div>
+                      <div className="table-list__col">
+                        <div className="plan-service plan-service--flex">
+                          {activePlanPrice === `${_id}-price` ? (
+                            <TextField
+                              label={`Значение - ${price}`}
+                              value={planPriceVal}
+                              onChange={handleChangeService}
+                              onBlur={handleBlurService(_id, 'price', price)}
+                              autoFocus={true}
+                              variant="standard"
+                            />
+                          ) : (
+                            <div
+                              className="plan-service__item"
+                              onClick={handleActivePlanPrice(_id, 'price', price)}>
+                              {price}
+                            </div>
+                          )}
+                          <div
+                            className="plan-service__item plan-service--count plan-service--flex"
+                            onClick={handleActivePlanPrice(_id, 'count', count)}>
+                            <div className="plan-service__multiplier">x</div>
+                            {activePlanPrice === `${_id}-count` ? (
+                              <TextField
+                                label={`Значение - ${count}`}
+                                value={planPriceVal}
+                                onChange={handleChangeService}
+                                onBlur={handleBlurService(_id, 'count', count)}
+                                autoFocus={true}
+                                variant="standard"
+                              />
+                            ) : (
+                              count
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="table-list__col">
+                        {activePlanPrice === `${_id}-discount` ? (
+                          <TextField
+                            label={`Значение - ${discount}`}
+                            value={planPriceVal}
+                            onChange={handleChangeService}
+                            onBlur={handleBlurService(_id, 'discount', discount)}
+                            autoFocus={true}
+                            variant="standard"
+                          />
+                        ) : (
+                          <div
+                            className="plan-service__item"
+                            onClick={handleActivePlanPrice(_id, 'discount', discount)}>
+                            {discount}
+                          </div>
+                        )}
+                      </div>
+                      <div className="table-list__col table-list--col-space-between">
+                        <b>{total}</b>
+                        <ButtonIcon
+                          Icon={DeleteIcon}
+                          title="Удалить"
+                          fontSize="small"
+                          onClick={handleDeleteService(_id)}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+                {activeAddServise && (
+                  <form onSubmit={formik.handleSubmit} className="table-list__item table-list--row">
+                    <div className="table-list__col">
+                      <TextField
+                        fullWidth
+                        id="nameService"
+                        name="nameService"
+                        label="Товар/Услуга"
+                        value={formik.values.nameService}
+                        onChange={formik.handleChange}
+                        error={formik.touched.nameService && Boolean(formik.errors.nameService)}
+                      />
+                    </div>
+                    <div className="table-list__col table-list--col-flex">
+                      <TextField
+                        fullWidth
+                        id="priceService"
+                        name="priceService"
+                        label="Цена"
+                        value={formik.values.priceService}
+                        onChange={formik.handleChange}
+                        error={formik.touched.priceService && Boolean(formik.errors.priceService)}
+                      />
+                      <div className="table-list__icon-multiplay">x</div>
+                      <TextField
+                        fullWidth
+                        id="countService"
+                        name="countService"
+                        label="Количество"
+                        value={formik.values.countService}
+                        onChange={formik.handleChange}
+                        error={formik.touched.countService && Boolean(formik.errors.countService)}
+                      />
+                    </div>
+                    <div className="table-list__col">
+                      <TextField
+                        fullWidth
+                        id="discountService"
+                        name="discountService"
+                        label="Скидка"
+                        value={formik.values.discountService}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.discountService && Boolean(formik.errors.discountService)
+                        }
+                      />
+                    </div>
+                    <div className="table-list__col">
+                      <ButtonIcon
+                        Icon={CheckIcon}
+                        title="Сохранить"
+                        type="submit"
+                        fontSize="small"
+                      />
+                      <ButtonIcon
+                        Icon={CloseIcon}
+                        title="Отменить"
+                        fontSize="small"
+                        onClick={handleCancelService}
+                      />
+                    </div>
+                  </form>
+                )}
               </div>
             </div>
             <div className="content-page__indent"></div>
@@ -198,18 +423,27 @@ const PlanDetails = ({ isSeparatePage }) => {
         )}
         {detailsOrder && detailsOrder.total && (
           <div className="content-page__total">
-            <div className="total-price">
-              <div className="total-price__item">
-                Доп услуги {detailsOrder.servicePrice.priceService} руб.
+            <div className="total-price total-price--columns">
+              <div className="total-price__col ">
+                {!activeAddServise && (
+                  <button className="link" onClick={handleAddService}>
+                    Добавить вручную
+                  </button>
+                )}
               </div>
-              <div className="total-price__item">
-                Итого с учетом скидок {detailsOrder.total.totalPriceText} руб.
-              </div>
-              <div className="total-price__item">
-                Общая скидка {detailsOrder.total.discountPercent}%
-              </div>
-              <div className="total-price__item">
-                Сумма скидок {detailsOrder.total.discount} руб.
+              <div className="total-price__col">
+                <div className="total-price__item">
+                  Доп услуги {detailsOrder.servicePrice.priceService} руб.
+                </div>
+                <div className="total-price__item">
+                  Итого с учетом скидок {detailsOrder.total.totalPriceText} руб.
+                </div>
+                <div className="total-price__item">
+                  Общая скидка {detailsOrder.total.discountPercent}%
+                </div>
+                <div className="total-price__item">
+                  Сумма скидок {detailsOrder.total.discount} руб.
+                </div>
               </div>
             </div>
           </div>

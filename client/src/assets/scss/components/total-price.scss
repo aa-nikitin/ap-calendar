@@ -3,6 +3,12 @@
   text-align: right;
   border-top: 3px solid $cl-completed-head;
   padding-top: 15px;
+
+  &--columns {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
   &__item {
     font-size: 20px;
     margin-top: 5px;

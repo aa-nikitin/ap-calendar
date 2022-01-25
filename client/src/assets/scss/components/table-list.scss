@@ -59,6 +59,9 @@
     display: flex;
     align-items: flex-start;
   }
+  &--col-flex {
+    display: flex;
+  }
   &__buttons {
     justify-content: space-between;
     display: flex;
@@ -71,5 +74,11 @@
   }
   &--col-percent-30 {
     width: 30%;
+  }
+
+  &__icon-multiplay {
+    padding-left: 10px;
+    padding-right: 10px;
+    align-self: center;
   }
 }
