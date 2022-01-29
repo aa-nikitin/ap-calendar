@@ -7,6 +7,7 @@ const formatTimeConf = config.get('formatTime');
 const Plan = require('../models/plan');
 const Clients = require('../models/clients');
 const Halls = require('../models/halls');
+const PriceInfo = require('../models/price-info');
 const { daysOfWeekArr, paymentTypeArr, purposeArr, statusArr } = require('../config/priceSettings');
 const { arrToObj, formatPrice } = require('../libs/helper.functions');
 const { timeToMinutes } = require('../libs/handler-time');
@@ -18,26 +19,29 @@ const statusObj = arrToObj(statusArr);
 module.exports.getPlanDetails = async (req, res) => {
   try {
     const plan = await Plan.findOne({ _id: req.params.id });
+    const idPlan = plan.id;
     const client = await Clients.findOne({ _id: plan.client });
     const hall = await Halls.findOne({ _id: String(plan.hall) });
-    const priceDiscount = plan.price - plan.discount > 0 ? plan.price - plan.discount : 0;
+    const priceInfo = await PriceInfo.findOne({ idPlan });
+
+    // const priceDiscount = plan.price - plan.discount > 0 ? plan.price - plan.discount : 0;
     const paymentType = paymentTypeObj[plan.paymentType];
-    const servicePrice = {
-      price: formatPrice(plan.price),
-      discount: formatPrice(plan.discount),
-      total: formatPrice(priceDiscount),
-      priceService: formatPrice(plan.priceService)
-    };
-    const discount = paymentType.value === 'paid' ? plan.discount : plan.priceService + plan.price;
-    const totalDiscount = (discount / (plan.priceService + plan.price)) * 100;
-    const totalPrice = plan.priceService + plan.price - discount;
-    const total = {
-      price: formatPrice(plan.price),
-      discountPercent: Math.floor(totalDiscount),
-      discount: formatPrice(discount),
-      totalPrice: totalPrice,
-      totalPriceText: formatPrice(totalPrice)
-    };
+    // const servicePrice = {
+    //   price: formatPrice(plan.price),
+    //   discount: formatPrice(plan.discount),
+    //   total: formatPrice(priceDiscount),
+    //   priceService: formatPrice(plan.priceService)
+    // };
+    // const discount = paymentType.value === 'paid' ? plan.discount : plan.priceService + plan.price;
+    // const totalDiscount = (discount / (plan.priceService + plan.price)) * 100;
+    // const totalPrice = plan.priceService + plan.price - discount;
+    // const total = {
+    //   price: formatPrice(plan.price),
+    //   discountPercent: Math.floor(totalDiscount),
+    //   discount: formatPrice(discount),
+    //   totalPrice: totalPrice,
+    //   totalPriceText: formatPrice(totalPrice)
+    // };
     const clientInfo = client
       ? {
           name: `${client.name.first} ${client.name.last}`.trim(),
@@ -75,14 +79,14 @@ module.exports.getPlanDetails = async (req, res) => {
       client: plan.client,
       clientInfo: plan.clientInfo,
       comment: plan.comment,
-      discount: plan.discount,
+      // discount: plan.discount,
       id: plan._id,
       minutes: plan.minutes,
       paymentType: plan.paymentType,
       paymentTypeObj: paymentType,
       persons: plan.persons,
-      price: plan.price - plan.discount,
-      priceService: plan.priceService,
+      // price: plan.price - plan.discount,
+      // priceService: plan.priceService,
       purpose: plan.purpose,
       purposeText: purposeObj[plan.purpose].name,
       services: plan.services,
@@ -94,14 +98,14 @@ module.exports.getPlanDetails = async (req, res) => {
     };
 
     const planDetail = {
-      idPlan: plan.id,
+      idPlan,
       date: moment(plan.date).format(formatDateConf),
       time: moment(plan.time).format(formatTimeConf),
       dayOfWeek: daysOfWeekObj[moment(plan.date).isoWeekday() - 1].name,
       paymentType,
       persons: plan.persons,
       comment: plan.comment,
-      servicePrice,
+      // servicePrice,
       orderNumber: plan.orderNumber,
       dateOrderPlan: `${moment(plan.date).format(formatDateConf)}, ${
         daysOfWeekObj[moment(plan.date).isoWeekday() - 1].name
@@ -113,11 +117,12 @@ module.exports.getPlanDetails = async (req, res) => {
       } ${moment(plan.dateOrder).format(formatTimeConf)}`,
       clientInfo: clientInfo,
       hall: hallInfo,
-      total,
+      // total,
       statusText: plan.status === 'cancelled' ? 'Отменен' : statusObj[plan.status].name,
       minutes: plan.minutes,
       minutesStart: timeToMinutes(moment(plan.time).format(formatTimeConf)),
-      planInfo
+      planInfo,
+      priceInfo
     };
 
     // const planDetails = {

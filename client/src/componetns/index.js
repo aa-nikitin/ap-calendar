@@ -14,6 +14,7 @@ export * from './SocialsItem';
 export * from './Notification';
 export * from './PlanMonth';
 export * from './FinanceItem';
+export * from './PrettyPrice';
 export * from './settings/';
 export * from './buttons/';
 export * from './forms/';

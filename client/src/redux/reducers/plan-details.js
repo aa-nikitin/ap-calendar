@@ -1,5 +1,7 @@
 import { handleActions } from 'redux-actions';
 import { combineReducers } from 'redux';
+import { createSelector } from 'reselect';
+import produce from 'immer';
 
 import {
   getPlanDetailsRequest,
@@ -8,7 +10,10 @@ import {
   setPlanDetailsVisible,
   getRefreshDetailsRequest,
   getRefreshDetailsSuccess,
-  getRefreshDetailsError
+  getRefreshDetailsError,
+  setPriceInfo,
+  removePlanInfoServices,
+  setPlanInfoServices
 } from '../actions';
 
 const loading = handleActions(
@@ -40,7 +45,28 @@ const details = handleActions(
     [getPlanDetailsError]: (_state) => [],
     [getRefreshDetailsRequest]: (_state) => [],
     [getRefreshDetailsSuccess]: (_state, { payload }) => payload,
-    [getRefreshDetailsError]: (_state) => []
+    [getRefreshDetailsError]: (_state) => [],
+    [setPriceInfo]: (state, { payload }) => ({ ...state, priceInfo: payload }),
+    [setPlanInfoServices]: (state, { payload }) => {
+      const services = state.planInfo.services;
+      const newServices = [...services, ...payload.map((item) => item.idService)];
+      const nextState = produce(state, (draft) => {
+        draft.planInfo.services = newServices;
+      });
+
+      return nextState;
+    },
+    [removePlanInfoServices]: (state, { payload }) => {
+      const services = state.planInfo.services;
+      const newServices = services.filter((item) => {
+        return item !== payload;
+      });
+      const nextState = produce(state, (draft) => {
+        draft.planInfo.services = newServices;
+      });
+
+      return nextState;
+    }
   },
   []
 );
@@ -65,5 +91,18 @@ const isVisible = handleActions(
 
 export const getPlanDetails = ({ planDetails }) => planDetails;
 export const getDetailsOrder = ({ planDetails }) => planDetails.details;
+// export const getPlanDetailsServices = ({ planDetails }) => planDetails.details.planInfo.services;
+
+export const getPlanDetailsServices = createSelector(
+  (state) => state.planDetails.details.planInfo.services,
+  (state) => state.services.list,
+  (servicesChecked, services) => {
+    const servicesList = services.filter((item) => {
+      const indexChecked = servicesChecked.indexOf(item._id);
+      return indexChecked < 0;
+    });
+    return { servicesList, servicesChecked };
+  }
+);
 
 export default combineReducers({ loading, error, details, query, isVisible });

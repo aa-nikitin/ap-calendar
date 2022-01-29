@@ -68,7 +68,6 @@ export function* getPlanData() {
       const planFreeTime = yield call(fetchPost, '/api/plan-check-time/', dataPlan, token);
       const planFree = yield call(fetchPost, '/api/plan-check-free/', dataPlan, token);
 
-      console.log(dataPlan);
       yield put(planDataSuccess({ planFreeTime, planFree, date, time, idHall, minutes }));
     } else {
       const planTimeForEdit = yield call(fetchPost, '/api/plan-time-for-edit/', dataPlan, token);

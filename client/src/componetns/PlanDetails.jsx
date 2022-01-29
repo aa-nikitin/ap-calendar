@@ -15,6 +15,7 @@ import {
   Loading,
   Socials,
   PaymentsForm,
+  ServicesForm,
   BillForm,
   PlanForm,
   ButtonIcon,
@@ -89,7 +90,7 @@ const PlanDetails = ({ isSeparatePage }) => {
       // console.log(values, detailsOrder.idPlan);
     }
   });
-
+  // console.log(detailsOrder.priceInfo);
   const {
     loading: loadingPayments,
     list,
@@ -126,9 +127,9 @@ const PlanDetails = ({ isSeparatePage }) => {
     setActiveAddServise(true);
   };
 
-  const handleDeleteService = (id) => () => {
+  const handleDeleteService = (id, idService) => () => {
     if (window.confirm('Вы действительно хотите удалить позицию?'))
-      dispatch(delPlanPriceRequest(id));
+      dispatch(delPlanPriceRequest({ id, idPlan: detailsOrder.idPlan, idService }));
   };
 
   const handleChangeService = (e) => {
@@ -137,9 +138,16 @@ const PlanDetails = ({ isSeparatePage }) => {
   };
 
   const handleBlurService = (id, field, value) => (e) => {
-    if (parseInt(planPriceVal)) {
-      // console.log(id, field, parseInt(planPriceVal));
-      dispatch(editPlanPriceRequest({ id, field, value: parseInt(planPriceVal) }));
+    if (parseInt(planPriceVal) >= 0) {
+      // console.log(detailsOrder.idPlan);
+      dispatch(
+        editPlanPriceRequest({
+          id,
+          field,
+          value: parseInt(planPriceVal),
+          idPlan: detailsOrder.idPlan
+        })
+      );
     }
     setPlanPriceVal('');
     setActivePlanPrice('');
@@ -261,10 +269,21 @@ const PlanDetails = ({ isSeparatePage }) => {
           </div>
         )}
 
-        {detailsOrder && detailsOrder.hall && detailsOrder.servicePrice && (
+        {detailsOrder && detailsOrder.hall && (
           <>
-            <h2 className="content-page__title">Смета</h2>
-            <div className="table-list">
+            <div className="content-page__panel-item content-page--valign-center content-page--indent-bottom">
+              <h2 className="content-page__title content-page--no-margin content-page--indent-right">
+                Смета
+              </h2>
+              <ServicesForm
+                // onClick={handlePayment}
+                idPlan={detailsOrder.idPlan}
+                minutes={detailsOrder.minutes}
+                captionButton="+ Добавить из справочника"
+                nameForm="Ваши услуги"
+              />
+            </div>
+            <div className="table-list table-list--top-indent">
               <div className="table-list__head">
                 <div className="table-list__head-item">Услуга</div>
                 <div className="table-list__head-item">Цена, руб.</div>
@@ -272,16 +291,16 @@ const PlanDetails = ({ isSeparatePage }) => {
                 <div className="table-list__head-item">Сумма, руб.</div>
               </div>
               <div className="table-list__body">
-                <div className="table-list__item table-list--row">
+                {/* <div className="table-list__item table-list--row">
                   <div className="table-list__col">{detailsOrder.hall.name}</div>
                   <div className="table-list__col">{detailsOrder.servicePrice.price}</div>
                   <div className="table-list__col">{detailsOrder.servicePrice.discount}</div>
                   <div className="table-list__col">
                     <b>{detailsOrder.servicePrice.total}</b>
                   </div>
-                </div>
+                </div> */}
                 {planPrice.map((element) => {
-                  const { _id, name, count, price, discount, total } = element;
+                  const { _id, name, count, price, discount, total, idService } = element;
                   // console.log(element);
                   return (
                     <div key={_id} className="table-list__item table-list--row">
@@ -337,7 +356,7 @@ const PlanDetails = ({ isSeparatePage }) => {
                           <div
                             className="plan-service__item"
                             onClick={handleActivePlanPrice(_id, 'discount', discount)}>
-                            {discount}
+                            {discount ? discount : '-'}
                           </div>
                         )}
                       </div>
@@ -347,7 +366,7 @@ const PlanDetails = ({ isSeparatePage }) => {
                           Icon={DeleteIcon}
                           title="Удалить"
                           fontSize="small"
-                          onClick={handleDeleteService(_id)}
+                          onClick={handleDeleteService(_id, idService)}
                         />
                       </div>
                     </div>
@@ -421,34 +440,44 @@ const PlanDetails = ({ isSeparatePage }) => {
             <div className="content-page__indent"></div>
           </>
         )}
-        {detailsOrder && detailsOrder.total && (
+        {detailsOrder && detailsOrder.priceInfo && (
           <div className="content-page__total">
             <div className="total-price total-price--columns">
               <div className="total-price__col ">
                 {!activeAddServise && (
-                  <button className="link" onClick={handleAddService}>
-                    Добавить вручную
-                  </button>
+                  <>
+                    <button className="link" onClick={handleAddService}>
+                      Добавить вручную
+                    </button>
+                  </>
                 )}
               </div>
               <div className="total-price__col">
-                <div className="total-price__item">
-                  Доп услуги {detailsOrder.servicePrice.priceService} руб.
-                </div>
-                <div className="total-price__item">
-                  Итого с учетом скидок {detailsOrder.total.totalPriceText} руб.
-                </div>
-                <div className="total-price__item">
-                  Общая скидка {detailsOrder.total.discountPercent}%
-                </div>
-                <div className="total-price__item">
-                  Сумма скидок {detailsOrder.total.discount} руб.
-                </div>
+                {!!detailsOrder.priceInfo.total && (
+                  <div className="total-price__item">
+                    <b>Итого с учетом скидок {detailsOrder.priceInfo.total} руб.</b>
+                  </div>
+                )}
+                {!!detailsOrder.priceInfo.addServices && (
+                  <div className="total-price__item">
+                    Доп услуги {detailsOrder.priceInfo.addServices} руб.
+                  </div>
+                )}
+                {!!detailsOrder.priceInfo.percentDisount && (
+                  <div className="total-price__item">
+                    Общая скидка {detailsOrder.priceInfo.percentDisount}%
+                  </div>
+                )}
+                {!!detailsOrder.priceInfo.totalDiscount && (
+                  <div className="total-price__item">
+                    Сумма скидок {detailsOrder.priceInfo.totalDiscount} руб.
+                  </div>
+                )}
               </div>
             </div>
           </div>
         )}
-        {detailsOrder && detailsOrder.total && (
+        {detailsOrder && detailsOrder.priceInfo && (
           <div className="content-page__payments">
             <div className="content-page__panel-item content-page--valign-center content-page--indent-bottom">
               <h2 className="content-page__title content-page--no-margin content-page--indent-right">
@@ -465,7 +494,7 @@ const PlanDetails = ({ isSeparatePage }) => {
               <div className="content-page__btn">
                 <BillForm
                   // onClick={handlePayment}
-                  priceBill={detailsOrder.total.totalPrice - totalPayments.total}
+                  priceBill={detailsOrder.priceInfo.total - totalPayments.total}
                   idPlan={detailsOrder.idPlan}
                   captionButton="Отправить счет"
                   nameForm="Счет"
@@ -531,19 +560,20 @@ const PlanDetails = ({ isSeparatePage }) => {
               {!!totalPayments.expense && (
                 <div className="total-price__item">Расходы {totalPayments.expenseText} руб.</div>
               )}
-
-              <div className="total-price__item">Итого {totalPayments.totalText} руб.</div>
-              {totalPayments.total >= detailsOrder.total.totalPrice ? (
+              {!!totalPayments.expense && (
+                <div className="total-price__item">Итого {totalPayments.totalText} руб.</div>
+              )}
+              {/* {totalPayments.total >= detailsOrder.priceInfo.total ? (
                 <div className="total-price__item total-price--green">Оплачено полностью</div>
               ) : (
                 <div className="total-price__item total-price--red">
                   Осталось{' '}
-                  {(detailsOrder.total.totalPrice - totalPayments.total)
+                  {(detailsOrder.priceInfo.total - totalPayments.total)
                     .toString()
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}{' '}
                   руб.
                 </div>
-              )}
+              )} */}
             </div>
           </div>
         )}

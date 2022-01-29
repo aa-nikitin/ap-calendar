@@ -1,6 +1,6 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
 
-import { fetchPost, fetchDelete, fetchPut } from '../api';
+import { fetchGet, fetchPost, fetchDelete, fetchPut } from '../api';
 import {
   addPlanPriceRequest,
   addPlanPriceSuccess,
@@ -11,6 +11,12 @@ import {
   editPlanPriceRequest,
   editPlanPriceSuccess,
   editPlanPriceError,
+  servicePlanPriceRequest,
+  servicePlanPriceSuccess,
+  servicePlanPriceError,
+  setPriceInfo,
+  setPlanInfoServices,
+  removePlanInfoServices,
   logoutFetchFromToken
 } from '../redux/actions';
 import { storageName } from '../config';
@@ -22,8 +28,9 @@ export function* addPlanPrice() {
     const token = localStorage.getItem(storageName);
     const { query } = yield select(getPlanPrice);
     const planPrice = yield call(fetchPost, `/api/plan-price/`, query, token);
-    // console.log(planPrice);
+    const priceInfo = yield call(fetchGet, `/api/price-info/${query.idPlan}`, {}, token);
 
+    yield put(setPriceInfo(priceInfo));
     yield put(addPlanPriceSuccess(planPrice));
   } catch (error) {
     if (error === 'Unauthorized') yield put(logoutFetchFromToken());
@@ -36,10 +43,12 @@ export function* delPlanPrice() {
     // console.log('planPrice');
     const token = localStorage.getItem(storageName);
     const { query } = yield select(getPlanPrice);
-    const planPrice = yield call(fetchDelete, `/api/plan-price/${query.id}`, {}, token);
-    // console.log(planPrice);
+    const planPrice = yield call(fetchDelete, `/api/plan-price/${query.id}`, query, token);
+    const priceInfo = yield call(fetchGet, `/api/price-info/${query.idPlan}`, {}, token);
 
+    yield put(setPriceInfo(priceInfo));
     yield put(delPlanPriceSuccess(planPrice));
+    yield put(removePlanInfoServices(query.idService));
   } catch (error) {
     if (error === 'Unauthorized') yield put(logoutFetchFromToken());
     yield put(delPlanPriceError, error);
@@ -49,11 +58,13 @@ export function* delPlanPrice() {
 export function* editPlanPrice() {
   try {
     // console.log('planPrice');
+
     const token = localStorage.getItem(storageName);
     const { query } = yield select(getPlanPrice);
     const planPrice = yield call(fetchPut, `/api/plan-price/${query.id}`, query, token);
-    // console.log(planPrice);
+    const priceInfo = yield call(fetchGet, `/api/price-info/${query.idPlan}`, {}, token);
 
+    yield put(setPriceInfo(priceInfo));
     yield put(editPlanPriceSuccess(planPrice));
   } catch (error) {
     if (error === 'Unauthorized') yield put(logoutFetchFromToken());
@@ -61,8 +72,26 @@ export function* editPlanPrice() {
   }
 }
 
+export function* addServicePlanPrice() {
+  try {
+    // console.log('planPrice');
+    const token = localStorage.getItem(storageName);
+    const { query } = yield select(getPlanPrice);
+    const planPrice = yield call(fetchPost, `/api/plan-price-from-services`, query, token);
+    const priceInfo = yield call(fetchGet, `/api/price-info/${query.idPlan}`, {}, token);
+
+    yield put(setPriceInfo(priceInfo));
+    yield put(servicePlanPriceSuccess(planPrice));
+    yield put(setPlanInfoServices(planPrice));
+  } catch (error) {
+    if (error === 'Unauthorized') yield put(logoutFetchFromToken());
+    yield put(servicePlanPriceError, error);
+  }
+}
+
 export function* planPriceWatch() {
   yield takeLatest(addPlanPriceRequest, addPlanPrice);
   yield takeLatest(delPlanPriceRequest, delPlanPrice);
   yield takeLatest(editPlanPriceRequest, editPlanPrice);
+  yield takeLatest(servicePlanPriceRequest, addServicePlanPrice);
 }

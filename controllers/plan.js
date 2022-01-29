@@ -11,6 +11,7 @@ const Plan = require('../models/plan');
 const Halls = require('../models/halls');
 const Payments = require('../models/payments');
 const WorkShedule = require('../models/work-shedule');
+const PriceInfo = require('../models/price-info');
 const { calculateFreeTime, calculateFreeDays, timeToMinutes } = require('../libs/handler-time');
 const { arrToObj, parseFullName, transformEmpty } = require('../libs/helper.functions');
 const handleAddPlan = require('../libs/handler-add-plan');
@@ -97,12 +98,16 @@ module.exports.getPlanHalls = async (req, res) => {
 
     const remainSumm = await Promise.all(
       planFiltered.map(async (planItem) => {
-        const { price, discount, priceService } = planItem;
+        // const { price, discount, priceService } = planItem;
+
+        const priceInfo = await PriceInfo.findOne({ idPlan: planItem._id });
+        const totalPrice = priceInfo && priceInfo.total ? priceInfo.total : 0;
+        // console.log(priceInfo);
         const payments = await Payments.find({ idPlan: planItem._id });
         const { total: paidSum } = calcPayments(payments);
-        const remainPay = price - discount + priceService - paidSum;
+        const remainPay = totalPrice - paidSum;
         const summ = remainPay > 0 ? remainPay : 0;
-        return { summ, id: planItem.id };
+        return { summ, id: planItem.id, priceInfo };
       })
     );
     // await Promise.all(imagesPromise);
@@ -121,10 +126,10 @@ module.exports.getPlanHalls = async (req, res) => {
         purpose,
         persons,
         comment,
-        price,
-        discount,
-        services,
-        priceService
+        // price,
+        // discount,
+        services
+        // priceService
       } = planItem;
       // const formatTime =
       //   Number(moment(time).format('mm')) !== minutesStep % hourSize
@@ -133,7 +138,7 @@ module.exports.getPlanHalls = async (req, res) => {
       const formatTime = moment(time).format(formatTimeConf);
       const timeEnd = moment(time).add(minutes, 'm').format(formatTimeConf);
       const timeRange = `${formatTime} - ${timeEnd}`;
-      const priceDiscount = price - discount > 0 ? price - discount : 0;
+      // const priceDiscount = price - discount > 0 ? price - discount : 0;
 
       // const payments = await Payments.find({ idPlan: id });
 
@@ -155,16 +160,18 @@ module.exports.getPlanHalls = async (req, res) => {
           purposeText: purposeObj[purpose].text,
           persons,
           comment,
-          price: priceDiscount,
-          discount,
+          // price: priceDiscount,
+          // discount,
           services,
-          priceService,
-          paidSumm: remainSummObj[id].summ
+          // priceService,
+          paidSumm: remainSummObj[id].summ,
+          priceInfo: remainSummObj[id].priceInfo
           // priceDiscount,
           // priceDiscountFormat: priceDiscount ? formatPrice(priceDiscount) : ''
         };
       }
     });
+    // console.log(newPlan['614982efaf20d2c61dd99f38'].plans);
     res.status(201).json(Object.values(newPlan));
   } catch (error) {
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
@@ -361,15 +368,15 @@ module.exports.getPlanMonth = async (req, res) => {
         comment,
         date,
         dateOrder,
-        discount,
+        // discount,
         hall,
         invoices,
         minutes,
         orderNumber,
         paymentType,
         persons,
-        price,
-        priceService,
+        // price,
+        // priceService,
         purpose,
         reason,
         services,
@@ -387,15 +394,15 @@ module.exports.getPlanMonth = async (req, res) => {
           comment,
           date,
           dateOrder,
-          discount,
+          // discount,
           hall,
           invoices,
           minutes,
           orderNumber,
           paymentType,
           persons,
-          price,
-          priceService,
+          // price,
+          // priceService,
           purpose,
           reason,
           services,

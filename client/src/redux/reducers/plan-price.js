@@ -14,7 +14,10 @@ import {
   delPlanPriceError,
   editPlanPriceRequest,
   editPlanPriceSuccess,
-  editPlanPriceError
+  editPlanPriceError,
+  servicePlanPriceRequest,
+  servicePlanPriceSuccess,
+  servicePlanPriceError
 } from '../actions';
 
 const loading = handleActions(
@@ -30,7 +33,10 @@ const loading = handleActions(
     [delPlanPriceError]: (_state) => false,
     [editPlanPriceRequest]: (_state) => true,
     [editPlanPriceSuccess]: (_state) => false,
-    [editPlanPriceError]: (_state) => false
+    [editPlanPriceError]: (_state) => false,
+    [servicePlanPriceRequest]: (_state) => true,
+    [servicePlanPriceSuccess]: (_state) => false,
+    [servicePlanPriceError]: (_state) => false
   },
   false
 );
@@ -47,7 +53,10 @@ const error = handleActions(
     [delPlanPriceError]: (_state, { payload }) => payload,
     [editPlanPriceRequest]: (_state) => null,
     [editPlanPriceSuccess]: (_state) => null,
-    [editPlanPriceError]: (_state, { payload }) => payload
+    [editPlanPriceError]: (_state, { payload }) => payload,
+    [servicePlanPriceRequest]: (_state) => null,
+    [servicePlanPriceSuccess]: (_state) => null,
+    [servicePlanPriceError]: (_state, { payload }) => payload
   },
   null
 );
@@ -72,7 +81,9 @@ const list = handleActions(
 
       return newState;
     },
-    [editPlanPriceError]: (_state) => []
+    [editPlanPriceError]: (_state) => [],
+    [servicePlanPriceSuccess]: (state, { payload }) => [...state, ...payload],
+    [servicePlanPriceError]: (_state) => []
   },
   []
 );
@@ -81,12 +92,15 @@ const query = handleActions(
     [addPlanPriceRequest]: (_state, { payload }) => payload,
     [addPlanPriceSuccess]: (_state) => ({}),
     [addPlanPriceError]: (_state) => ({}),
-    [delPlanPriceRequest]: (_state, { payload }) => ({ id: payload }),
+    [delPlanPriceRequest]: (_state, { payload }) => payload,
     [delPlanPriceSuccess]: (_state) => ({}),
     [delPlanPriceError]: (_state) => ({}),
     [editPlanPriceRequest]: (_state, { payload }) => payload,
     [editPlanPriceSuccess]: (_state) => ({}),
-    [editPlanPriceError]: (_state) => ({})
+    [editPlanPriceError]: (_state) => ({}),
+    [servicePlanPriceRequest]: (_state, { payload }) => payload,
+    [servicePlanPriceSuccess]: (_state) => ({}),
+    [servicePlanPriceError]: (_state) => ({})
   },
   {}
 );

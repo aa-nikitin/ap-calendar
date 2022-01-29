@@ -1,0 +1,25 @@
+.checkbox-text {
+  display: flex !important;
+  border-top: solid 1px #ccc;
+  margin-left: 5px !important;
+  & > span:last-child {
+    width: 100%;
+  }
+  &__wrap {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  &__left {
+  }
+  &__right {
+    margin-left: 10px;
+  }
+  &--head {
+    justify-content: space-between;
+    border-top: none;
+    margin-right: 16px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+}

@@ -13,7 +13,16 @@ const {
       request: editPlanPriceRequest,
       success: editPlanPriceSuccess,
       error: editPlanPriceError
+    },
+    addFromService: {
+      request: servicePlanPriceRequest,
+      success: servicePlanPriceSuccess,
+      error: servicePlanPriceError
     }
+  },
+  priceInfo: { set: setPriceInfo },
+  planInfo: {
+    services: { set: setPlanInfoServices, remove: removePlanInfoServices }
   }
 } = createActions({
   PLAN_PRICE: {
@@ -36,6 +45,20 @@ const {
       REQUEST: null,
       SUCCESS: null,
       ERROR: null
+    },
+    ADD_FROM_SERVICE: {
+      REQUEST: null,
+      SUCCESS: null,
+      ERROR: null
+    }
+  },
+  PRICE_INFO: {
+    set: null
+  },
+  PLAN_INFO: {
+    services: {
+      set: null,
+      remove: null
     }
   }
 });
@@ -52,5 +75,11 @@ export {
   delPlanPriceError,
   editPlanPriceRequest,
   editPlanPriceSuccess,
-  editPlanPriceError
+  editPlanPriceError,
+  servicePlanPriceRequest,
+  servicePlanPriceSuccess,
+  servicePlanPriceError,
+  setPriceInfo,
+  setPlanInfoServices,
+  removePlanInfoServices
 };

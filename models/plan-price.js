@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose');
 const schema = new Schema({
   idPlan: { type: String, require: true },
   typePrice: { type: String },
-  // idService: { type: Schema.Types.ObjectId, ref: 'services' },
+  idService: { type: String },
   name: { type: String },
   price: { type: Number },
   count: { type: Number },

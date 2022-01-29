@@ -1,14 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { PrettyPrice } from '../../componetns';
+
 const BtnAddPlan = ({ thisHourInfo, time, style, paidSumm }) => {
   const contactsList = [
     { name: 'Компания', value: 'company' },
     { name: 'Телефон', value: 'phone' },
     { name: 'E-mail', value: 'mail' }
   ];
-  const price = thisHourInfo ? parseInt(thisHourInfo.price) : 0;
-  const discount = thisHourInfo ? parseInt(thisHourInfo.discount) : 0;
+  const price =
+    thisHourInfo && thisHourInfo.priceInfo && thisHourInfo.priceInfo.total
+      ? parseInt(thisHourInfo.priceInfo.total)
+      : 0;
+  const discount =
+    thisHourInfo && thisHourInfo.priceInfo && thisHourInfo.priceInfo.totalDiscount
+      ? parseInt(thisHourInfo.priceInfo.totalDiscount)
+      : 0;
   const status = thisHourInfo ? thisHourInfo.status : '';
   const paymentType = thisHourInfo ? thisHourInfo.paymentTypeObj : {};
 
@@ -64,19 +72,14 @@ const BtnAddPlan = ({ thisHourInfo, time, style, paidSumm }) => {
                 {!!price && (
                   <div className="shedule-booking__item shedule-booking--price">
                     <div className="shedule-booking__value">
-                      Итого,{' '}
-                      {(thisHourInfo.priceService + thisHourInfo.price)
-                        .toString()
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}{' '}
-                      руб.
+                      Итого, <PrettyPrice price={price} /> руб.
                     </div>
                   </div>
                 )}
                 {!!discount && (
                   <div className="shedule-booking__item shedule-booking--discount">
                     <div className="shedule-booking__value">
-                      (Включая скидку{' '}
-                      {thisHourInfo.discount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} руб.)
+                      (Включая скидку <PrettyPrice price={discount} /> руб.)
                     </div>
                   </div>
                 )}
@@ -85,8 +88,7 @@ const BtnAddPlan = ({ thisHourInfo, time, style, paidSumm }) => {
                     <b>Оплачено полностью</b>
                   ) : (
                     <b>
-                      Осталось оплатить: {paidSumm.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}{' '}
-                      руб.{' '}
+                      Осталось оплатить: <PrettyPrice price={thisHourInfo.paidSumm} /> руб.
                     </b>
                   )}
                 </div>
