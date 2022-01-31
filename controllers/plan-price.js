@@ -19,10 +19,10 @@ module.exports.addPlanPrice = async (req, res) => {
       idPlan,
       typePrice,
       name,
-      price: newPrice,
+      price: Math.round(newPrice),
       count: newCount,
-      discount: newDiscount,
-      total: newPrice * newCount - newDiscount
+      discount: Math.round(newDiscount),
+      total: Math.round(newPrice * newCount - newDiscount)
     };
     const priceNew = new PlanPrice(newPlanPrice);
 
@@ -98,7 +98,12 @@ module.exports.editPlanPrice = async (req, res) => {
     }
 
     const total = price * count - discount;
-    const newPlanPrice = { price, count, discount, total };
+    const newPlanPrice = {
+      price: Math.round(price),
+      count: Math.round(count),
+      discount: Math.round(discount),
+      total: Math.round(total)
+    };
 
     await PlanPrice.updateOne({ _id: req.params.id }, newPlanPrice, { new: true });
 
@@ -133,10 +138,10 @@ module.exports.addServicesPlanPrice = async (req, res) => {
           idPlan,
           typePrice: 'service',
           name: item.name,
-          price: item.price,
+          price: Math.round(item.price),
           count: countItem,
           discount: 0,
-          total: totalPriceItem,
+          total: Math.round(totalPriceItem),
           idService: item._id,
           hourly: item.hourly
         };
