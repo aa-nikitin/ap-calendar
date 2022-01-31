@@ -21,10 +21,10 @@ const getPriceInfo = async (idPlan) => {
     const percentDisount = totalDiscount ? Math.round((totalDiscount * 100) / summWithoutSale) : 0;
 
     return {
-      addServices,
-      total: summTotal,
+      addServices: Math.round(addServices),
+      total: Math.round(summTotal),
       percentDisount,
-      totalDiscount
+      totalDiscount: Math.round(totalDiscount)
     };
   } catch (error) {
     return { error };
