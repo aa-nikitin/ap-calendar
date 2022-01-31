@@ -171,10 +171,10 @@ module.exports = async (params, client, clientID) => {
         idPlan: newPlan._id,
         typePrice: 'main',
         name: `Аренда зала: ${nameHall}`,
-        price: priceUnit,
+        price: Math.round(priceUnit),
         count: countPricePlan,
-        discount,
-        total: priceUnit * countPricePlan - discount,
+        discount: Math.round(discount),
+        total: Math.round(priceUnit * countPricePlan - discount),
         hourly: true
       };
       if (!planPrice) {
