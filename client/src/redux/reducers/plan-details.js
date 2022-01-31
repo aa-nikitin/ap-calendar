@@ -13,7 +13,10 @@ import {
   getRefreshDetailsError,
   setPriceInfo,
   removePlanInfoServices,
-  setPlanInfoServices
+  setPlanInfoServices,
+  changeRecalcPlanInfoRequest,
+  changeRecalcPlanInfoSuccess,
+  changeRecalcPlanInfoError
 } from '../actions';
 
 const loading = handleActions(
@@ -23,7 +26,10 @@ const loading = handleActions(
     [getPlanDetailsError]: (_state) => false,
     [getRefreshDetailsRequest]: (_state) => true,
     [getRefreshDetailsSuccess]: (_state) => false,
-    [getRefreshDetailsError]: (_state) => false
+    [getRefreshDetailsError]: (_state) => false,
+    [changeRecalcPlanInfoRequest]: (_state) => true,
+    [changeRecalcPlanInfoSuccess]: (_state) => false,
+    [changeRecalcPlanInfoError]: (_state) => false
   },
   false
 );
@@ -34,7 +40,10 @@ const error = handleActions(
     [getPlanDetailsError]: (_state, { payload }) => payload,
     [getRefreshDetailsRequest]: (_state) => null,
     [getRefreshDetailsSuccess]: (_state) => null,
-    [getRefreshDetailsError]: (_state, { payload }) => payload
+    [getRefreshDetailsError]: (_state, { payload }) => payload,
+    [changeRecalcPlanInfoRequest]: (_state) => null,
+    [changeRecalcPlanInfoSuccess]: (_state) => null,
+    [changeRecalcPlanInfoError]: (_state, { payload }) => payload
   },
   null
 );
@@ -66,6 +75,13 @@ const details = handleActions(
       });
 
       return nextState;
+    },
+    [changeRecalcPlanInfoSuccess]: (state, { payload }) => {
+      const nextState = produce(state, (draft) => {
+        draft.priceInfo = payload.priceInfo;
+      });
+
+      return nextState;
     }
   },
   []
@@ -77,7 +93,10 @@ const query = handleActions(
     [getPlanDetailsError]: (_state) => ({}),
     [getRefreshDetailsRequest]: (_state, { payload }) => payload,
     [getRefreshDetailsSuccess]: (_state) => ({}),
-    [getRefreshDetailsError]: (_state) => ({})
+    [getRefreshDetailsError]: (_state) => ({}),
+    [changeRecalcPlanInfoRequest]: (_state, { payload }) => payload,
+    [changeRecalcPlanInfoSuccess]: (_state) => ({}),
+    [changeRecalcPlanInfoError]: (_state) => ({})
   },
   {}
 );

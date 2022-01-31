@@ -21,6 +21,8 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import ruLocale from 'date-fns/locale/ru';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import PropTypes from 'prop-types';
 
@@ -150,7 +152,7 @@ const PlanForm = ({
         dateOrder,
         services: isChecked
       };
-      // console.log(dateOrder);
+
       onClick(newPlan);
       setValueDate(dateFrom);
     }
@@ -243,6 +245,14 @@ const PlanForm = ({
         <form className="form-box" onSubmit={formik.handleSubmit}>
           <div className="form-box__body form-box--body-columns">
             <div className="form-box__column form-box--column-plan-left">
+              <div className="form-box__row">
+                <Button
+                  variant="contained"
+                  onClick={handleShowService}
+                  endIcon={showServices ? <VisibilityOffIcon /> : <VisibilityIcon />}>
+                  Доп. услуги
+                </Button>
+              </div>
               <div className="form-box__row">
                 <div className="form-box__head">Дата</div>
                 <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
@@ -357,190 +367,204 @@ const PlanForm = ({
               </div>
             </div>
             <div className="form-box__column form-box--column-plan-right">
-              {!!planFreeTime && !!idHall && (
-                <>
-                  <Slider
-                    aria-label="Small steps"
-                    value={positionTime}
-                    step={minutesStep}
-                    marks
-                    min={minutesStep}
-                    max={planFreeTime}
-                    onChange={(_, value) => setPositionTime(value)}
-                    // valueLabelDisplay="off"
-                    // valueLabelFormat={(value) => aaa(value)}
-                  />
-                  {resultTime}
-                </>
-              )}
-
-              {planFree && (
-                <div className="available-time">
-                  {planFree.map(({ time: timeFree, minutes, busy }) => {
-                    const activeTimeItem =
-                      minutes >= minutesAvailable && minutes < minutesAvailable + positionTime;
+              {showServices ? (
+                <FormGroup>
+                  <div className="checkbox-text checkbox-text--head">
+                    <div className="checkbox-text__left"></div>
+                    <div className="checkbox-text__right">Цена</div>
+                  </div>
+                  {servicesList.map((item) => {
+                    const isChecked =
+                      formik.values.isChecked && formik.values.isChecked.indexOf(item._id) >= 0
+                        ? true
+                        : false;
                     return (
-                      <div
-                        onClick={refreshParamsPlan(
-                          { time: timeFree, minutes, date, idHall },
-                          !busy,
-                          {
-                            positionTime,
-                            minutesStep,
-                            planFreeTime
-                          }
-                        )}
-                        className={`available-time__item ${
-                          activeTimeItem ? 'available-time--active' : ''
-                        } ${busy ? 'available-time--busy' : ''}`}
-                        key={minutes}>
-                        {timeFree}
-                      </div>
+                      <FormControlLabel
+                        className="checkbox-text"
+                        key={item._id}
+                        control={
+                          <Checkbox
+                            checked={isChecked}
+                            onChange={handleChangeCheckGroup}
+                            name={item._id}
+                          />
+                        }
+                        label={
+                          <span className="checkbox-text__wrap">
+                            <span className="checkbox-text__left">{item.name}</span>
+                            <span className="checkbox-text__right">
+                              {item.priceText} руб. {item.hourly ? '/ ч.' : ''}
+                            </span>
+                          </span>
+                        }
+                        // label={`${item.name} - ${item.priceText} руб. ${item.hourly ? '/ ч' : ''}`}
+                      />
                     );
                   })}
-                </div>
-              )}
-              <div className="form-box__row">
-                <div className="form-box__head">Клиент</div>
-                <TabContext value={tabValue}>
-                  <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                    <Tab label="Найти" value="1" />
-                    <Tab label="Новый" value="2" />
-                  </TabList>
-                  <TabPanel value="1" style={{ padding: '10px 0px' }}>
-                    <div className="form-box__row-icon">
-                      <TextField
-                        fullWidth
-                        id="searchClient"
-                        name="searchClient"
-                        label="Поиск клиента"
-                        value={searchName}
-                        onChange={handleSearchName}
+                </FormGroup>
+              ) : (
+                <>
+                  {!!planFreeTime && !!idHall && (
+                    <>
+                      <Slider
+                        aria-label="Small steps"
+                        value={positionTime}
+                        step={minutesStep}
+                        marks
+                        min={minutesStep}
+                        max={planFreeTime}
+                        onChange={(_, value) => setPositionTime(value)}
+                        // valueLabelDisplay="off"
+                        // valueLabelFormat={(value) => aaa(value)}
                       />
-                      <ButtonIcon Icon={CloseIcon} title="Очистить" onClick={clearSearchName} />
-                    </div>
-                    <div className="form-box__row">
-                      {searchName && clients && clients.length > 0 && (
-                        <div className="form-box__drop-list drop-list">
-                          {clients.map((client) => {
-                            return (
-                              <div
-                                className="drop-list__item  drop-list--item-hover"
-                                key={client.id}
-                                onClick={handleClientSeclect(client)}>
-                                <div className="drop-list__name">
-                                  {client.name.first} {client.name.last}
-                                  {client.company ? ` (${client.company})` : ''}
-                                </div>
-                                {client.phone ? `Тел: ${client.phone}` : ''}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                    <div className="form-box__row">
-                      <div className="client-contacts">
-                        {contactsList.map(
-                          ({ name, value }) =>
-                            clientSelected[value] && (
-                              <div key={name} className="client-contacts__item">
-                                <div className="client-contacts__name">{name}:</div>
-                                <div className="client-contacts__value">
-                                  {clientSelected[value]}
-                                </div>
-                              </div>
-                            )
-                        )}
-                      </div>
-                    </div>
-                  </TabPanel>
-                  <TabPanel value="2" style={{ padding: '10px 0px' }}>
-                    <div className="form-box__row">
-                      <TextField
-                        fullWidth
-                        id="clientName"
-                        name="clientName"
-                        label="Имя клиента"
-                        value={formik.values.clientName}
-                        onChange={formik.handleChange}
-                        error={formik.touched.clientName && Boolean(formik.errors.clientName)}
-                        helperText={formik.touched.clientName && formik.errors.clientName}
-                      />
-                    </div>
-                    <div className="form-box__row">
-                      <TextField
-                        fullWidth
-                        id="clientAlias"
-                        name="clientAlias"
-                        label="Псевдоним"
-                        value={formik.values.clientAlias}
-                        onChange={formik.handleChange}
-                        error={formik.touched.clientAlias && Boolean(formik.errors.clientAlias)}
-                        helperText={formik.touched.clientAlias && formik.errors.clientAlias}
-                      />
-                    </div>
-                    <div className="form-box__row">
-                      <InputMask
-                        mask="+7 (999) 999-99-99"
-                        value={formik.values.clientPhone}
-                        onChange={formik.handleChange}
-                        disabled={false}
-                        error={formik.touched.clientPhone && Boolean(formik.errors.clientPhone)}
-                        helperText={formik.touched.clientPhone && formik.errors.clientPhone}>
-                        <TextField fullWidth id="clientPhone" name="clientPhone" label="Телефон" />
-                      </InputMask>
-                    </div>
-                    <div className="form-box__row">
-                      <TextField
-                        fullWidth
-                        id="clientEmail"
-                        name="clientEmail"
-                        label="Email"
-                        value={formik.values.clientEmail}
-                        onChange={formik.handleChange}
-                        error={formik.touched.clientEmail && Boolean(formik.errors.clientEmail)}
-                        helperText={formik.touched.clientEmail && formik.errors.clientEmail}
-                      />
-                    </div>
-                  </TabPanel>
-                </TabContext>
-                {!!servicesList && servicesList.length > 0 && (
-                  <div className="form-box__row">
-                    <div
-                      className={`form-box__head-link ${showServices ? 'active' : ''}`}
-                      onClick={handleShowService}>
-                      Доп. услуги ({showServices ? 'Скрыть' : 'Показать'})
-                    </div>
-                    {showServices && (
-                      <FormGroup>
-                        {servicesList.map((item) => {
-                          const isChecked =
-                            formik.values.isChecked &&
-                            formik.values.isChecked.indexOf(item._id) >= 0
-                              ? true
-                              : false;
-                          return (
-                            <FormControlLabel
-                              key={item._id}
-                              control={
-                                <Checkbox
-                                  checked={isChecked}
-                                  onChange={handleChangeCheckGroup}
-                                  name={item._id}
-                                />
+                      {resultTime}
+                    </>
+                  )}
+
+                  {planFree && (
+                    <div className="available-time">
+                      {planFree.map(({ time: timeFree, minutes, busy }) => {
+                        const activeTimeItem =
+                          minutes >= minutesAvailable && minutes < minutesAvailable + positionTime;
+                        return (
+                          <div
+                            onClick={refreshParamsPlan(
+                              { time: timeFree, minutes, date, idHall },
+                              !busy,
+                              {
+                                positionTime,
+                                minutesStep,
+                                planFreeTime
                               }
-                              label={`${item.name} - ${item.priceText} руб. ${
-                                item.hourly ? '/ ч' : ''
-                              }`}
+                            )}
+                            className={`available-time__item ${
+                              activeTimeItem ? 'available-time--active' : ''
+                            } ${busy ? 'available-time--busy' : ''}`}
+                            key={minutes}>
+                            {timeFree}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <div className="form-box__row">
+                    <div className="form-box__head">Клиент</div>
+                    <TabContext value={tabValue}>
+                      <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                        <Tab label="Найти" value="1" />
+                        <Tab label="Новый" value="2" />
+                      </TabList>
+                      <TabPanel value="1" style={{ padding: '10px 0px' }}>
+                        <div className="form-box__row-icon">
+                          <TextField
+                            fullWidth
+                            id="searchClient"
+                            name="searchClient"
+                            label="Поиск клиента"
+                            value={searchName}
+                            onChange={handleSearchName}
+                          />
+                          <ButtonIcon Icon={CloseIcon} title="Очистить" onClick={clearSearchName} />
+                        </div>
+                        <div className="form-box__row">
+                          {searchName && clients && clients.length > 0 && (
+                            <div className="form-box__drop-list drop-list">
+                              {clients.map((client) => {
+                                return (
+                                  <div
+                                    className="drop-list__item  drop-list--item-hover"
+                                    key={client.id}
+                                    onClick={handleClientSeclect(client)}>
+                                    <div className="drop-list__name">
+                                      {client.name.first} {client.name.last}
+                                      {client.company ? ` (${client.company})` : ''}
+                                    </div>
+                                    {client.phone ? `Тел: ${client.phone}` : ''}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                        <div className="form-box__row">
+                          <div className="client-contacts">
+                            {contactsList.map(
+                              ({ name, value }) =>
+                                clientSelected[value] && (
+                                  <div key={name} className="client-contacts__item">
+                                    <div className="client-contacts__name">{name}:</div>
+                                    <div className="client-contacts__value">
+                                      {clientSelected[value]}
+                                    </div>
+                                  </div>
+                                )
+                            )}
+                          </div>
+                        </div>
+                      </TabPanel>
+                      <TabPanel value="2" style={{ padding: '10px 0px' }}>
+                        <div className="form-box__row">
+                          <TextField
+                            fullWidth
+                            id="clientName"
+                            name="clientName"
+                            label="Имя клиента"
+                            value={formik.values.clientName}
+                            onChange={formik.handleChange}
+                            error={formik.touched.clientName && Boolean(formik.errors.clientName)}
+                            helperText={formik.touched.clientName && formik.errors.clientName}
+                          />
+                        </div>
+                        <div className="form-box__row">
+                          <TextField
+                            fullWidth
+                            id="clientAlias"
+                            name="clientAlias"
+                            label="Псевдоним"
+                            value={formik.values.clientAlias}
+                            onChange={formik.handleChange}
+                            error={formik.touched.clientAlias && Boolean(formik.errors.clientAlias)}
+                            helperText={formik.touched.clientAlias && formik.errors.clientAlias}
+                          />
+                        </div>
+                        <div className="form-box__row">
+                          <InputMask
+                            mask="+7 (999) 999-99-99"
+                            value={formik.values.clientPhone}
+                            onChange={formik.handleChange}
+                            disabled={false}
+                            error={formik.touched.clientPhone && Boolean(formik.errors.clientPhone)}
+                            helperText={formik.touched.clientPhone && formik.errors.clientPhone}>
+                            <TextField
+                              fullWidth
+                              id="clientPhone"
+                              name="clientPhone"
+                              label="Телефон"
                             />
-                          );
-                        })}
-                      </FormGroup>
-                    )}
+                          </InputMask>
+                        </div>
+                        <div className="form-box__row">
+                          <TextField
+                            fullWidth
+                            id="clientEmail"
+                            name="clientEmail"
+                            label="Email"
+                            value={formik.values.clientEmail}
+                            onChange={formik.handleChange}
+                            error={formik.touched.clientEmail && Boolean(formik.errors.clientEmail)}
+                            helperText={formik.touched.clientEmail && formik.errors.clientEmail}
+                          />
+                        </div>
+                      </TabPanel>
+                    </TabContext>
+                    {/* {!!servicesList && servicesList.length > 0 && (
+                    <div className="form-box__row">
+                      
+                    </div>
+                  )} */}
                   </div>
-                )}
-              </div>
+                </>
+              )}
             </div>
           </div>
           <div className="form-box__footer  form-box--footer-btn-panels">

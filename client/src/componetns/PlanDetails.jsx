@@ -9,6 +9,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
 import TextField from '@mui/material/TextField';
 import { useFormik } from 'formik';
+import moment from 'moment';
 import * as yup from 'yup';
 
 import {
@@ -29,7 +30,8 @@ import {
   getRefreshDetailsRequest,
   addPlanPriceRequest,
   delPlanPriceRequest,
-  editPlanPriceRequest
+  editPlanPriceRequest,
+  changeRecalcPlanInfoRequest
 } from '../redux/actions';
 import {
   getPlanDetails,
@@ -50,7 +52,7 @@ const validationSchema = yup.object({
   discountService: yup.string('Скидка')
 });
 
-const PlanDetails = ({ isSeparatePage }) => {
+const PlanDetails = ({ isSeparatePage, valueDate, setValueDate }) => {
   const [activeAddServise, setActiveAddServise] = useState(false);
   const [planPriceVal, setPlanPriceVal] = useState('');
   const [activePlanPrice, setActivePlanPrice] = useState('');
@@ -87,10 +89,9 @@ const PlanDetails = ({ isSeparatePage }) => {
           idPlan: detailsOrder.idPlan
         })
       );
-      // console.log(values, detailsOrder.idPlan);
     }
   });
-  // console.log(detailsOrder.priceInfo);
+
   const {
     loading: loadingPayments,
     list,
@@ -101,7 +102,7 @@ const PlanDetails = ({ isSeparatePage }) => {
     detailsOrder && detailsOrder.clientInfo && detailsOrder.clientInfo.socials
       ? Object.keys(detailsOrder.clientInfo.socials).length
       : [].length;
-
+  const thisDate = moment(valueDate).format('DD.MM.YYYY');
   const backToPlan = () => dispatch(setPlanDetailsVisible(false));
 
   const handleDelete = (id, idPlan) => () => {
@@ -134,12 +135,10 @@ const PlanDetails = ({ isSeparatePage }) => {
 
   const handleChangeService = (e) => {
     setPlanPriceVal(e.target.value);
-    // console.log(e.target.value);
   };
 
   const handleBlurService = (id, field, value) => (e) => {
-    if (parseInt(planPriceVal) >= 0) {
-      // console.log(detailsOrder.idPlan);
+    if (parseInt(planPriceVal) >= 0 && value !== planPriceVal) {
       dispatch(
         editPlanPriceRequest({
           id,
@@ -153,9 +152,7 @@ const PlanDetails = ({ isSeparatePage }) => {
     setActivePlanPrice('');
   };
 
-  const handleActivePlanPrice = (id, field, value) => () => {
-    // console.log(`${id}-${field}`);
-    // setPlanPriceVal(value);
+  const handleActivePlanPrice = (id, field) => () => {
     setActivePlanPrice(`${id}-${field}`);
   };
 
@@ -165,6 +162,14 @@ const PlanDetails = ({ isSeparatePage }) => {
     formik.setFieldValue('countService', '');
     formik.setFieldValue('discountService', '');
     setActiveAddServise(false);
+  };
+
+  const handleRecalcEstimate = () => {
+    dispatch(changeRecalcPlanInfoRequest({ idPlan: detailsOrder.idPlan }));
+  };
+
+  const handleDisableRecalcEstimate = () => {
+    dispatch(changeRecalcPlanInfoRequest({ idPlan: detailsOrder.idPlan, disable: true }));
   };
 
   useEffect(() => {
@@ -193,6 +198,7 @@ const PlanDetails = ({ isSeparatePage }) => {
               nameForm="Аренда"
               params={workShedule}
               thisHourInfo={detailsOrder.planInfo}
+              thisDate={thisDate}
               handleClick={handlePlanBtn(
                 {
                   idHall: detailsOrder.hall.idHall,
@@ -283,6 +289,32 @@ const PlanDetails = ({ isSeparatePage }) => {
                 nameForm="Ваши услуги"
               />
             </div>
+            {!detailsOrder.priceInfo || !detailsOrder.priceInfo.recalc ? (
+              <div className="recalc-estimate">
+                <div className="recalc-estimate__left">
+                  <div className="recalc-estimate__icon">
+                    <InfoIcon />
+                  </div>
+                  <div className="recalc-estimate__text">
+                    <div className="recalc-estimate__head">
+                      Отключен автоматический пересчёт сметы!
+                    </div>
+                    <div className="recalc-estimate__sub-head">
+                      Смета была изменена вручную. Следите за сметой при изменении заказа
+                    </div>
+                  </div>
+                </div>
+                <div className="recalc-estimate__button">
+                  <Button variant="contained" onClick={handleRecalcEstimate}>
+                    Пересчитать по прайсу
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button variant="contained" onClick={handleDisableRecalcEstimate}>
+                Отключить автоматический пересчёт сметы!
+              </Button>
+            )}
             <div className="table-list table-list--top-indent">
               <div className="table-list__head">
                 <div className="table-list__head-item">Услуга</div>
@@ -291,17 +323,9 @@ const PlanDetails = ({ isSeparatePage }) => {
                 <div className="table-list__head-item">Сумма, руб.</div>
               </div>
               <div className="table-list__body">
-                {/* <div className="table-list__item table-list--row">
-                  <div className="table-list__col">{detailsOrder.hall.name}</div>
-                  <div className="table-list__col">{detailsOrder.servicePrice.price}</div>
-                  <div className="table-list__col">{detailsOrder.servicePrice.discount}</div>
-                  <div className="table-list__col">
-                    <b>{detailsOrder.servicePrice.total}</b>
-                  </div>
-                </div> */}
                 {planPrice.map((element) => {
                   const { _id, name, count, price, discount, total, idService } = element;
-                  // console.log(element);
+
                   return (
                     <div key={_id} className="table-list__item table-list--row">
                       <div className="table-list__col">{name}</div>
@@ -608,10 +632,14 @@ const PlanDetails = ({ isSeparatePage }) => {
 };
 
 PlanDetails.propTypes = {
-  isSeparatePage: PropTypes.bool
+  isSeparatePage: PropTypes.bool,
+  valueDate: PropTypes.object,
+  setValueDate: PropTypes.func
 };
 PlanDetails.defaultProps = {
-  isSeparatePage: false
+  isSeparatePage: false,
+  valueDate: {},
+  setValueDate: () => {}
 };
 
 export { PlanDetails };

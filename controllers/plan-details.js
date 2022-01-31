@@ -1,5 +1,6 @@
 const moment = require('moment');
 const config = require('config');
+const _ = require('lodash');
 
 const formatDateConf = config.get('formatDate');
 const formatTimeConf = config.get('formatTime');
@@ -7,10 +8,19 @@ const formatTimeConf = config.get('formatTime');
 const Plan = require('../models/plan');
 const Clients = require('../models/clients');
 const Halls = require('../models/halls');
+const WorkShedule = require('../models/work-shedule');
+const Holidays = require('../models/holidays');
+const Price = require('../models/prices');
+const Discounts = require('../models/discounts');
+const PlanPrice = require('../models/plan-price');
 const PriceInfo = require('../models/price-info');
 const { daysOfWeekArr, paymentTypeArr, purposeArr, statusArr } = require('../config/priceSettings');
 const { arrToObj, formatPrice } = require('../libs/helper.functions');
 const { timeToMinutes } = require('../libs/handler-time');
+const groupPrices = require('../libs/group-prices');
+const calcPrice = require('../libs/calc-price');
+const calcDiscount = require('../libs/calc-discount');
+const { addPriceInfo } = require('../libs/price-info');
 const daysOfWeekObj = arrToObj(daysOfWeekArr);
 const paymentTypeObj = arrToObj(paymentTypeArr);
 const purposeObj = arrToObj(purposeArr);
@@ -136,6 +146,68 @@ module.exports.getPlanDetails = async (req, res) => {
     // const planNew = converterDiscountFromBase(plan, hallsObj);
 
     res.json(planDetail);
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+module.exports.recalcEstimate = async (req, res) => {
+  try {
+    const { idPlan, disable } = req.body;
+    if (!disable) {
+      const prices = await Price.find({}).sort('priority');
+      const pricesSort = _.reverse(prices);
+      const pricesObj = groupPrices(pricesSort);
+      const plan = await Plan.findOne({ _id: idPlan }).populate('hall');
+      const idHall = String(plan.hall._id);
+      const purpose = plan.purpose;
+      const shedule = await WorkShedule.findOne({});
+      const holidaysObj = await Holidays.find({});
+      const priceByPurpose =
+        pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
+      const price = calcPrice(plan, priceByPurpose, shedule, holidaysObj);
+      const discounts = await Discounts.find({});
+      const discount = calcDiscount({
+        plan,
+        discounts,
+        shedule,
+        holidays: holidaysObj,
+        price,
+        idHall
+      });
+      const planPrice = await PlanPrice.findOne({ idPlan, typePrice: 'main' });
+      // hourly: { type: Boolean, default: false }
+      const countPricePlan = plan.minutes / 60;
+      const priceUnit = price / countPricePlan;
+      const newPlanPrice = {
+        idPlan: idPlan,
+        typePrice: 'main',
+        name: `Аренда зала: ${plan.hall.name}`,
+        price: priceUnit,
+        count: countPricePlan,
+        discount,
+        total: priceUnit * countPricePlan - discount,
+        hourly: true
+      };
+      if (!planPrice) {
+        const createPlanPrice = new PlanPrice(newPlanPrice);
+
+        await createPlanPrice.save();
+      } else {
+        await PlanPrice.updateOne({ _id: planPrice._id }, newPlanPrice, { new: true });
+      }
+
+      await addPriceInfo(idPlan, true);
+
+      const priceInfo = await PriceInfo.findOne({ idPlan });
+      const planPriceResult = await PlanPrice.findOne({ idPlan, typePrice: 'main' });
+
+      res.json({ priceInfo, planPrice: planPriceResult });
+    } else {
+      await PriceInfo.updateOne({ idPlan }, { recalc: false }, { new: true });
+      const priceInfo = await PriceInfo.findOne({ idPlan });
+      res.json({ priceInfo: priceInfo, planPrice: false });
+    }
   } catch (error) {
     res.status(500).json({ message: error });
   }

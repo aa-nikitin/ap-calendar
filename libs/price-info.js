@@ -17,7 +17,8 @@ const getPriceInfo = async (idPlan) => {
       summWithoutSale += price * count;
       totalDiscount += discount;
     });
-    const percentDisount = Math.round((totalDiscount * 100) / summWithoutSale);
+
+    const percentDisount = totalDiscount ? Math.round((totalDiscount * 100) / summWithoutSale) : 0;
 
     return {
       addServices,
@@ -30,19 +31,27 @@ const getPriceInfo = async (idPlan) => {
   }
 };
 
-module.exports.addPriceInfo = async (idPlan) => {
+module.exports.addPriceInfo = async (idPlan, recalc) => {
   try {
     // const aaa = await PlanPrice.find({ idPlan }); idPlan
     const priceDetail = await getPriceInfo(idPlan);
-    // console.log(priceDetail);
     const priceInfo = await PriceInfo.findOne({ idPlan });
+
+    // console.log(priceDetail);
     if (!priceInfo) {
-      const newPriceInfo = new PriceInfo({ ...priceDetail, idPlan });
+      const newPriceInfo = new PriceInfo({
+        ...priceDetail,
+        idPlan,
+        recalc: recalc ? recalc : true
+      });
       await newPriceInfo.save();
     } else {
-      await PriceInfo.updateOne({ idPlan: idPlan }, { ...priceDetail, idPlan }, { new: true });
+      await PriceInfo.updateOne(
+        { idPlan },
+        { ...priceDetail, idPlan, recalc: recalc ? recalc : priceInfo.recalc },
+        { new: true }
+      );
     }
-
     // const aaa = await PriceInfo.findOne({ idPlan });
     // console.log(priceDetail);
     // return aaa;

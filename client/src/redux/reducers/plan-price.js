@@ -1,6 +1,8 @@
 import { handleActions } from 'redux-actions';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
+import produce from 'immer';
+import _ from 'lodash';
 
 import {
   getPlanPriceRequest,
@@ -17,7 +19,8 @@ import {
   editPlanPriceError,
   servicePlanPriceRequest,
   servicePlanPriceSuccess,
-  servicePlanPriceError
+  servicePlanPriceError,
+  changeRecalcPlanInfoSuccess
 } from '../actions';
 
 const loading = handleActions(
@@ -83,7 +86,18 @@ const list = handleActions(
     },
     [editPlanPriceError]: (_state) => [],
     [servicePlanPriceSuccess]: (state, { payload }) => [...state, ...payload],
-    [servicePlanPriceError]: (_state) => []
+    [servicePlanPriceError]: (_state) => [],
+    [changeRecalcPlanInfoSuccess]: (state, { payload }) => {
+      const index = _.findIndex(state, (item) => item._id === payload.planPrice._id);
+      const nextState =
+        index >= 0
+          ? produce(state, (draft) => {
+              draft[index] = payload.planPrice;
+            })
+          : [...state, payload.planPrice];
+
+      return payload.planPrice ? nextState : state;
+    }
   },
   []
 );
@@ -121,7 +135,7 @@ export const getPlanPriceList = createSelector(
 
       return { ...item, price: priceFormat, discount: discountFormat, total: totalFormat };
     });
-    // console.log(newPlanPriceList);
+
     return newPlanPriceList;
   }
 );

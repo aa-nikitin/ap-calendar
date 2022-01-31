@@ -1,10 +1,9 @@
-const _ = require('lodash');
-const mongoose = require('mongoose');
 const config = require('config');
 
 const hourSize = config.get('hourSize');
 
 const PlanPrice = require('../models/plan-price');
+const PriceInfo = require('../models/price-info');
 const Plan = require('../models/plan');
 
 const { addPriceInfo } = require('../libs/price-info');
@@ -52,8 +51,10 @@ module.exports.deletePlanPriceById = async (req, res) => {
   try {
     // const prices = await PlanPrice.find({ idPlan: req.params.id });
     const { idPlan, idService } = req.body.params;
+
+    const { typePrice } = await PlanPrice.findOne({ _id: req.params.id });
+
     await PlanPrice.deleteOne({ _id: req.params.id });
-    await addPriceInfo(idPlan);
 
     const plan = await Plan.findOne({ _id: idPlan });
     const newPlanServices = plan.services.filter((item) => {
@@ -63,7 +64,10 @@ module.exports.deletePlanPriceById = async (req, res) => {
     });
 
     await Plan.updateOne({ _id: idPlan }, { services: newPlanServices }, { new: true });
-    // console.log(newPlanServices);
+    if (typePrice === 'main') {
+      await PriceInfo.updateOne({ idPlan }, { recalc: false }, { new: true });
+    }
+    await addPriceInfo(idPlan);
 
     res.json({ id: req.params.id });
   } catch (error) {
@@ -97,6 +101,10 @@ module.exports.editPlanPrice = async (req, res) => {
     const newPlanPrice = { price, count, discount, total };
 
     await PlanPrice.updateOne({ _id: req.params.id }, newPlanPrice, { new: true });
+
+    if (planPriceFind.typePrice === 'main')
+      await PriceInfo.updateOne({ idPlan }, { recalc: false }, { new: true });
+
     await addPriceInfo(idPlan);
 
     res.json({ id: req.params.id, field, ...newPlanPrice });
@@ -123,13 +131,14 @@ module.exports.addServicesPlanPrice = async (req, res) => {
         const totalPriceItem = Math.round(parseInt(item.price) * countItem);
         const newPlanPrice = {
           idPlan,
-          typePrice: '',
+          typePrice: 'service',
           name: item.name,
           price: item.price,
           count: countItem,
           discount: 0,
           total: totalPriceItem,
-          idService: item._id
+          idService: item._id,
+          hourly: item.hourly
         };
         const priceNew = new PlanPrice(newPlanPrice);
 

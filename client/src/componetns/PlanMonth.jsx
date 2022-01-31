@@ -24,12 +24,10 @@ const PlanMonth = ({ valueDate, setValueDate }) => {
   const planCalendar = useSelector((state) => getPlanCalendar(state));
   const thisDate = moment(valueDate).format('DD.MM.YYYY');
   const handlePlan = (values) => {
-    // console.log(values);
     dispatch(planFetchAddRequest({ ...values, typePlan: 'planMonth' }));
   };
   const handlePlanBtn = (obj, thisHourInfo) => (refreshObj) => {
     const workObj = refreshObj ? refreshObj : obj;
-    // console.log(refreshObj, obj);
     if (!thisHourInfo) dispatch(planDataRequest(workObj));
     else {
       dispatch(planDataRequest({ ...workObj, idPlan: thisHourInfo.id }));
@@ -61,7 +59,6 @@ const PlanMonth = ({ valueDate, setValueDate }) => {
   const thisDayPlan =
     planMonth && planMonth[thisDate] && planMonth[thisDate].length > 0 ? planMonth[thisDate] : [];
 
-  //   console.log(thisDayPlan);
   if (planFetch) return <Loading />;
   return (
     <div className="content-page__main">
@@ -74,6 +71,7 @@ const PlanMonth = ({ valueDate, setValueDate }) => {
               nameForm="Аренда"
               params={workShedule}
               handleClick={handlePlanBtn({ date: thisDate })}
+              thisDate={thisDate}
             />
           </div>
           <div className="content-page__panel-btn">
@@ -123,7 +121,6 @@ const PlanMonth = ({ valueDate, setValueDate }) => {
               planCalendar.map((item) => {
                 const isPlanDay =
                   planMonth && planMonth[item.date] && planMonth[item.date].length > 0;
-                // console.log(isPlanDay);
                 return (
                   <div
                     className={`calendar__item-wrap ${
@@ -148,7 +145,6 @@ const PlanMonth = ({ valueDate, setValueDate }) => {
           {thisDayPlan.length > 0 ? (
             <div className="plan-month__body">
               {thisDayPlan.map((item) => {
-                // console.log(item);
                 return (
                   <div className="plan-month__item-wrap" key={item.id}>
                     <div className="plan-month__item-info">
@@ -170,6 +166,7 @@ const PlanMonth = ({ valueDate, setValueDate }) => {
                         CustomBtn={BtnChangePlanMonth({
                           thisPlanInfo: item
                         })}
+                        thisDate={thisDate}
                       />
                     </div>
                     <div onClick={handleDetailShedule(item.id)} className="plan-month__detail">

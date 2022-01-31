@@ -209,7 +209,6 @@ module.exports.addOrders = async (req, res) => {
 
       await clientFromDB.save();
     }
-
     const client = {
       name: trim(`${clientFromDB.name.first} ${clientFromDB.name.last}`),
       phone: transformEmpty(clientFromDB.phone),

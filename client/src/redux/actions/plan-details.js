@@ -13,6 +13,13 @@ const {
       error: getRefreshDetailsError
     },
     setVisible: setPlanDetailsVisible
+  },
+  planInfo: {
+    changeRecalc: {
+      request: changeRecalcPlanInfoRequest,
+      success: changeRecalcPlanInfoSuccess,
+      error: changeRecalcPlanInfoError
+    }
   }
 } = createActions({
   PLAN: {
@@ -27,9 +34,16 @@ const {
       ERROR: null
     },
     SET_VISIBLE: null
+  },
+  PLAN_INFO: {
+    CHANGE_RECALC: {
+      REQUEST: null,
+      SUCCESS: null,
+      ERROR: null
+    }
   }
 });
-
+// , changeRecalc: changePriceInfoRecalc
 export {
   getPlanDetailsRequest,
   getPlanDetailsSuccess,
@@ -37,5 +51,8 @@ export {
   setPlanDetailsVisible,
   getRefreshDetailsRequest,
   getRefreshDetailsSuccess,
-  getRefreshDetailsError
+  getRefreshDetailsError,
+  changeRecalcPlanInfoRequest,
+  changeRecalcPlanInfoSuccess,
+  changeRecalcPlanInfoError
 };

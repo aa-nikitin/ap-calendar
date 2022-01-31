@@ -13,12 +13,15 @@ const WorkShedule = require('../models/work-shedule');
 const Holidays = require('../models/holidays');
 const Price = require('../models/prices');
 const PlanPrice = require('../models/plan-price');
+const PriceInfo = require('../models/price-info');
+const Services = require('../models/services');
 // const Services = require('../models/services');
 const groupPrices = require('../libs/group-prices');
 const { calculateFreeTime } = require('../libs/handler-time');
 const calcPrice = require('../libs/calc-price');
 const calcDiscount = require('../libs/calc-discount');
 const { addPriceInfo } = require('../libs/price-info');
+const hourSize = config.get('hourSize');
 // const calcServices = require('../libs/calc-services');
 
 module.exports = async (params, client, clientID) => {
@@ -38,7 +41,6 @@ module.exports = async (params, client, clientID) => {
       paymentMethod,
       services
     } = params;
-
     const dateOrder = moment(params.dateOrderFormat, 'DD.MM.YYYY HH:mm');
     const formateDate = moment(`${date}`, formatDateConf);
     const formateTime = moment(`${dateForTimeConf} ${time}`, `${formatDateConf} ${formatTimeConf}`);
@@ -67,6 +69,51 @@ module.exports = async (params, client, clientID) => {
 
     if (!(hoursCount >= minutes)) throw 'Указанное время занято';
 
+    const servicesPlanPrice = await PlanPrice.find({ idPlan, typePrice: 'service' });
+    const servicesForAdd = services ? [...services] : [];
+
+    // console.log(servicesPlanPrice, services);
+    const servicesPlanPriceDel = servicesPlanPrice.map(async (item) => {
+      const toDelete = services.indexOf(item.idService);
+      if (toDelete < 0) {
+        await PlanPrice.deleteOne({ _id: item._id });
+      } else {
+        // console.log(item.idService);
+        delete servicesForAdd[toDelete];
+        // servicesForAdd.splice(toDelete, 1);
+      }
+      return item;
+    });
+    await Promise.all(servicesPlanPriceDel);
+
+    const servicesForAddFull = await Services.find({
+      _id: { $in: servicesForAdd }
+    });
+
+    const count = minutes / hourSize;
+    const planPriceServiceResult = servicesForAddFull.map(async (item) => {
+      const countItem = item.hourly ? count : 1;
+      const totalPriceItem = Math.round(parseInt(item.price) * countItem);
+      const planPriceObj = {
+        idPlan,
+        typePrice: 'service',
+        name: item.name,
+        price: item.price,
+        count: countItem,
+        discount: 0,
+        total: totalPriceItem,
+        idService: item._id,
+        hourly: item.hourly
+      };
+      const planPriceNew = new PlanPrice(planPriceObj);
+
+      await planPriceNew.save();
+
+      return planPriceObj;
+    });
+
+    await Promise.all(planPriceServiceResult);
+
     const newPlanObj = {
       date: formateDate,
       time: formateTime,
@@ -93,8 +140,6 @@ module.exports = async (params, client, clientID) => {
     const price = calcPrice(newPlanObj, priceByPurpose, shedule, holidaysObj);
 
     const { name: nameHall } = await Halls.findOne({ _id: idHall });
-    // const servicesAll = await Services.find({});
-    // const priceService = calcServices(services ? services : [], servicesAll, minutes);
     const discount = calcDiscount({
       plan: newPlanObj,
       discounts,
@@ -103,32 +148,6 @@ module.exports = async (params, client, clientID) => {
       price,
       idHall
     });
-
-    /*---price---*/
-
-    // let priceNew = price;
-    // let discountNew = discount;
-    // let priceServiceNew = 0;
-
-    // if (!!idPlan) {
-    //   const comparePlanServices = comparePlan.services.map((item) => String(item));
-    //   const isChangedServices =
-    //     _.difference(services, comparePlanServices).length !== 0 ||
-    //     _.difference(comparePlanServices, services).length !== 0;
-
-    //   priceNew = comparePlan.minutes !== minutes ? price : comparePlan.price;
-    //   discountNew = comparePlan.minutes !== minutes ? discount : comparePlan.discount;
-    //   priceServiceNew =
-    //     comparePlan.minutes !== minutes || isChangedServices
-    //       ? priceService
-    //       : comparePlan.priceService;
-    // }
-
-    // newPlanObj.price = priceNew;
-    // newPlanObj.discount = discountNew > priceNew ? priceNew : discountNew;
-    // newPlanObj.priceService = priceServiceNew;
-
-    /*---end price---*/
 
     let newPlan = {};
     if (!idPlan) {
@@ -140,30 +159,34 @@ module.exports = async (params, client, clientID) => {
 
       newPlan = await Plan.findOne({ _id: idPlan });
     }
+    const priceInfoFind = await PriceInfo.findOne({ idPlan });
+    const recalc = priceInfoFind ? priceInfoFind.recalc : {};
 
-    const planPrice = await PlanPrice.findOne({ idPlan, typePrice: 'main' });
-    // hourly: { type: Boolean, default: false }
-    const countPricePlan = minutes / 60;
-    const priceUnit = price / countPricePlan;
-    const newPlanPrice = {
-      idPlan: newPlan._id,
-      typePrice: 'main',
-      name: `Аренда зала: ${nameHall}`,
-      price: priceUnit,
-      count: countPricePlan,
-      discount,
-      total: priceUnit * countPricePlan - discount,
-      hourly: true
-    };
-    if (!planPrice) {
-      const createPlanPrice = new PlanPrice(newPlanPrice);
+    if (recalc) {
+      const planPrice = await PlanPrice.findOne({ idPlan, typePrice: 'main' });
+      // hourly: { type: Boolean, default: false }
+      const countPricePlan = minutes / 60;
+      const priceUnit = price / countPricePlan;
+      const newPlanPrice = {
+        idPlan: newPlan._id,
+        typePrice: 'main',
+        name: `Аренда зала: ${nameHall}`,
+        price: priceUnit,
+        count: countPricePlan,
+        discount,
+        total: priceUnit * countPricePlan - discount,
+        hourly: true
+      };
+      if (!planPrice) {
+        const createPlanPrice = new PlanPrice(newPlanPrice);
 
-      await createPlanPrice.save();
-    } else {
-      await PlanPrice.updateOne({ _id: planPrice._id }, newPlanPrice, { new: true });
+        await createPlanPrice.save();
+      } else {
+        await PlanPrice.updateOne({ _id: planPrice._id }, newPlanPrice, { new: true });
+      }
+
+      await addPriceInfo(newPlan._id);
     }
-
-    await addPriceInfo(newPlan._id);
 
     return newPlan;
     // res.status(201).json({});

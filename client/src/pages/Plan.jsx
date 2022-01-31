@@ -18,7 +18,8 @@ const Plan = () => {
   //   dispatch(planHallsRequest(thisDate));
   // }, [dispatch, thisDate]);
 
-  if (isVisiblePlanDetails) return <PlanDetails isSeparatePage={true} />;
+  if (isVisiblePlanDetails)
+    return <PlanDetails valueDate={valueDate} setValueDate={setValueDate} isSeparatePage={true} />;
 
   const handleChangeTypePlan = (_event, newTypelan) => {
     if (newTypelan) setTypePlan(newTypelan);

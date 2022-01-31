@@ -1,0 +1,27 @@
+.recalc-estimate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: $yellow;
+  padding: 14px 20px 12px;
+  &__text {
+  }
+  &__button {
+    margin-left: 10px;
+  }
+  &__left {
+    display: flex;
+    align-items: center;
+  }
+  &__icon {
+    margin-right: 20px;
+  }
+  &__head {
+    font-weight: bold;
+    font-size: 18px;
+  }
+  &__sub-head {
+    margin-top: 2px;
+    font-size: 14px;
+  }
+}
