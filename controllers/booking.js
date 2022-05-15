@@ -406,7 +406,7 @@ module.exports.bookingNotice = async (req, res) => {
       await Promise.all(allPaymentsPlans);
 
       const priceFormat = formatPrice(parseInt(sum));
-      console.log(priceFormat);
+      console.log('1 - ', priceFormat);
       await sendMailer({
         subject: `Оплата заказа на сумму ${priceFormat} руб.`,
         html: `

@@ -17,7 +17,6 @@ const handlerPayments = (payments) =>
   payments.map((item) => {
     const { paymentType, paymentDate, paymentWay, paymentSum, paymentPurpose, idPlan, id } = item;
 
-    console.log('1 - ', paymentSum);
     return {
       paymentType,
       paymentDate: moment(paymentDate).format(formatDateConf),
