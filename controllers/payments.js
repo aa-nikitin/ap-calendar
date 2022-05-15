@@ -99,6 +99,7 @@ module.exports.sendBill = async (req, res) => {
     const { priceBill, idPlan, dateOrder } = req.body;
     const { loginPK, passPK, serverPK } = await Paykeeper.findOne({});
     const prepayment = await Prepayment.findOne({});
+
     const plan = await Plan.findOne({
       _id: idPlan
     })
@@ -129,16 +130,7 @@ module.exports.sendBill = async (req, res) => {
     const timeToFormat = moment(plan.time).add(plan.minutes, 'm').format(formatTimeConf);
     serviceName += ` ${plan.hall.name} (${dateFormat} ${timeFormat} - ${timeToFormat});`;
     const expiryPrepayment = moment(dateOrder, 'DD.MM.YYYY HH:mm').add(prepayment.hours, 'h');
-    // console.log(dateOrder, expiryPrepayment.format('DD.MM.YYYY HH:mm'));
-
-    await sendMailer({
-      to: clientEmail,
-      subject: `Счет на оплату ${priceBill}`,
-      html: `
-      <a href="#">Ссылка на оплату счета</a>
-    `
-    });
-
+    console.log(dateOrder, expiryPrepayment.format('DD.MM.YYYY HH:mm'));
     const { invoice_id, invoice_url } = JSON.parse(
       await requestFunc({
         method: 'POST',
@@ -158,7 +150,6 @@ module.exports.sendBill = async (req, res) => {
         }
       })
     );
-
     const percentResult = ((priceBill * 100) / plan.price).toFixed(2);
     const invoicesNew = new Invoices({
       invoiceID: invoice_id,
