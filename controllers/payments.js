@@ -12,6 +12,7 @@ const calcPayments = require('../libs/payments-calc');
 
 const formatDateConf = config.get('formatDate');
 const formatTimeConf = config.get('formatTime');
+const sendMailer = require('../libs/sendmailer');
 
 const handlerPayments = (payments) =>
   payments.map((item) => {
