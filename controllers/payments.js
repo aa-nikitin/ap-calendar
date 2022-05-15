@@ -148,13 +148,14 @@ module.exports.sendBill = async (req, res) => {
         }
       })
     );
-    const percentResult = (priceBill * 100).toFixed(2);
+
+    // const percentResult = ((priceBill * 100) / plan.price).toFixed(2);
     const invoicesNew = new Invoices({
       invoiceID: invoice_id,
       invoiceUrl: invoice_url,
       listPlans: [plan.id],
       orderId: parseInt(invoicesOrderId),
-      percent: percentResult
+      percent: 0
     });
 
     await invoicesNew.save();
