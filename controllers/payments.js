@@ -150,7 +150,7 @@ module.exports.sendBill = async (req, res) => {
         }
       })
     );
-    console.log('2');
+    console.log(invoice_id, invoice_url, plan, invoicesOrderId, percentResult);
     const percentResult = ((priceBill * 100) / plan.price).toFixed(2);
     const invoicesNew = new Invoices({
       invoiceID: invoice_id,
