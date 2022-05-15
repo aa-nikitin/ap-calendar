@@ -99,7 +99,6 @@ module.exports.sendBill = async (req, res) => {
     const { priceBill, idPlan, dateOrder } = req.body;
     const { loginPK, passPK, serverPK } = await Paykeeper.findOne({});
     const prepayment = await Prepayment.findOne({});
-    console.log(req.body, loginPK, passPK, serverPK);
     const plan = await Plan.findOne({
       _id: idPlan
     })
@@ -150,16 +149,14 @@ module.exports.sendBill = async (req, res) => {
         }
       })
     );
-    console.log(
-      token,
-      clientName,
-      invoicesOrderId,
-      priceBill,
-      clientEmail,
-      clientPhone,
-      serviceName
-    );
-    console.log(invoice_id, invoice_url);
+
+    await sendMailer({
+      subject: `Счет на оплату ${priceBill}`,
+      html: `
+      <a href="${invoice_url}">Ссылка на оплату счета</a>
+    `
+    });
+
     const percentResult = ((priceBill * 100) / plan.price).toFixed(2);
     const invoicesNew = new Invoices({
       invoiceID: invoice_id,
