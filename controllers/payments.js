@@ -130,6 +130,7 @@ module.exports.sendBill = async (req, res) => {
     const timeToFormat = moment(plan.time).add(plan.minutes, 'm').format(formatTimeConf);
     serviceName += ` ${plan.hall.name} (${dateFormat} ${timeFormat} - ${timeToFormat});`;
     const expiryPrepayment = moment(dateOrder, 'DD.MM.YYYY HH:mm').add(prepayment.hours, 'h');
+    console.log('1');
     const { invoice_id, invoice_url } = JSON.parse(
       await requestFunc({
         method: 'POST',
@@ -149,6 +150,7 @@ module.exports.sendBill = async (req, res) => {
         }
       })
     );
+    console.log('2');
     const percentResult = ((priceBill * 100) / plan.price).toFixed(2);
     const invoicesNew = new Invoices({
       invoiceID: invoice_id,
@@ -158,16 +160,19 @@ module.exports.sendBill = async (req, res) => {
       percent: percentResult
     });
 
+    console.log('3');
     await invoicesNew.save();
 
-    console.log(clientName);
+    console.log('4');
     await Plan.updateOne(
       { _id: plan._id },
       { invoices: [...plan.invoices, invoicesNew._id] },
       { new: true }
     );
 
+    console.log('5');
     res.json({ invoice_id, invoice_url });
+    console.log('6');
   } catch (error) {
     res.status(500).json({ message: error });
   }
