@@ -389,7 +389,7 @@ module.exports.bookingNotice = async (req, res) => {
           paymentType: 'income',
           paymentDate: moment(),
           paymentWay: 'сashless',
-          paymentSum: priceCalcPercent,
+          paymentSum: priceCalcPercent ? priceCalcPercent : 0,
           paymentPurpose: '',
           idPlan: item,
           invoiceID: invoiceID,
