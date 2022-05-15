@@ -161,7 +161,7 @@ module.exports.sendBill = async (req, res) => {
 
     await sendMailer({
       to: clientEmail,
-      subject: `Выставлен счет на сумму ${priceFormat} руб.`,
+      subject: `Выставлен счет на сумму ${priceBill} руб.`,
       html: `
       <a href="${invoice_url}">Ссылка на оплату счета</a>
     `
