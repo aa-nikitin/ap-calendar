@@ -378,8 +378,9 @@ module.exports.bookingNotice = async (req, res) => {
         const timeFormat = moment(plan.time).format(formatTimeConf);
         const timeToFormat = moment(plan.time).add(plan.minutes, 'm').format(formatTimeConf);
         const priceCalc = plan.price - plan.discount;
+        console.log('1 - ', plan);
         const priceCalcPercent = parseInt(Math.ceil((priceCalc / 100) * percent));
-        console.log('1 - ', priceCalcPercent, priceCalc, percent);
+        console.log('2 - ', priceCalcPercent, priceCalc, percent);
         const textPlan = `<div><a href="${hostname}/detail-plan/${plan.id}">${plan.hall.name} (${dateFormat} ${timeFormat} - ${timeToFormat})</a></div>`;
         textPlans += textPlan;
         if (key === 0) {
