@@ -99,7 +99,7 @@ module.exports.sendBill = async (req, res) => {
     const { priceBill, idPlan, dateOrder } = req.body;
     const { loginPK, passPK, serverPK } = await Paykeeper.findOne({});
     const prepayment = await Prepayment.findOne({});
-    console.log(req.body);
+    console.log(req.body, loginPK, passPK, serverPK);
     const plan = await Plan.findOne({
       _id: idPlan
     })
@@ -115,6 +115,7 @@ module.exports.sendBill = async (req, res) => {
         }
       })
     );
+    console.log(token);
     const invoicesLast = await Invoices.findOne().sort({ orderId: -1 }).limit(1);
     const invoicesOrderId = invoicesLast && invoicesLast.orderId ? invoicesLast.orderId + 1 : 1;
     // console.log(plan);
