@@ -130,7 +130,6 @@ module.exports.sendBill = async (req, res) => {
     const timeToFormat = moment(plan.time).add(plan.minutes, 'm').format(formatTimeConf);
     serviceName += ` ${plan.hall.name} (${dateFormat} ${timeFormat} - ${timeToFormat});`;
     const expiryPrepayment = moment(dateOrder, 'DD.MM.YYYY HH:mm').add(prepayment.hours, 'h');
-    console.log(dateOrder, expiryPrepayment.format('DD.MM.YYYY HH:mm'));
     const { invoice_id, invoice_url } = JSON.parse(
       await requestFunc({
         method: 'POST',
@@ -161,6 +160,7 @@ module.exports.sendBill = async (req, res) => {
 
     await invoicesNew.save();
 
+    console.log(clientName);
     await Plan.updateOne(
       { _id: plan._id },
       { invoices: [...plan.invoices, invoicesNew._id] },
