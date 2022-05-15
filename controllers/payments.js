@@ -115,7 +115,6 @@ module.exports.sendBill = async (req, res) => {
         }
       })
     );
-    console.log(token);
     const invoicesLast = await Invoices.findOne().sort({ orderId: -1 }).limit(1);
     const invoicesOrderId = invoicesLast && invoicesLast.orderId ? invoicesLast.orderId + 1 : 1;
     // console.log(plan);
@@ -151,6 +150,16 @@ module.exports.sendBill = async (req, res) => {
         }
       })
     );
+    console.log(
+      token,
+      clientName,
+      invoicesOrderId,
+      priceBill,
+      clientEmail,
+      clientPhone,
+      serviceName
+    );
+    console.log(invoice_id, invoice_url);
     const percentResult = ((priceBill * 100) / plan.price).toFixed(2);
     const invoicesNew = new Invoices({
       invoiceID: invoice_id,
