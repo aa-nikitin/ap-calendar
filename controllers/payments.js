@@ -61,8 +61,9 @@ module.exports.addPayments = async (req, res) => {
     const { paymentType, paymentDate, paymentWay, paymentSum, paymentPurpose, idPlan } = req.body;
     const plan = await Plan.findOne({ _id: idPlan });
     const formatPaymentDate = moment(paymentDate, formatDateConf);
-    console.log(paymentSum);
+    // console.log(paymentSum);
     const paymentSumInt = parseInt(paymentSum);
+    console.log(paymentSumInt);
     const formatPaymentSum = paymentSumInt ? paymentSumInt : 0;
     const payments = new Payments({
       paymentType,
