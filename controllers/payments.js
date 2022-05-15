@@ -20,7 +20,7 @@ const handlerPayments = (payments) =>
       paymentType,
       paymentDate: moment(paymentDate).format(formatDateConf),
       paymentWay,
-      paymentSum,
+      paymentSum: paymentSum ? paymentSum : 0,
       paymentSumText: formatPrice(paymentSum),
       paymentPurpose,
       idPlan,
