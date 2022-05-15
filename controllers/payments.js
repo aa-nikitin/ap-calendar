@@ -69,7 +69,7 @@ module.exports.addPayments = async (req, res) => {
       paymentType,
       paymentDate: formatPaymentDate,
       paymentWay,
-      paymentSum: 500,
+      paymentSum: formatPaymentSum,
       paymentPurpose,
       idPlan,
       plan: idPlan,
