@@ -63,8 +63,8 @@ module.exports.addPayments = async (req, res) => {
     const formatPaymentDate = moment(paymentDate, formatDateConf);
     // console.log(paymentSum);
     const paymentSumInt = parseInt(paymentSum);
-    console.log(paymentSumInt);
     const formatPaymentSum = paymentSumInt ? paymentSumInt : 0;
+    console.log(formatPaymentSum);
     const payments = new Payments({
       paymentType,
       paymentDate: formatPaymentDate,
