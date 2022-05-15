@@ -16,12 +16,11 @@ const formatTimeConf = config.get('formatTime');
 const handlerPayments = (payments) =>
   payments.map((item) => {
     const { paymentType, paymentDate, paymentWay, paymentSum, paymentPurpose, idPlan, id } = item;
-
     return {
       paymentType,
       paymentDate: moment(paymentDate).format(formatDateConf),
       paymentWay,
-      paymentSum: paymentSum ? paymentSum : 0,
+      paymentSum,
       paymentSumText: formatPrice(paymentSum),
       paymentPurpose,
       idPlan,
@@ -62,10 +61,8 @@ module.exports.addPayments = async (req, res) => {
     const { paymentType, paymentDate, paymentWay, paymentSum, paymentPurpose, idPlan } = req.body;
     const plan = await Plan.findOne({ _id: idPlan });
     const formatPaymentDate = moment(paymentDate, formatDateConf);
-    console.log('1)', paymentSum);
     const paymentSumInt = parseInt(paymentSum);
     const formatPaymentSum = paymentSumInt ? paymentSumInt : 0;
-    console.log('2)', formatPaymentSum);
     const payments = new Payments({
       paymentType,
       paymentDate: formatPaymentDate,
@@ -102,7 +99,7 @@ module.exports.sendBill = async (req, res) => {
     const { priceBill, idPlan, dateOrder } = req.body;
     const { loginPK, passPK, serverPK } = await Paykeeper.findOne({});
     const prepayment = await Prepayment.findOne({});
-
+    console.log(req.body);
     const plan = await Plan.findOne({
       _id: idPlan
     })
