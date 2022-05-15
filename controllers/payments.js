@@ -130,6 +130,15 @@ module.exports.sendBill = async (req, res) => {
     serviceName += ` ${plan.hall.name} (${dateFormat} ${timeFormat} - ${timeToFormat});`;
     const expiryPrepayment = moment(dateOrder, 'DD.MM.YYYY HH:mm').add(prepayment.hours, 'h');
     // console.log(dateOrder, expiryPrepayment.format('DD.MM.YYYY HH:mm'));
+
+    await sendMailer({
+      to: clientEmail,
+      subject: `Счет на оплату ${priceBill}`,
+      html: `
+      <a href="#">Ссылка на оплату счета</a>
+    `
+    });
+
     const { invoice_id, invoice_url } = JSON.parse(
       await requestFunc({
         method: 'POST',
@@ -149,14 +158,6 @@ module.exports.sendBill = async (req, res) => {
         }
       })
     );
-
-    await sendMailer({
-      to: clientEmail,
-      subject: `Счет на оплату ${priceBill}`,
-      html: `
-      <a href="${invoice_url}">Ссылка на оплату счета</a>
-    `
-    });
 
     const percentResult = ((priceBill * 100) / plan.price).toFixed(2);
     const invoicesNew = new Invoices({
