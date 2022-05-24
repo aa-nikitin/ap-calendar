@@ -109,13 +109,13 @@ const BtnAddPlan = ({ thisHourInfo, time, style, paidSumm }) => {
   };
 };
 
-Notification.BtnAddPlan = {
+BtnAddPlan.BtnAddPlan = {
   thisHourInfo: PropTypes.object,
   time: PropTypes.string,
   style: PropTypes.string,
   paidSumm: PropTypes.string
 };
-Notification.BtnAddPlan = {
+BtnAddPlan.BtnAddPlan = {
   thisHourInfo: {},
   time: '',
   style: '',

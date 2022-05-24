@@ -31,10 +31,10 @@ const BtnChangePlanMonth = ({ thisPlanInfo }) => {
   };
 };
 
-Notification.BtnChangePlanMonth = {
+BtnChangePlanMonth.BtnChangePlanMonth = {
   thisPlanInfo: PropTypes.object
 };
-Notification.BtnChangePlanMonth = {
+BtnChangePlanMonth.BtnChangePlanMonth = {
   thisPlanInfo: {}
 };
 
