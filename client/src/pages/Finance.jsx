@@ -363,8 +363,8 @@ const Finance = () => {
           </div>
         </div>
         <div className="content-page__info">
-          <div className="table-list">
-            <div className="table-list__head">
+          <div className="table-list table-list--a-width">
+            <div className="table-list__head table-list--mobile-head">
               <div className="table-list__head-item table-list--head-goal">Чек</div>
               <div className="table-list__head-item table-list--head-condition">Заказ</div>
               <div className="table-list__head-item table-list--head-sale">Сумма, руб. </div>

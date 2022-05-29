@@ -85,4 +85,43 @@
     padding-right: 10px;
     align-self: center;
   }
+
+  @include xl() {
+    &--mobile-head {
+      display: none;
+    }
+  }
+  @include lg() {
+    &__head-item {
+      font-size: 14px;
+    }
+    &__col {
+      font-size: 14px;
+    }
+    & .css-78trlr-MuiButtonBase-root-MuiIconButton-root {
+      padding: 0px;
+    }
+  }
+  @include md() {
+    &__head-item {
+      font-size: 13px;
+    }
+    &__col {
+      font-size: 13px;
+    }
+  }
+  @include sm() {
+    width: 500px;
+    &--a-width {
+      width: auto;
+    }
+    &__head-item {
+      font-size: 12px;
+    }
+    &__col {
+      font-size: 12px;
+    }
+  }
+  @include xs() {
+  }
 }

@@ -34,8 +34,8 @@ const SettingsServices = () => {
           nameForm="Новая услуга"
         />
       </div>
-      <div className="table-list">
-        <div className="table-list__head">
+      <div className="table-list table-list--a-width">
+        <div className="table-list__head table-list--mobile-head">
           <div className="table-list__head-item table-list--col-percent-70">Услуга</div>
           <div className="table-list__head-item table-list--col-percent-30">Цена</div>
         </div>

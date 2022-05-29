@@ -111,4 +111,30 @@
   &--booking-completed {
     background-color: $cl-completed;
   }
+
+  @include xl() {
+    overflow-x: scroll;
+    &__row {
+    }
+    &__item {
+    }
+    &__scale {
+      display: none;
+    }
+    &__button {
+      &:after {
+        content: attr(data-hour) ' (' attr(data-hall) ')';
+        display: block;
+        text-align: center;
+        font-weight: 300;
+        width: 100%;
+        color: $gray-dark;
+      }
+      &:hover {
+        &:after {
+          color: $cl-white;
+        }
+      }
+    }
+  }
 }

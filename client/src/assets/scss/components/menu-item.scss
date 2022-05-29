@@ -21,4 +21,10 @@
   &__name {
     font-size: 12px;
   }
+  @include xl() {
+    &__name {
+      font-size: 8px;
+      text-transform: uppercase;
+    }
+  }
 }

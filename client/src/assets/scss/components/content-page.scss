@@ -137,4 +137,115 @@
   &__payments {
     margin-top: 40px;
   }
+  @include xl() {
+    padding: 10px;
+    background-color: $cl-white;
+    width: 100%;
+    &__main {
+      background-color: $cl-white;
+      border: none;
+      padding: 0px;
+    }
+    &__head-row {
+      flex-wrap: wrap;
+    }
+    &__head-col {
+      width: 100%;
+    }
+    &__panel-item {
+      flex-wrap: wrap;
+    }
+    &__panel-btn {
+      margin: 10px;
+    }
+    &--panel-extend {
+      margin-left: -4px;
+      margin-right: -4px;
+    }
+    &__panel-item {
+      padding-left: 4px;
+      padding-right: 4px;
+      margin-left: -4px;
+      margin-right: -4px;
+    }
+    &__panel-btn {
+      margin-left: 4px;
+      margin-right: 4px;
+    }
+    &__head-row {
+      margin-left: -4px;
+      margin-right: -4px;
+      margin-bottom: 10px;
+    }
+    &__head-col {
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+
+    &--columns {
+      flex-wrap: wrap;
+    }
+    &__right {
+      padding-left: 0px;
+      margin-top: 20px;
+      padding-bottom: 40px;
+    }
+  }
+  @include lg() {
+    &__head,
+    &__title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    &__title {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    & .css-sghohy-MuiButtonBase-root-MuiButton-root {
+      font-size: 11px;
+    }
+    & .css-1rwt2y5-MuiButtonBase-root-MuiButton-root {
+      font-size: 11px;
+    }
+    & .css-1gjgmky-MuiToggleButtonGroup-root {
+      display: block;
+    }
+    &__table-list {
+      overflow-x: auto;
+      padding-bottom: 30px;
+      margin-top: 20px;
+    }
+    &__btn {
+      width: 100%;
+      margin-right: 0px;
+      margin-bottom: 5px;
+    }
+    &__panel-btn {
+      margin: 0px;
+      width: 100%;
+      margin-bottom: 5px;
+    }
+    & .css-1u3bzj6-MuiFormControl-root-MuiTextField-root {
+      margin-top: 20px;
+    }
+    & .css-heg063-MuiTabs-flexContainer {
+      flex-wrap: wrap;
+    }
+    & .css-1ujnqem-MuiTabs-root {
+      min-height: 28px;
+    }
+    & .css-1h9z7r5-MuiButtonBase-root-MuiTab-root {
+      font-size: 11px;
+      padding: 3px;
+      min-height: 28px;
+      min-width: 40px;
+      font-weight: bold;
+    }
+    & .css-1aquho2-MuiTabs-indicator {
+      display: none;
+    }
+    & .css-13xfq8m-MuiTabPanel-root {
+      padding: 0px;
+    }
+  }
 }

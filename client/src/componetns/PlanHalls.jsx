@@ -10,6 +10,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ruLocale from 'date-fns/locale/ru';
 import PropTypes from 'prop-types';
+import useWindowDimensions from '../hooks/useWindowDimensions';
 
 import { Loading, PlanForm, BtnAddPlan } from '../componetns';
 import {
@@ -23,10 +24,12 @@ import {
 import { getPlan, getWorkShedule } from '../redux/reducers';
 
 const PlanHalls = ({ valueDate, setValueDate }) => {
+  const itemWidthMobile = 240;
   const dispatch = useDispatch();
   const { plan, planFetch } = useSelector((state) => getPlan(state));
   const workShedule = useSelector((state) => getWorkShedule(state));
   const { list: hoursArray, minutesStep, hourSize } = workShedule;
+  const { width } = useWindowDimensions();
   const handlePlan = (values) => {
     dispatch(planFetchAddRequest({ ...values, typePlan: 'planHalls' }));
   };
@@ -63,6 +66,7 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
     dispatch(planHallsRequest(thisDate));
   }, [dispatch, thisDate]);
   if (planFetch) return <Loading />;
+
   return (
     <div className="content-page__main">
       <div className="content-page__panel content-page--panel-extend">
@@ -106,7 +110,9 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
       <div className="content-page__info">
         {plan.length > 0 && (
           <div className="shedule">
-            <div className="shedule__row">
+            <div
+              className="shedule__row"
+              style={width <= 1170 ? { width: plan.length * itemWidthMobile } : {}}>
               <div className="shedule__scale shedule-scale">
                 {hoursArray.map((item) => {
                   const itemCount = item.minutes / minutesStep;
@@ -126,7 +132,10 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
               </div>
               {plan.map((planItem) => {
                 return (
-                  <div className="shedule__item" key={planItem.id}>
+                  <div
+                    className="shedule__item"
+                    key={planItem.id}
+                    style={width <= 1170 ? { width: itemWidthMobile } : {}}>
                     <div className="shedule__head" key={planItem.id}>
                       {planItem.name}
                     </div>
@@ -185,7 +194,8 @@ const PlanHalls = ({ valueDate, setValueDate }) => {
                                     thisHourInfo,
                                     time: thisTime,
                                     style,
-                                    paidSumm
+                                    paidSumm,
+                                    hallName: planItem.name
                                   })}
                                 />
                               </div>

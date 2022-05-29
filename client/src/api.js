@@ -1,8 +1,11 @@
 import axios from 'axios';
 
+// const serverSite = 'https://calendar-kamorka.ru';
+const serverSite = '';
+
 export const fetchGet = async (url, token) => {
   try {
-    const { data } = await axios.get(url, {
+    const { data } = await axios.get(`${serverSite}${url}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -16,7 +19,7 @@ export const fetchGet = async (url, token) => {
 export const fetchPut = async (url, obj, token) => {
   try {
     const { data } = await axios.put(
-      url,
+      `${serverSite}${url}`,
       { ...obj },
       {
         headers: {
@@ -33,7 +36,7 @@ export const fetchPut = async (url, obj, token) => {
 export const fetchPost = async (url, obj, token) => {
   try {
     const { data } = await axios.post(
-      url,
+      `${serverSite}${url}`,
       { ...obj },
       {
         headers: {
@@ -49,7 +52,7 @@ export const fetchPost = async (url, obj, token) => {
 
 export const fetchDelete = async (url, params, token) => {
   try {
-    const { data } = await axios.delete(url, {
+    const { data } = await axios.delete(`${serverSite}${url}`, {
       headers: {
         Authorization: `Bearer ${token}`
       },
@@ -63,7 +66,7 @@ export const fetchDelete = async (url, params, token) => {
 
 export const fetchPostMultipart = async (url, obj, token) => {
   try {
-    const { data } = await axios.post(url, obj, {
+    const { data } = await axios.post(`${serverSite}${url}`, obj, {
       headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` }
     });
     return data;

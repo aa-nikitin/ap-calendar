@@ -29,4 +29,8 @@
     color: $gray-dark;
     font-size: 12px;
   }
+
+  @include xl() {
+    flex-wrap: wrap;
+  }
 }

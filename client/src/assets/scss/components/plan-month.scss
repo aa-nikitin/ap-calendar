@@ -63,4 +63,52 @@
   &--gray {
     color: $gray-dark;
   }
+
+  @include xxl() {
+    &__time {
+      width: 70px;
+    }
+    &__client {
+      width: 150px;
+    }
+  }
+  @include sm() {
+    &__item-wrap {
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+    &__detail {
+      width: 100%;
+      border: solid 1px $gray;
+      & svg {
+        display: none;
+      }
+      &:after {
+        content: 'Подробнее';
+        padding: 5px;
+      }
+    }
+
+    &__item {
+      border: none;
+      flex-wrap: wrap;
+      padding: 0px;
+    }
+    &__body {
+      border-bottom: none;
+    }
+    &__time {
+      width: 30%;
+      padding-right: 10px;
+    }
+    &__name {
+      width: 70%;
+      padding-right: 0px;
+    }
+    &__client {
+      width: 100%;
+      text-align: center;
+      padding: 5px 0px 7px;
+    }
+  }
 }

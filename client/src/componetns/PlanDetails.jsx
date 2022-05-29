@@ -315,153 +315,157 @@ const PlanDetails = ({ isSeparatePage, valueDate, setValueDate }) => {
                 Отключить автоматический пересчёт сметы!
               </Button>
             )}
-            <div className="table-list table-list--top-indent">
-              <div className="table-list__head">
-                <div className="table-list__head-item">Услуга</div>
-                <div className="table-list__head-item">Цена, руб.</div>
-                <div className="table-list__head-item">Скидка, руб. </div>
-                <div className="table-list__head-item">Сумма, руб.</div>
-              </div>
-              <div className="table-list__body">
-                {planPrice.map((element) => {
-                  const { _id, name, count, price, discount, total, idService } = element;
 
-                  return (
-                    <div key={_id} className="table-list__item table-list--row">
-                      <div className="table-list__col">{name}</div>
-                      <div className="table-list__col">
-                        <div className="plan-service plan-service--flex">
-                          {activePlanPrice === `${_id}-price` ? (
+            <div className="content-page__table-list">
+              <div className="table-list">
+                <div className="table-list__head">
+                  <div className="table-list__head-item">Услуга</div>
+                  <div className="table-list__head-item">Цена, руб.</div>
+                  <div className="table-list__head-item">Скидка, руб. </div>
+                  <div className="table-list__head-item">Сумма, руб.</div>
+                </div>
+                <div className="table-list__body">
+                  {planPrice.map((element) => {
+                    const { _id, name, count, price, discount, total, idService } = element;
+
+                    return (
+                      <div key={_id} className="table-list__item table-list--row">
+                        <div className="table-list__col">{name}</div>
+                        <div className="table-list__col">
+                          <div className="plan-service plan-service--flex">
+                            {activePlanPrice === `${_id}-price` ? (
+                              <TextField
+                                label={`Значение - ${price}`}
+                                value={planPriceVal}
+                                onChange={handleChangeService}
+                                onBlur={handleBlurService(_id, 'price', price)}
+                                autoFocus={true}
+                                variant="standard"
+                              />
+                            ) : (
+                              <div
+                                className="plan-service__item"
+                                onClick={handleActivePlanPrice(_id, 'price', price)}>
+                                {price}
+                              </div>
+                            )}
+                            <div
+                              className="plan-service__item plan-service--count plan-service--flex"
+                              onClick={handleActivePlanPrice(_id, 'count', count)}>
+                              <div className="plan-service__multiplier">x</div>
+                              {activePlanPrice === `${_id}-count` ? (
+                                <TextField
+                                  label={`Значение - ${count}`}
+                                  value={planPriceVal}
+                                  onChange={handleChangeService}
+                                  onBlur={handleBlurService(_id, 'count', count)}
+                                  autoFocus={true}
+                                  variant="standard"
+                                />
+                              ) : (
+                                count
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="table-list__col">
+                          {activePlanPrice === `${_id}-discount` ? (
                             <TextField
-                              label={`Значение - ${price}`}
+                              label={`Значение - ${discount}`}
                               value={planPriceVal}
                               onChange={handleChangeService}
-                              onBlur={handleBlurService(_id, 'price', price)}
+                              onBlur={handleBlurService(_id, 'discount', discount)}
                               autoFocus={true}
                               variant="standard"
                             />
                           ) : (
                             <div
                               className="plan-service__item"
-                              onClick={handleActivePlanPrice(_id, 'price', price)}>
-                              {price}
+                              onClick={handleActivePlanPrice(_id, 'discount', discount)}>
+                              {discount ? discount : '-'}
                             </div>
                           )}
-                          <div
-                            className="plan-service__item plan-service--count plan-service--flex"
-                            onClick={handleActivePlanPrice(_id, 'count', count)}>
-                            <div className="plan-service__multiplier">x</div>
-                            {activePlanPrice === `${_id}-count` ? (
-                              <TextField
-                                label={`Значение - ${count}`}
-                                value={planPriceVal}
-                                onChange={handleChangeService}
-                                onBlur={handleBlurService(_id, 'count', count)}
-                                autoFocus={true}
-                                variant="standard"
-                              />
-                            ) : (
-                              count
-                            )}
-                          </div>
+                        </div>
+                        <div className="table-list__col table-list--col-space-between">
+                          <b>{total}</b>
+                          <ButtonIcon
+                            Icon={DeleteIcon}
+                            title="Удалить"
+                            fontSize="small"
+                            onClick={handleDeleteService(_id, idService)}
+                          />
                         </div>
                       </div>
+                    );
+                  })}
+                  {activeAddServise && (
+                    <form
+                      onSubmit={formik.handleSubmit}
+                      className="table-list__item table-list--row">
                       <div className="table-list__col">
-                        {activePlanPrice === `${_id}-discount` ? (
-                          <TextField
-                            label={`Значение - ${discount}`}
-                            value={planPriceVal}
-                            onChange={handleChangeService}
-                            onBlur={handleBlurService(_id, 'discount', discount)}
-                            autoFocus={true}
-                            variant="standard"
-                          />
-                        ) : (
-                          <div
-                            className="plan-service__item"
-                            onClick={handleActivePlanPrice(_id, 'discount', discount)}>
-                            {discount ? discount : '-'}
-                          </div>
-                        )}
-                      </div>
-                      <div className="table-list__col table-list--col-space-between">
-                        <b>{total}</b>
-                        <ButtonIcon
-                          Icon={DeleteIcon}
-                          title="Удалить"
-                          fontSize="small"
-                          onClick={handleDeleteService(_id, idService)}
+                        <TextField
+                          fullWidth
+                          id="nameService"
+                          name="nameService"
+                          label="Товар/Услуга"
+                          value={formik.values.nameService}
+                          onChange={formik.handleChange}
+                          error={formik.touched.nameService && Boolean(formik.errors.nameService)}
                         />
                       </div>
-                    </div>
-                  );
-                })}
-                {activeAddServise && (
-                  <form onSubmit={formik.handleSubmit} className="table-list__item table-list--row">
-                    <div className="table-list__col">
-                      <TextField
-                        fullWidth
-                        id="nameService"
-                        name="nameService"
-                        label="Товар/Услуга"
-                        value={formik.values.nameService}
-                        onChange={formik.handleChange}
-                        error={formik.touched.nameService && Boolean(formik.errors.nameService)}
-                      />
-                    </div>
-                    <div className="table-list__col table-list--col-flex">
-                      <TextField
-                        fullWidth
-                        id="priceService"
-                        name="priceService"
-                        label="Цена"
-                        value={formik.values.priceService}
-                        onChange={formik.handleChange}
-                        error={formik.touched.priceService && Boolean(formik.errors.priceService)}
-                      />
-                      <div className="table-list__icon-multiplay">x</div>
-                      <TextField
-                        fullWidth
-                        id="countService"
-                        name="countService"
-                        label="Количество"
-                        value={formik.values.countService}
-                        onChange={formik.handleChange}
-                        error={formik.touched.countService && Boolean(formik.errors.countService)}
-                      />
-                    </div>
-                    <div className="table-list__col">
-                      <TextField
-                        fullWidth
-                        id="discountService"
-                        name="discountService"
-                        label="Скидка"
-                        value={formik.values.discountService}
-                        onChange={formik.handleChange}
-                        error={
-                          formik.touched.discountService && Boolean(formik.errors.discountService)
-                        }
-                      />
-                    </div>
-                    <div className="table-list__col">
-                      <ButtonIcon
-                        Icon={CheckIcon}
-                        title="Сохранить"
-                        type="submit"
-                        fontSize="small"
-                      />
-                      <ButtonIcon
-                        Icon={CloseIcon}
-                        title="Отменить"
-                        fontSize="small"
-                        onClick={handleCancelService}
-                      />
-                    </div>
-                  </form>
-                )}
+                      <div className="table-list__col table-list--col-flex">
+                        <TextField
+                          fullWidth
+                          id="priceService"
+                          name="priceService"
+                          label="Цена"
+                          value={formik.values.priceService}
+                          onChange={formik.handleChange}
+                          error={formik.touched.priceService && Boolean(formik.errors.priceService)}
+                        />
+                        <div className="table-list__icon-multiplay">x</div>
+                        <TextField
+                          fullWidth
+                          id="countService"
+                          name="countService"
+                          label="Количество"
+                          value={formik.values.countService}
+                          onChange={formik.handleChange}
+                          error={formik.touched.countService && Boolean(formik.errors.countService)}
+                        />
+                      </div>
+                      <div className="table-list__col">
+                        <TextField
+                          fullWidth
+                          id="discountService"
+                          name="discountService"
+                          label="Скидка"
+                          value={formik.values.discountService}
+                          onChange={formik.handleChange}
+                          error={
+                            formik.touched.discountService && Boolean(formik.errors.discountService)
+                          }
+                        />
+                      </div>
+                      <div className="table-list__col">
+                        <ButtonIcon
+                          Icon={CheckIcon}
+                          title="Сохранить"
+                          type="submit"
+                          fontSize="small"
+                        />
+                        <ButtonIcon
+                          Icon={CloseIcon}
+                          title="Отменить"
+                          fontSize="small"
+                          onClick={handleCancelService}
+                        />
+                      </div>
+                    </form>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="content-page__indent"></div>
           </>
         )}
         {detailsOrder && detailsOrder.priceInfo && (
@@ -538,36 +542,38 @@ const PlanDetails = ({ isSeparatePage, valueDate, setValueDate }) => {
             )}
 
             {!!totalPayments.total ? (
-              <div className="table-list">
-                <div className="table-list__head">
-                  <div className="table-list__head-item">Дата</div>
-                  <div className="table-list__head-item">Назначение</div>
-                  <div className="table-list__head-item">Способ </div>
-                  <div className="table-list__head-item">Сумма, руб.</div>
-                </div>
-                <div className="table-list__body">
-                  {list.map((item) => (
-                    <div key={item.id} className="table-list__item table-list--row">
-                      <div className="table-list__col">{item.paymentDate}</div>
-                      <div className="table-list__col">{item.paymentPurpose}</div>
-                      <div className="table-list__col">
-                        {paymentMethodObj[item.paymentWay].name}
+              <div className="content-page__table-list">
+                <div className="table-list">
+                  <div className="table-list__head">
+                    <div className="table-list__head-item">Дата</div>
+                    <div className="table-list__head-item">Назначение</div>
+                    <div className="table-list__head-item">Способ </div>
+                    <div className="table-list__head-item">Сумма, руб.</div>
+                  </div>
+                  <div className="table-list__body">
+                    {list.map((item) => (
+                      <div key={item.id} className="table-list__item table-list--row">
+                        <div className="table-list__col">{item.paymentDate}</div>
+                        <div className="table-list__col">{item.paymentPurpose}</div>
+                        <div className="table-list__col">
+                          {paymentMethodObj[item.paymentWay].name}
+                        </div>
+                        <div
+                          className={`table-list__col table-list--col-space-between table-list--col-${
+                            item.paymentType === 'income' ? 'green' : 'red'
+                          }`}>
+                          {item.paymentType === 'income' ? '+' : '-'}
+                          {item.paymentSumText}
+                          <ButtonIcon
+                            Icon={DeleteIcon}
+                            title="Удалить"
+                            fontSize="small"
+                            onClick={handleDelete(item.id, detailsOrder.idPlan)}
+                          />
+                        </div>
                       </div>
-                      <div
-                        className={`table-list__col table-list--col-space-between table-list--col-${
-                          item.paymentType === 'income' ? 'green' : 'red'
-                        }`}>
-                        {item.paymentType === 'income' ? '+' : '-'}
-                        {item.paymentSumText}
-                        <ButtonIcon
-                          Icon={DeleteIcon}
-                          title="Удалить"
-                          fontSize="small"
-                          onClick={handleDelete(item.id, detailsOrder.idPlan)}
-                        />
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             ) : (

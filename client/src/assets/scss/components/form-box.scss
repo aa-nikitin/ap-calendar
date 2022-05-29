@@ -88,4 +88,35 @@
     font-weight: 300;
     font-size: 14px;
   }
+
+  @include lg() {
+    &--body-columns {
+      flex-wrap: wrap;
+      margin: 0px;
+    }
+    &__column {
+      width: 100%;
+      padding: 0px;
+    }
+    &--column-plan-left {
+      border-right: none;
+    }
+    &__body {
+      padding: 10px;
+    }
+    & .css-ueukts-MuiButtonBase-root-MuiToggleButton-root {
+      font-size: 12px;
+      padding: 10px;
+    }
+  }
+  @include md() {
+  }
+  @include sm() {
+    & .css-ueukts-MuiButtonBase-root-MuiToggleButton-root {
+      font-size: 10px;
+      padding: 7px;
+    }
+  }
+  @include xs() {
+  }
 }

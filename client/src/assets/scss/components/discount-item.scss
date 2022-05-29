@@ -46,4 +46,10 @@
   &--price {
     font-size: 18px;
   }
+  @include xl() {
+    flex-wrap: wrap;
+    &__column {
+      width: 100%;
+    }
+  }
 }

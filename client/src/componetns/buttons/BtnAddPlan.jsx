@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { PrettyPrice } from '../../componetns';
 
-const BtnAddPlan = ({ thisHourInfo, time, style, paidSumm }) => {
+const BtnAddPlan = ({ thisHourInfo, time, style, paidSumm, hallName }) => {
   const contactsList = [
     { name: 'Компания', value: 'company' },
     { name: 'Телефон', value: 'phone' },
@@ -102,7 +102,11 @@ const BtnAddPlan = ({ thisHourInfo, time, style, paidSumm }) => {
         </div>
       </div>
     ) : (
-      <button className="shedule__button" data-hour={time} {...params}></button>
+      <button
+        className="shedule__button"
+        data-hour={time}
+        data-hall={hallName}
+        {...params}></button>
     );
 
     // return <button className="shedule__button" data-hour={time} onClick={onClick}></button>;
@@ -113,13 +117,15 @@ BtnAddPlan.BtnAddPlan = {
   thisHourInfo: PropTypes.object,
   time: PropTypes.string,
   style: PropTypes.string,
-  paidSumm: PropTypes.string
+  paidSumm: PropTypes.string,
+  hallName: PropTypes.string
 };
 BtnAddPlan.BtnAddPlan = {
   thisHourInfo: {},
   time: '',
   style: '',
-  paidSumm: ''
+  paidSumm: '',
+  hallName: ''
 };
 
 export { BtnAddPlan };

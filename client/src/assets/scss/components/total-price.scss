@@ -1,5 +1,4 @@
 .total-price {
-  margin-top: 40px;
   text-align: right;
   border-top: 3px solid $cl-completed-head;
   padding-top: 15px;
@@ -19,5 +18,31 @@
   }
   &--red {
     color: $cl-error;
+  }
+
+  @include xl() {
+  }
+  @include lg() {
+    &--columns {
+      flex-wrap: wrap;
+    }
+    &__col {
+      width: 100%;
+      & .link {
+        margin-bottom: 10px;
+        font-size: 14px;
+      }
+    }
+    &__item {
+      font-size: 13px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+  }
+  @include md() {
+  }
+  @include sm() {
+  }
+  @include xs() {
   }
 }

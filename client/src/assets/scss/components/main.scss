@@ -11,4 +11,13 @@
   &__right {
     padding-left: 80px;
   }
+  @include xl() {
+    &__left {
+      width: 60px;
+      padding: 0px;
+    }
+    &__right {
+      padding-left: 60px;
+    }
+  }
 }
