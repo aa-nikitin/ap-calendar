@@ -5,6 +5,8 @@ const Payments = require('../models/payments');
 const Plan = require('../models/plan');
 const config = require('config');
 const hourCheck = config.get('hourCheck');
+const calcPayments = require('../libs/payments-calc');
+const PriceInfo = require('../models/price-info');
 
 checkPayment = async () => {
   try {
@@ -17,17 +19,21 @@ checkPayment = async () => {
         $gte: dateFrom,
         $lt: dateTo
       },
-      paymentType: 'paid'
+      paymentType: 'paid',
+      status: { $ne: 'cancelled' }
     });
+
     plan.forEach(async (item) => {
-      const { price, discount, id } = item;
-      const paymentThreshold = ((price - discount) * percentPrepayment) / 100;
+      const { id } = item;
+      const priceInfo = await PriceInfo.findOne({ idPlan: id });
       const payments = await Payments.find({ idPlan: id });
-      let sumPayment = 0;
-      payments.forEach((itemPayment) => {
-        if (itemPayment.paymentType === 'income') sumPayment += Number(itemPayment.paymentSum);
-        else sumPayment -= Number(itemPayment.paymentSum);
-      });
+      const paymentThreshold = (priceInfo.total * percentPrepayment) / 100;
+      const { total: sumPayment } = calcPayments(payments);
+      // console.log(paymentThreshold, sumPayment, sumPayment < paymentThreshold);
+      // payments.forEach((itemPayment) => {
+      //   if (itemPayment.paymentType === 'income') sumPayment += Number(itemPayment.paymentSum);
+      //   else sumPayment -= Number(itemPayment.paymentSum);
+      // });
       if (sumPayment < paymentThreshold)
         await Plan.updateOne(
           { _id: id },
