@@ -15,14 +15,13 @@ const Price = require('../models/prices');
 const PlanPrice = require('../models/plan-price');
 const PriceInfo = require('../models/price-info');
 const Services = require('../models/services');
-// const Services = require('../models/services');
 const groupPrices = require('../libs/group-prices');
 const { calculateFreeTime } = require('../libs/handler-time');
 const calcPrice = require('../libs/calc-price');
 const calcDiscount = require('../libs/calc-discount');
-const { addPriceInfo } = require('../libs/price-info');
+const recalcPlanPrice = require('../libs/recalc-plan-price');
 const hourSize = config.get('hourSize');
-// const calcServices = require('../libs/calc-services');
+const { addPriceInfo } = require('../libs/price-info');
 
 module.exports = async (params, client, clientID) => {
   try {
@@ -72,13 +71,11 @@ module.exports = async (params, client, clientID) => {
     const servicesPlanPrice = await PlanPrice.find({ idPlan, typePrice: 'service' });
     const servicesForAdd = services ? [...services] : [];
 
-    // console.log(servicesPlanPrice, services);
     const servicesPlanPriceDel = servicesPlanPrice.map(async (item) => {
       const toDelete = services.indexOf(item.idService);
       if (toDelete < 0) {
         await PlanPrice.deleteOne({ _id: item._id });
       } else {
-        // console.log(item.idService);
         delete servicesForAdd[toDelete];
         // servicesForAdd.splice(toDelete, 1);
       }
@@ -137,7 +134,8 @@ module.exports = async (params, client, clientID) => {
       pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
 
     const holidaysObj = await Holidays.find({});
-    const price = calcPrice(newPlanObj, priceByPurpose, shedule, holidaysObj);
+    const price = calcPrice(newPlanObj, priceByPurpose, shedule, holidaysObj, 'detail');
+    const { totalPrice } = price;
 
     const { name: nameHall } = await Halls.findOne({ _id: idHall });
     const discount = calcDiscount({
@@ -145,7 +143,7 @@ module.exports = async (params, client, clientID) => {
       discounts,
       shedule,
       holidays: holidaysObj,
-      price,
+      price: totalPrice,
       idHall
     });
 
@@ -163,27 +161,7 @@ module.exports = async (params, client, clientID) => {
     const recalc = priceInfoFind ? priceInfoFind.recalc : {};
 
     if (recalc) {
-      const planPrice = await PlanPrice.findOne({ idPlan, typePrice: 'main' });
-      // hourly: { type: Boolean, default: false }
-      const countPricePlan = minutes / 60;
-      const priceUnit = price / countPricePlan;
-      const newPlanPrice = {
-        idPlan: newPlan._id,
-        typePrice: 'main',
-        name: `Аренда зала: ${nameHall}`,
-        price: Math.round(priceUnit),
-        count: countPricePlan,
-        discount: Math.round(discount),
-        total: Math.round(priceUnit * countPricePlan - discount),
-        hourly: true
-      };
-      if (!planPrice) {
-        const createPlanPrice = new PlanPrice(newPlanPrice);
-
-        await createPlanPrice.save();
-      } else {
-        await PlanPrice.updateOne({ _id: planPrice._id }, newPlanPrice, { new: true });
-      }
+      await recalcPlanPrice({ idPlan, minutes, price, newPlanId: newPlan._id, nameHall, discount });
 
       await addPriceInfo(newPlan._id);
     }

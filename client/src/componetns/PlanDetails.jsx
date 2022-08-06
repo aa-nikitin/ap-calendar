@@ -326,11 +326,14 @@ const PlanDetails = ({ isSeparatePage, valueDate, setValueDate }) => {
                 </div>
                 <div className="table-list__body">
                   {planPrice.map((element) => {
-                    const { _id, name, count, price, discount, total, idService } = element;
+                    const { _id, name, descr, count, price, discount, total, idService } = element;
 
                     return (
                       <div key={_id} className="table-list__item table-list--row">
-                        <div className="table-list__col">{name}</div>
+                        <div className="table-list__col">
+                          <div>{name}</div>
+                          <div className="table-list--descr">{descr}</div>
+                        </div>
                         <div className="table-list__col">
                           <div className="plan-service plan-service--flex">
                             {activePlanPrice === `${_id}-price` ? (
@@ -346,13 +349,13 @@ const PlanDetails = ({ isSeparatePage, valueDate, setValueDate }) => {
                               <div
                                 className="plan-service__item"
                                 onClick={handleActivePlanPrice(_id, 'price', price)}>
-                                {price}
+                                {price ? price : '-'}
                               </div>
                             )}
                             <div
                               className="plan-service__item plan-service--count plan-service--flex"
                               onClick={handleActivePlanPrice(_id, 'count', count)}>
-                              <div className="plan-service__multiplier">x</div>
+                              <div className="plan-service__multiplier">{price ? 'x' : ''}</div>
                               {activePlanPrice === `${_id}-count` ? (
                                 <TextField
                                   label={`Значение - ${count}`}
@@ -363,7 +366,7 @@ const PlanDetails = ({ isSeparatePage, valueDate, setValueDate }) => {
                                   variant="standard"
                                 />
                               ) : (
-                                count
+                                <>{price ? count : ''}</>
                               )}
                             </div>
                           </div>
@@ -593,17 +596,17 @@ const PlanDetails = ({ isSeparatePage, valueDate, setValueDate }) => {
               {!!totalPayments.expense && (
                 <div className="total-price__item">Итого {totalPayments.totalText} руб.</div>
               )}
-              {/* {totalPayments.total >= detailsOrder.priceInfo.total ? (
+              {totalPayments.total >= detailsOrder.priceInfo.total ? (
                 <div className="total-price__item total-price--green">Оплачено полностью</div>
               ) : (
                 <div className="total-price__item total-price--red">
-                  Осталось{' '}
+                  Осталось оплатить{' '}
                   {(detailsOrder.priceInfo.total - totalPayments.total)
                     .toString()
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}{' '}
                   руб.
                 </div>
-              )} */}
+              )}
             </div>
           </div>
         )}

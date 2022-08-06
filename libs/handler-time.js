@@ -136,9 +136,40 @@ const creatingSchedule = (params) => {
   return list;
 };
 
+const timeArrToStr = (objPriceByGroup) => {
+  let thisTime;
+  let lengthMinutes;
+  let strTime = '';
+
+  objPriceByGroup.timePoints.forEach((itemTime, keyItemTime) => {
+    if (!thisTime) {
+      thisTime = itemTime;
+      lengthMinutes = objPriceByGroup.minutesStep;
+      strTime += minutesToTime(itemTime);
+    } else if (thisTime + objPriceByGroup.minutesStep === itemTime) {
+      thisTime = itemTime;
+      lengthMinutes = lengthMinutes + objPriceByGroup.minutesStep;
+    } else {
+      strTime += ` - ${minutesToTime(thisTime + objPriceByGroup.minutesStep)}; ${minutesToTime(
+        itemTime
+      )}`;
+      lengthMinutes = objPriceByGroup.minutesStep;
+      thisTime = itemTime;
+    }
+    if (objPriceByGroup.timePoints.length === keyItemTime + 1) {
+      strTime += ` - ${minutesToTime(thisTime + objPriceByGroup.minutesStep)}`;
+      lengthMinutes = undefined;
+      thisTime = undefined;
+    }
+  });
+
+  return strTime;
+};
+
 module.exports.timeToMinutes = timeToMinutes;
 module.exports.minutesToTime = minutesToTime;
 module.exports.minutesToTimeHour = minutesToTimeHour;
 module.exports.calculateFreeTime = calculateFreeTime;
 module.exports.calculateFreeDays = calculateFreeDays;
 module.exports.creatingSchedule = creatingSchedule;
+module.exports.timeArrToStr = timeArrToStr;

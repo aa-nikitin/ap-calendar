@@ -5,6 +5,7 @@ const schema = new Schema({
   typePrice: { type: String },
   idService: { type: String },
   name: { type: String },
+  descr: { type: String },
   price: { type: Number },
   count: { type: Number },
   discount: { type: Number },

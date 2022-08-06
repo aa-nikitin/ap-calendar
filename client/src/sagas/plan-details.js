@@ -11,7 +11,7 @@ import {
   getPlanPriceSuccess,
   getPlanPriceError,
   changeRecalcPlanInfoRequest,
-  changeRecalcPlanInfoSuccess,
+  // changeRecalcPlanInfoSuccess,
   changeRecalcPlanInfoError,
   logoutFetchFromToken
 } from '../redux/actions';
@@ -54,10 +54,13 @@ export function* changeRecalcPlanInfo() {
   try {
     const token = localStorage.getItem(storageName);
     const { query } = yield select(getPlanDetails);
-    const { priceInfo, planPrice } = yield call(fetchPost, '/api/recalc-estimate/', query, token);
-    // const planDetails = yield call(fetchGet, `/api/plan-details/${query.idPlan}`, token);
+    yield call(fetchPost, '/api/recalc-estimate/', query, token);
 
-    yield put(changeRecalcPlanInfoSuccess({ priceInfo, planPrice }));
+    const planDetails = yield call(fetchGet, `/api/plan-details/${query.idPlan}`, token);
+    const planPrice = yield call(fetchGet, `/api/plan-price/${query.idPlan}`, token);
+
+    yield put(getPlanDetailsSuccess(planDetails));
+    yield put(getPlanPriceSuccess(planPrice));
   } catch (error) {
     if (error === 'Unauthorized') yield put(logoutFetchFromToken());
     yield put(changeRecalcPlanInfoError, error);

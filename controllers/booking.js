@@ -93,17 +93,20 @@ module.exports.getBookingPlanWeek = async (req, res) => {
         idHall,
         list: listSheduleWork
       };
+
       dateStart.add(1, 'd');
     }
     plan.forEach((item) => {
+      if (item.status === 'cancelled') return;
+
       const datePlan = moment(item.date).format(formatDateConf);
       const timePlan = moment(item.time).format(formatTimeConf);
       const isErrorRate = timeToMinutes(timePlan) % minutesStep;
       const minutesStartPlan =
         isErrorRate > 0 ? timeToMinutes(String(timePlan)) - 30 : timeToMinutes(String(timePlan));
       const minutesPlan = isErrorRate > 0 ? item.minutes + 30 : item.minutes;
-
       let counterMinutes = minutesStartPlan;
+
       while (counterMinutes < minutesStartPlan + minutesPlan) {
         sheduleWork[datePlan]['list'][String(counterMinutes)]['busy'] = true;
         counterMinutes = counterMinutes + minutesStep;
@@ -350,8 +353,6 @@ module.exports.bookingFetch = async (req, res) => {
       //   { status: 'cancelled', comment, reason },
       //   { new: true }
       // );
-      // console.log(listOrdersWithInvoices);
-      // console.log(invoice_id, invoice_url);
 
       res.json({ error: false, result: 'success', invoice_url });
     }
@@ -398,11 +399,9 @@ module.exports.bookingNotice = async (req, res) => {
 
         await payment.save();
 
-        // console.log(plan);
-
         return payment;
       });
-      // console.log(allPaymentsPlans);
+
       await Promise.all(allPaymentsPlans);
 
       const priceFormat = formatPrice(parseInt(sum));
@@ -424,8 +423,6 @@ module.exports.bookingNotice = async (req, res) => {
       `
       });
     }
-    // console.log(hostname);
-    // console.log(resultSending);
 
     res.send(`OK ${hash}`);
   } catch (error) {

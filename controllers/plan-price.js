@@ -39,7 +39,7 @@ module.exports.addPlanPrice = async (req, res) => {
 module.exports.getPlanPriceById = async (req, res) => {
   try {
     const idPlan = req.params.id;
-    const prices = await PlanPrice.find({ idPlan });
+    const prices = await PlanPrice.find({ idPlan }).sort({ typePrice: -1 });
 
     res.json(prices);
   } catch (error) {

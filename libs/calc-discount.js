@@ -58,6 +58,7 @@ module.exports = ({ plan, discounts, shedule, holidays, price, idHall }) => {
       : sumDiscountResult;
     discountsCommonArr.push(resultDiscount);
   });
+  // console.log(discountsCommonArr);
 
   return discountsCommonArr.length > 0 ? maxItemArray(discountsCommonArr) : 0;
 };

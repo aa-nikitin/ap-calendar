@@ -6,7 +6,7 @@ const formatTime = config.get('formatTime');
 
 const { timeToMinutes } = require('../libs/handler-time');
 
-module.exports = (plan, price, shedule, holidaysObj) => {
+module.exports = (plan, price, shedule, holidaysObj, typeOutput = 'standart') => {
   const { date, time, minutes, persons } = plan;
   const { minutesStep, hourSize } = shedule;
   const countHours = minutes / hourSize;
@@ -78,12 +78,13 @@ module.exports = (plan, price, shedule, holidaysObj) => {
       const timeToPrice = moment(timeTo, `${formatDate} ${formatTime}`);
       const timeFromPriceMinutes = timeToMinutes(timeFromPrice.format(formatTime));
       const timeToPriceMinutes = timeToMinutes(timeToPrice.format(formatTime));
+
       arrSumByHours.forEach((item, key) => {
         const { timePoint } = item;
-        const isUpdatePrice =
-          ((timeFromPriceMinutes <= timePoint && timeToPriceMinutes > timePoint) ||
-            (timeFromPriceMinutes === timePoint && timeToPriceMinutes === timePoint)) &&
-          !arrSumByHours[key].price;
+        const isUpdatePriceByTime =
+          (timeFromPriceMinutes <= timePoint && timeToPriceMinutes > timePoint) ||
+          (timeFromPriceMinutes === timePoint && timeToPriceMinutes === timePoint);
+        const isUpdatePriceRent = isUpdatePriceByTime && !arrSumByHours[key].price;
 
         const isRoundUp =
           (key === 0 && roundUp && timePoint % hourSize !== 0) ||
@@ -91,16 +92,20 @@ module.exports = (plan, price, shedule, holidaysObj) => {
             roundUp &&
             (timePoint + minutesStep) % hourSize !== 0);
         const dividerPrice = isRoundUp ? priceNumber : priceNumber / divider;
-        const newPrice = isUpdatePrice ? dividerPrice : arrSumByHours[key].price;
-        if (isUpdatePrice && itemPrice.price === 'rent')
-          arrSumByHours[key] = { ...item, price: newPrice };
-        else if (isUpdatePrice && itemPrice.price !== 'rent') {
+        const newPriceRent = isUpdatePriceRent ? dividerPrice : arrSumByHours[key].price;
+
+        if (isUpdatePriceRent && itemPrice.price === 'rent')
+          arrSumByHours[key] = { ...item, price: newPriceRent };
+        else if (isUpdatePriceByTime && itemPrice.price !== 'rent') {
           let surchargePrice = 0;
+          const newPriceSurcharge = isUpdatePriceByTime ? dividerPrice : arrSumByHours[key].price;
 
           if (itemPrice.price === 'surcharge') {
             const isPercent = itemPrice.priceSum.indexOf('%') > -1 ? true : false;
-            surchargePrice = isPercent ? parseInt(itemPrice.priceSum) / divider + '%' : newPrice;
-          } else surchargePrice = checkPersons * newPrice;
+            surchargePrice = isPercent
+              ? parseInt(itemPrice.priceSum) / divider + '%'
+              : newPriceSurcharge;
+          } else surchargePrice = checkPersons * newPriceSurcharge;
 
           if (surchargePrice !== 0) arrSumByHours[key].surcharge.push(surchargePrice);
         }
@@ -115,20 +120,61 @@ module.exports = (plan, price, shedule, holidaysObj) => {
     arrSumByHours[0].price === 0;
   let totalSurcharge = 0;
   let totalPrice = isRound ? commonPrice.price : 0;
+  const pricesByGroup = {};
 
   arrSumByHours.forEach((item) => {
     const { surcharge, price } = item;
-    totalPrice += price === 0 ? commonPrice.price : price;
+    const thisPrice = price === 0 ? commonPrice.price : price;
+    totalPrice += thisPrice;
 
+    // const newPriceByGroup = {
+    //   price,
+    //   surcharge: 0,
+
+    // };
+    if (!pricesByGroup[thisPrice]) {
+      pricesByGroup[thisPrice] = {
+        price: thisPrice,
+        summ: thisPrice,
+        minutesStep,
+        surchargeSum: 0,
+        totalMinutes: minutesStep,
+        surcharge: item.surcharge,
+        countHours: minutesStep / 60,
+        timePoints: [item.timePoint]
+      };
+    } else {
+      const totalMinutes = pricesByGroup[thisPrice]['totalMinutes'] + minutesStep;
+      pricesByGroup[thisPrice] = {
+        ...pricesByGroup[thisPrice],
+        totalMinutes,
+        summ: pricesByGroup[thisPrice]['summ'] + thisPrice,
+        countHours: totalMinutes / 60,
+        surcharge: [...pricesByGroup[thisPrice]['surcharge'], ...item.surcharge],
+        timePoints: [...pricesByGroup[thisPrice]['timePoints'], item.timePoint]
+      };
+    }
+    // console.log(pricesByGroup[thisPrice]);
+    // console.log(minutesStep, price, commonPrice, item);
     if (surcharge.length) {
       surcharge.forEach((itemSurcharge) => {
+        // console.log(itemSurcharge);
         const isPercent = String(itemSurcharge).indexOf('%') > -1 ? true : false;
+        let surchargeResult = 0;
         if (isPercent) {
           const percent = parseInt(itemSurcharge);
           const percentPrice = (price * percent) / 100;
-          totalSurcharge += percentPrice;
+          surchargeResult = percentPrice;
+          totalSurcharge += surchargeResult;
         } else {
-          totalSurcharge += itemSurcharge;
+          surchargeResult = itemSurcharge;
+          totalSurcharge += surchargeResult;
+        }
+        if (surchargeResult) {
+          pricesByGroup[thisPrice] = {
+            ...pricesByGroup[thisPrice],
+            surchargeSum: pricesByGroup[thisPrice]['surchargeSum'] + surchargeResult
+          };
         }
       });
     }
@@ -141,6 +187,13 @@ module.exports = (plan, price, shedule, holidaysObj) => {
     totalCommonSurcharge += isPercent ? parseInt(item) : parseInt(item);
   });
   const resultPrice = totalSurcharge + totalPrice + totalCommonSurcharge;
+
+  if (typeOutput === 'detail')
+    return {
+      pricesByGroup,
+      totalSurcharge: totalSurcharge + totalCommonSurcharge,
+      totalPrice: resultPrice
+    };
 
   return resultPrice ? resultPrice : 0;
 };

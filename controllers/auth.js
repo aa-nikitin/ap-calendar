@@ -20,7 +20,7 @@ module.exports.login = (req, res, next) =>
         });
       }
       if (user) {
-        const token = jwt.sign({ userId: user.id }, secret, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user.id }, secret, { expiresIn: '3h' });
         res.json({ error: false, token: token, userId: user.id });
       }
     } catch (error) {

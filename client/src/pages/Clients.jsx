@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { DataGrid, ruRU } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
 import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 // import { ruRU } from '@mui/material/locale';
 import {
   clientsFetchRequest,
@@ -25,6 +26,8 @@ const useStyles = makeStyles({
 
 const Clients = () => {
   const { clients, clientsFetch, clientsCheckList } = useSelector((state) => getClients(state));
+  const [clientSearch, setClientsSearch] = useState('');
+  const [clientsState, setClientsState] = useState([]);
   const dispatch = useDispatch();
   const clientsSelection = (list) => {
     dispatch(clientsSelectionCheck(list));
@@ -33,6 +36,19 @@ const Clients = () => {
   const handleRemoveClients = () => {
     if (window.confirm('Вы действительно хотите удалить клиентов?')) {
       dispatch(clientsSelectionDelRequest());
+    }
+  };
+
+  const handleSearch = (elem) => {
+    setClientsSearch(elem.target.value);
+    if (elem.target.value) {
+      const clientsFilter = clients.filter((item) => {
+        const fullName = `${item.name.first} ${item.name.last}`;
+        const isSearch = fullName.toLowerCase().indexOf(elem.target.value.toLowerCase());
+
+        return isSearch > -1;
+      });
+      setClientsState([...clientsFilter]);
     }
   };
 
@@ -95,6 +111,18 @@ const Clients = () => {
         <div className="content-page__panel content-page--panel-extend">
           <div className="content-page__panel-item">
             <div className="content-page__panel-btn">
+              <TextField
+                fullWidth
+                id="firstName"
+                name="firstName"
+                label="Поиск по ФИО"
+                value={clientSearch}
+                onChange={handleSearch}
+                error={false}
+                helperText=""
+              />
+            </div>
+            <div className="content-page__panel-btn">
               <ClientForm
                 onClick={addClient}
                 captionButton="Добавить клиента"
@@ -115,7 +143,7 @@ const Clients = () => {
             autoHeight
             pagination
             columns={columns}
-            rows={clients}
+            rows={clientSearch ? clientsState : clients}
             checkboxSelection
             disableSelectionOnClick
             localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}

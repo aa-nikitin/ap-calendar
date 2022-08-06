@@ -98,11 +98,9 @@ module.exports.getPlanHalls = async (req, res) => {
 
     const remainSumm = await Promise.all(
       planFiltered.map(async (planItem) => {
-        // const { price, discount, priceService } = planItem;
-
         const priceInfo = await PriceInfo.findOne({ idPlan: planItem._id });
         const totalPrice = priceInfo && priceInfo.total ? priceInfo.total : 0;
-        // console.log(priceInfo);
+
         const payments = await Payments.find({ idPlan: planItem._id });
         const { total: paidSum } = calcPayments(payments);
         const remainPay = totalPrice - paidSum;
@@ -126,10 +124,7 @@ module.exports.getPlanHalls = async (req, res) => {
         purpose,
         persons,
         comment,
-        // price,
-        // discount,
         services
-        // priceService
       } = planItem;
       // const formatTime =
       //   Number(moment(time).format('mm')) !== minutesStep % hourSize
@@ -138,7 +133,6 @@ module.exports.getPlanHalls = async (req, res) => {
       const formatTime = moment(time).format(formatTimeConf);
       const timeEnd = moment(time).add(minutes, 'm').format(formatTimeConf);
       const timeRange = `${formatTime} - ${timeEnd}`;
-      // const priceDiscount = price - discount > 0 ? price - discount : 0;
 
       // const payments = await Payments.find({ idPlan: id });
 
@@ -160,14 +154,9 @@ module.exports.getPlanHalls = async (req, res) => {
           purposeText: purposeObj[purpose].text,
           persons,
           comment,
-          // price: priceDiscount,
-          // discount,
           services,
-          // priceService,
           paidSumm: remainSummObj[id].summ,
           priceInfo: remainSummObj[id].priceInfo
-          // priceDiscount,
-          // priceDiscountFormat: priceDiscount ? formatPrice(priceDiscount) : ''
         };
       }
     });
@@ -273,8 +262,6 @@ module.exports.deletePlan = async (req, res) => {
 module.exports.cancalledPlan = async (req, res) => {
   try {
     const { idPlan, comment, reason, idClient, blacklist } = req.body;
-    // const { idPlan } = req.body.params;
-    // const resultDelete = await Plan.updateOne({ _id: idPlan });
 
     const resultUpdate = await Plan.updateOne(
       { _id: idPlan },
@@ -284,9 +271,6 @@ module.exports.cancalledPlan = async (req, res) => {
 
     if (blacklist) await Clients.updateOne({ _id: idClient }, { blacklist: true }, { new: true });
 
-    // { name: 'Заявка', value: 'application' },
-    // { name: 'Бронь', value: 'booking' },
-    // { name: 'Завершено', value: 'completed' }
     res.json(resultUpdate);
   } catch (error) {
     res.status(500).json({ message: error });
@@ -341,7 +325,6 @@ module.exports.getPlanMonth = async (req, res) => {
 
       const dayOfWeekAfter = daysOfWeekObj[dateThisWekdaysAfter.isoWeekday() - 1].name;
 
-      // console.log(dateThisWekdaysAfter.format(formatDateConf), dayOfWeekAfter);
       calendarMonth.push({
         date: dateThisWekdaysAfter.format(formatDateConf),
         dayOfWeek: dayOfWeekAfter,
@@ -368,15 +351,12 @@ module.exports.getPlanMonth = async (req, res) => {
         comment,
         date,
         dateOrder,
-        // discount,
         hall,
         invoices,
         minutes,
         orderNumber,
         paymentType,
         persons,
-        // price,
-        // priceService,
         purpose,
         reason,
         services,
@@ -394,15 +374,12 @@ module.exports.getPlanMonth = async (req, res) => {
           comment,
           date,
           dateOrder,
-          // discount,
           hall,
           invoices,
           minutes,
           orderNumber,
           paymentType,
           persons,
-          // price,
-          // priceService,
           purpose,
           reason,
           services,

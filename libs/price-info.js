@@ -10,12 +10,13 @@ const getPriceInfo = async (idPlan) => {
     let totalDiscount = 0;
     planPriceFind.forEach((item) => {
       const { typePrice, price, count, discount, total } = item;
+
       if (typePrice !== 'main') {
         addServices += total;
       }
       summTotal += total;
       summWithoutSale += price * count;
-      totalDiscount += discount;
+      totalDiscount += discount ? discount : 0;
     });
 
     const percentDisount = totalDiscount ? Math.round((totalDiscount * 100) / summWithoutSale) : 0;

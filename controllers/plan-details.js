@@ -25,6 +25,7 @@ const daysOfWeekObj = arrToObj(daysOfWeekArr);
 const paymentTypeObj = arrToObj(paymentTypeArr);
 const purposeObj = arrToObj(purposeArr);
 const statusObj = arrToObj(statusArr);
+const recalcPlanPrice = require('../libs/recalc-plan-price');
 
 module.exports.getPlanDetails = async (req, res) => {
   try {
@@ -84,7 +85,7 @@ module.exports.getPlanDetails = async (req, res) => {
       dayBirth && monthBirth ? moment(`${dayBirth}.${monthBirth}`, 'DD.MM').format('D MMMM') : ``;
     const dateOfBirthText = `${dayMonthBirth}${yearBirth}`.trim();
     clientInfo.birthday = dateOfBirthText;
-    // console.log(servicePrice);
+
     planInfo = {
       client: plan.client,
       clientInfo: plan.clientInfo,
@@ -165,37 +166,26 @@ module.exports.recalcEstimate = async (req, res) => {
       const holidaysObj = await Holidays.find({});
       const priceByPurpose =
         pricesObj[idHall] && pricesObj[idHall][purpose] ? pricesObj[idHall][purpose]['list'] : [];
-      const price = calcPrice(plan, priceByPurpose, shedule, holidaysObj);
+      const price = calcPrice(plan, priceByPurpose, shedule, holidaysObj, 'detail');
+      const { totalPrice } = price;
       const discounts = await Discounts.find({});
       const discount = calcDiscount({
         plan,
         discounts,
         shedule,
         holidays: holidaysObj,
-        price,
+        price: totalPrice,
         idHall
       });
-      const planPrice = await PlanPrice.findOne({ idPlan, typePrice: 'main' });
-      // hourly: { type: Boolean, default: false }
-      const countPricePlan = plan.minutes / 60;
-      const priceUnit = price / countPricePlan;
-      const newPlanPrice = {
-        idPlan: idPlan,
-        typePrice: 'main',
-        name: `Аренда зала: ${plan.hall.name}`,
-        price: priceUnit,
-        count: countPricePlan,
-        discount,
-        total: priceUnit * countPricePlan - discount,
-        hourly: true
-      };
-      if (!planPrice) {
-        const createPlanPrice = new PlanPrice(newPlanPrice);
 
-        await createPlanPrice.save();
-      } else {
-        await PlanPrice.updateOne({ _id: planPrice._id }, newPlanPrice, { new: true });
-      }
+      await recalcPlanPrice({
+        idPlan,
+        minutes: plan.minutes,
+        price,
+        newPlanId: plan._id,
+        nameHall: plan.hall.name,
+        discount
+      });
 
       await addPriceInfo(idPlan, true);
 
