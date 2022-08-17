@@ -29,12 +29,8 @@ checkPayment = async () => {
       const payments = await Payments.find({ idPlan: id });
       const paymentThreshold = (priceInfo.total * percentPrepayment) / 100;
       const { total: sumPayment } = calcPayments(payments);
-      // console.log(paymentThreshold, sumPayment, sumPayment < paymentThreshold);
-      // payments.forEach((itemPayment) => {
-      //   if (itemPayment.paymentType === 'income') sumPayment += Number(itemPayment.paymentSum);
-      //   else sumPayment -= Number(itemPayment.paymentSum);
-      // });
-      if (sumPayment < paymentThreshold)
+
+      if (sumPayment < paymentThreshold && !priceInfo.fixed)
         await Plan.updateOne(
           { _id: id },
           {

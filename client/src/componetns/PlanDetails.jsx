@@ -31,7 +31,8 @@ import {
   addPlanPriceRequest,
   delPlanPriceRequest,
   editPlanPriceRequest,
-  changeRecalcPlanInfoRequest
+  changeRecalcPlanInfoRequest,
+  changeFixedPlanInfoRequest
 } from '../redux/actions';
 import {
   getPlanDetails,
@@ -172,6 +173,10 @@ const PlanDetails = ({ isSeparatePage, valueDate, setValueDate }) => {
     dispatch(changeRecalcPlanInfoRequest({ idPlan: detailsOrder.idPlan, disable: true }));
   };
 
+  const handleReservation = (fixed) => () => {
+    dispatch(changeFixedPlanInfoRequest({ idPlan: detailsOrder.idPlan, fixed }));
+  };
+
   useEffect(() => {
     dispatch(paymentsGetRequest({ id: detailsOrder.idPlan }));
   }, [dispatch, detailsOrder.idPlan]);
@@ -289,32 +294,66 @@ const PlanDetails = ({ isSeparatePage, valueDate, setValueDate }) => {
                 nameForm="Ваши услуги"
               />
             </div>
-            {!detailsOrder.priceInfo || !detailsOrder.priceInfo.recalc ? (
-              <div className="recalc-estimate">
-                <div className="recalc-estimate__left">
-                  <div className="recalc-estimate__icon">
-                    <InfoIcon />
-                  </div>
-                  <div className="recalc-estimate__text">
+
+            <div className="recalc-estimate recalc-estimate--info content-page--indent-bottom">
+              <div className="recalc-estimate__button">
+                <Button
+                  variant="contained"
+                  onClick={handleReservation(!detailsOrder.priceInfo.fixed)}>
+                  {!detailsOrder.priceInfo.fixed ? 'Зафиксировать бронь' : 'Снять фиксацию брони'}
+                </Button>
+              </div>
+              <div className="recalc-estimate__left">
+                <div className="recalc-estimate__text">
+                  {!detailsOrder.priceInfo.fixed ? (
                     <div className="recalc-estimate__head">
-                      Отключен автоматический пересчёт сметы!
+                      Отменяет правило по отмене заказа в случае не оплаты клиентом определенного
+                      процента от суммы
                     </div>
-                    <div className="recalc-estimate__sub-head">
-                      Смета была изменена вручную. Следите за сметой при изменении заказа
-                    </div>
-                  </div>
-                </div>
-                <div className="recalc-estimate__button">
-                  <Button variant="contained" onClick={handleRecalcEstimate}>
-                    Пересчитать по прайсу
-                  </Button>
+                  ) : (
+                    <>
+                      <div className="recalc-estimate__head">
+                        Возвращает правило по отмене заказа в случае не оплаты клиентом
+                        определенного процента от суммы
+                      </div>
+
+                      <div className="recalc-estimate__sub-head">
+                        если времени с момента заказа прошло больше чем отведено на оплату, отмена
+                        данного правила никчему не приведет, лучше отменить заявку в ручную
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
-            ) : (
-              <Button variant="contained" onClick={handleDisableRecalcEstimate}>
-                Отключить автоматический пересчёт сметы!
-              </Button>
-            )}
+            </div>
+            <div className="content-page--indent-bottom">
+              {!detailsOrder.priceInfo || !detailsOrder.priceInfo.recalc ? (
+                <div className="recalc-estimate">
+                  <div className="recalc-estimate__left">
+                    <div className="recalc-estimate__icon">
+                      <InfoIcon />
+                    </div>
+                    <div className="recalc-estimate__text">
+                      <div className="recalc-estimate__head">
+                        Отключен автоматический пересчёт сметы!
+                      </div>
+                      <div className="recalc-estimate__sub-head">
+                        Смета была изменена вручную. Следите за сметой при изменении заказа
+                      </div>
+                    </div>
+                  </div>
+                  <div className="recalc-estimate__button">
+                    <Button variant="contained" onClick={handleRecalcEstimate}>
+                      Пересчитать по прайсу
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <Button variant="contained" onClick={handleDisableRecalcEstimate}>
+                  Отключить автоматический пересчёт сметы!
+                </Button>
+              )}
+            </div>
 
             <div className="content-page__table-list">
               <div className="table-list">

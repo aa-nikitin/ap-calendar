@@ -59,7 +59,7 @@ const {
   editDiscounts,
   deleteDiscounts
 } = require('../controllers/discounts');
-const { getPlanDetails, recalcEstimate } = require('../controllers/plan-details');
+const { getPlanDetails, recalcEstimate, fixedBooking } = require('../controllers/plan-details');
 const {
   getPayments,
   addPayments,
@@ -192,5 +192,6 @@ router.post('/plan-price-from-services', addServicesPlanPrice); // authJwt,
 
 router.get('/price-info/:id', getPriceInfoByIdPlan); // authJwt,
 router.post('/recalc-estimate', recalcEstimate); // authJwt,
+router.post('/fixed-booking', fixedBooking); // authJwt,
 
 module.exports = router;

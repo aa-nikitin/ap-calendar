@@ -202,3 +202,15 @@ module.exports.recalcEstimate = async (req, res) => {
     res.status(500).json({ message: error });
   }
 };
+
+module.exports.fixedBooking = async (req, res) => {
+  try {
+    const { idPlan, fixed } = req.body;
+    const priceInfo = await PriceInfo.findOne({ idPlan });
+
+    await PriceInfo.updateOne({ idPlan }, { fixed }, { new: true });
+    res.json({ priceInfo, fixed });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};

@@ -13,6 +13,8 @@ import {
   changeRecalcPlanInfoRequest,
   // changeRecalcPlanInfoSuccess,
   changeRecalcPlanInfoError,
+  changeFixedPlanInfoRequest,
+  changeFixedPlanInfoError,
   logoutFetchFromToken
 } from '../redux/actions';
 import { storageName } from '../config';
@@ -67,8 +69,24 @@ export function* changeRecalcPlanInfo() {
   }
 }
 
+export function* changeFixedPlanInfo() {
+  try {
+    const token = localStorage.getItem(storageName);
+    const { query } = yield select(getPlanDetails);
+    yield call(fetchPost, '/api/fixed-booking/', query, token);
+
+    const planDetails = yield call(fetchGet, `/api/plan-details/${query.idPlan}`, token);
+
+    yield put(getPlanDetailsSuccess(planDetails));
+  } catch (error) {
+    if (error === 'Unauthorized') yield put(logoutFetchFromToken());
+    yield put(changeFixedPlanInfoError, error);
+  }
+}
+
 export function* planDetailsWatch() {
   yield takeLatest(getPlanDetailsRequest, getPlanDetail);
   yield takeLatest(getRefreshDetailsRequest, getRefreshDetail);
   yield takeLatest(changeRecalcPlanInfoRequest, changeRecalcPlanInfo);
+  yield takeLatest(changeFixedPlanInfoRequest, changeFixedPlanInfo);
 }

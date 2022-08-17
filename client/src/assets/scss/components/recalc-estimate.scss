@@ -24,4 +24,41 @@
     margin-top: 2px;
     font-size: 14px;
   }
+  &--info {
+    background-color: $gray-light;
+    border: solid 1px $gray-dark;
+    padding: 14px 5px 12px;
+    justify-content: flex-start;
+    & .recalc-estimate {
+      &__button {
+        white-space: nowrap;
+        margin-right: 20px;
+      }
+      &__left {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+  @include sm() {
+    flex-direction: column;
+    &__head {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    &__sub-head {
+      font-size: 12px;
+    }
+    &__button {
+      order: 2;
+    }
+    &__left {
+      order: 1;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    &__icon {
+      display: none;
+    }
+  }
 }

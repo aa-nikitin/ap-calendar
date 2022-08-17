@@ -16,7 +16,10 @@ import {
   setPlanInfoServices,
   changeRecalcPlanInfoRequest,
   changeRecalcPlanInfoSuccess,
-  changeRecalcPlanInfoError
+  changeRecalcPlanInfoError,
+  changeFixedPlanInfoRequest,
+  changeFixedPlanInfoSuccess,
+  changeFixedPlanInfoError
 } from '../actions';
 
 const loading = handleActions(
@@ -29,7 +32,10 @@ const loading = handleActions(
     [getRefreshDetailsError]: (_state) => false,
     [changeRecalcPlanInfoRequest]: (_state) => true,
     [changeRecalcPlanInfoSuccess]: (_state) => false,
-    [changeRecalcPlanInfoError]: (_state) => false
+    [changeRecalcPlanInfoError]: (_state) => false,
+    [changeFixedPlanInfoRequest]: (_state) => true,
+    [changeFixedPlanInfoSuccess]: (_state) => false,
+    [changeFixedPlanInfoError]: (_state) => false
   },
   false
 );
@@ -43,7 +49,10 @@ const error = handleActions(
     [getRefreshDetailsError]: (_state, { payload }) => payload,
     [changeRecalcPlanInfoRequest]: (_state) => null,
     [changeRecalcPlanInfoSuccess]: (_state) => null,
-    [changeRecalcPlanInfoError]: (_state, { payload }) => payload
+    [changeRecalcPlanInfoError]: (_state, { payload }) => payload,
+    [changeFixedPlanInfoRequest]: (_state) => null,
+    [changeFixedPlanInfoSuccess]: (_state) => null,
+    [changeFixedPlanInfoError]: (_state, { payload }) => payload
   },
   null
 );
@@ -82,6 +91,13 @@ const details = handleActions(
       });
 
       return nextState;
+    },
+    [changeFixedPlanInfoSuccess]: (state, { payload }) => {
+      const nextState = produce(state, (draft) => {
+        draft.priceInfo = payload.priceInfo;
+      });
+
+      return nextState;
     }
   },
   []
@@ -96,7 +112,10 @@ const query = handleActions(
     [getRefreshDetailsError]: (_state) => ({}),
     [changeRecalcPlanInfoRequest]: (_state, { payload }) => payload,
     [changeRecalcPlanInfoSuccess]: (_state) => ({}),
-    [changeRecalcPlanInfoError]: (_state) => ({})
+    [changeRecalcPlanInfoError]: (_state) => ({}),
+    [changeFixedPlanInfoRequest]: (_state, { payload }) => payload,
+    [changeFixedPlanInfoSuccess]: (_state) => ({}),
+    [changeFixedPlanInfoError]: (_state) => ({})
   },
   {}
 );

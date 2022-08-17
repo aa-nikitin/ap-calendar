@@ -19,6 +19,11 @@ const {
       request: changeRecalcPlanInfoRequest,
       success: changeRecalcPlanInfoSuccess,
       error: changeRecalcPlanInfoError
+    },
+    changeFixed: {
+      request: changeFixedPlanInfoRequest,
+      success: changeFixedPlanInfoSuccess,
+      error: changeFixedPlanInfoError
     }
   }
 } = createActions({
@@ -40,6 +45,11 @@ const {
       REQUEST: null,
       SUCCESS: null,
       ERROR: null
+    },
+    CHANGE_FIXED: {
+      REQUEST: null,
+      SUCCESS: null,
+      ERROR: null
     }
   }
 });
@@ -54,5 +64,8 @@ export {
   getRefreshDetailsError,
   changeRecalcPlanInfoRequest,
   changeRecalcPlanInfoSuccess,
-  changeRecalcPlanInfoError
+  changeRecalcPlanInfoError,
+  changeFixedPlanInfoRequest,
+  changeFixedPlanInfoSuccess,
+  changeFixedPlanInfoError
 };
