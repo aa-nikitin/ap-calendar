@@ -1,36 +1,31 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { useSelector, useDispatch } from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Button from '@mui/material/Button';
 
-import { getWorkShedule, getPlan, getPlanMonth, getPlanCalendar } from '../redux/reducers';
-import {
-  planDataRequest,
-  planFetchAddRequest,
-  planMonthRequest,
-  getPlanDetailsRequest
-} from '../redux/actions';
-import { Loading, PlanForm, BtnChangePlanMonth } from '../componetns';
-import { monthsConfig } from '../config';
+import {getWorkShedule, getPlan, getPlanMonth, getPlanCalendar} from '../redux/reducers';
+import {planDataRequest, planFetchAddRequest, planMonthRequest, getPlanDetailsRequest} from '../redux/actions';
+import {Loading, PlanForm, BtnChangePlanMonth} from '../componetns';
+import {monthsConfig} from '../config';
 
-const PlanMonth = ({ valueDate, setValueDate }) => {
+const PlanMonth = ({valueDate, setValueDate}) => {
   const dispatch = useDispatch();
   const workShedule = useSelector((state) => getWorkShedule(state));
-  const { planFetch } = useSelector((state) => getPlan(state));
+  const {planFetch} = useSelector((state) => getPlan(state));
   const planMonth = useSelector((state) => getPlanMonth(state));
   const planCalendar = useSelector((state) => getPlanCalendar(state));
   const thisDate = moment(valueDate).format('DD.MM.YYYY');
   const handlePlan = (values) => {
-    dispatch(planFetchAddRequest({ ...values, typePlan: 'planMonth' }));
+    dispatch(planFetchAddRequest({...values, typePlan: 'planMonth'}));
   };
   const handlePlanBtn = (obj, thisHourInfo) => (refreshObj) => {
     const workObj = refreshObj ? refreshObj : obj;
     if (!thisHourInfo) dispatch(planDataRequest(workObj));
     else {
-      dispatch(planDataRequest({ ...workObj, idPlan: thisHourInfo.id }));
+      dispatch(planDataRequest({...workObj, idPlan: thisHourInfo.id}));
     }
   };
   const handleDateInc = () => {
@@ -56,8 +51,7 @@ const PlanMonth = ({ valueDate, setValueDate }) => {
     }
   }, [dispatch, thisDate, monthDate]);
 
-  const thisDayPlan =
-    planMonth && planMonth[thisDate] && planMonth[thisDate].length > 0 ? planMonth[thisDate] : [];
+  const thisDayPlan = planMonth && planMonth[thisDate] && planMonth[thisDate].length > 0 ? planMonth[thisDate] : [];
 
   if (planFetch) return <Loading />;
   return (
@@ -70,7 +64,7 @@ const PlanMonth = ({ valueDate, setValueDate }) => {
               captionButton={`+Добавить`}
               nameForm="Аренда"
               params={workShedule}
-              handleClick={handlePlanBtn({ date: thisDate })}
+              handleClick={handlePlanBtn({date: thisDate})}
               thisDate={thisDate}
             />
           </div>
@@ -119,21 +113,16 @@ const PlanMonth = ({ valueDate, setValueDate }) => {
           <div className="calendar__body">
             {!!planCalendar &&
               planCalendar.map((item) => {
-                const isPlanDay =
-                  planMonth && planMonth[item.date] && planMonth[item.date].length > 0;
+                const isPlanDay = planMonth && planMonth[item.date] && planMonth[item.date].length > 0;
                 return (
                   <div
-                    className={`calendar__item-wrap ${
-                      item.dayOfWeek === 'Сб' ? 'calendar--border' : ''
-                    }`}
+                    className={`calendar__item-wrap ${item.dayOfWeek === 'Сб' ? 'calendar--border' : ''}`}
                     key={item.date}
                     onClick={handleDate(item.date)}>
                     <div
-                      className={`calendar__item ${
-                        item.thisMonth !== true ? 'calendar--dim' : ''
-                      } ${item.date === thisDate ? 'calendar--active' : ''} ${
-                        isPlanDay ? 'calendar--plan-day' : ''
-                      }  `}>
+                      className={`calendar__item ${item.thisMonth !== true ? 'calendar--dim' : ''} ${
+                        item.date === thisDate ? 'calendar--active' : ''
+                      } ${isPlanDay ? 'calendar--plan-day' : ''}  `}>
                       {item.day}
                     </div>
                   </div>
@@ -145,53 +134,55 @@ const PlanMonth = ({ valueDate, setValueDate }) => {
           {thisDayPlan.length > 0 ? (
             <div className="plan-month__body">
               {thisDayPlan.map((item) => {
-                return (
-                  <div className="plan-month__item-wrap" key={item.id}>
-                    <div className="plan-month__item-info">
-                      <PlanForm
-                        onClick={handlePlan}
-                        nameForm="Аренда"
-                        params={workShedule}
-                        thisHourInfo={item}
-                        // handleDeletePlan={handleDeletePlan}
-                        handleClick={handlePlanBtn(
-                          {
-                            idHall: item.hall._id,
-                            date: moment(item.date).format('DD.MM.YYYY'),
-                            time: moment(item.time).format('HH:mm'),
-                            minutes: item.timeMinutes
-                          },
-                          item
-                        )}
-                        CustomBtn={BtnChangePlanMonth({
-                          thisPlanInfo: item
-                        })}
-                        thisDate={thisDate}
-                      />
+                if (item.hall)
+                  return (
+                    <div className="plan-month__item-wrap" key={item.id}>
+                      <div className="plan-month__item-info">
+                        <PlanForm
+                          onClick={handlePlan}
+                          nameForm="Аренда"
+                          params={workShedule}
+                          thisHourInfo={item}
+                          // handleDeletePlan={handleDeletePlan}
+                          handleClick={handlePlanBtn(
+                            {
+                              idHall: item.hall._id,
+                              date: moment(item.date).format('DD.MM.YYYY'),
+                              time: moment(item.time).format('HH:mm'),
+                              minutes: item.timeMinutes
+                            },
+                            item
+                          )}
+                          CustomBtn={BtnChangePlanMonth({
+                            thisPlanInfo: item
+                          })}
+                          thisDate={thisDate}
+                        />
+                      </div>
+                      <div onClick={handleDetailShedule(item.id)} className="plan-month__detail">
+                        <ArrowForwardIosIcon />
+                      </div>
                     </div>
-                    <div onClick={handleDetailShedule(item.id)} className="plan-month__detail">
-                      <ArrowForwardIosIcon />
-                    </div>
-                  </div>
-                  //   <div className="plan-month__item" key={item.id}>
-                  //     <div className="plan-month__time">
-                  //       <div>{item.timeFrom}</div>
-                  //       <div>{item.timeTo}</div>
-                  //     </div>
-                  //     <div className="plan-month__name">
-                  //       <div>
-                  //         Аренда, для {item.purposeText} #{item.orderNumber}{' '}
-                  //       </div>
-                  //       <div>
-                  //         Зал - {item.hall.name}, {item.persons} чел.
-                  //       </div>
-                  //     </div>
-                  //     <div className="plan-month__client">
-                  //       <div>{item.clientInfo.name}</div>
-                  //       <div>{item.clientInfo.phone}</div>
-                  //     </div>
-                  //   </div>
-                );
+                    //   <div className="plan-month__item" key={item.id}>
+                    //     <div className="plan-month__time">
+                    //       <div>{item.timeFrom}</div>
+                    //       <div>{item.timeTo}</div>
+                    //     </div>
+                    //     <div className="plan-month__name">
+                    //       <div>
+                    //         Аренда, для {item.purposeText} #{item.orderNumber}{' '}
+                    //       </div>
+                    //       <div>
+                    //         Зал - {item.hall.name}, {item.persons} чел.
+                    //       </div>
+                    //     </div>
+                    //     <div className="plan-month__client">
+                    //       <div>{item.clientInfo.name}</div>
+                    //       <div>{item.clientInfo.phone}</div>
+                    //     </div>
+                    //   </div>
+                  );
+                else return null;
               })}
             </div>
           ) : (
@@ -212,4 +203,4 @@ PlanMonth.defaultProps = {
   setValueDate: () => {}
 };
 
-export { PlanMonth };
+export {PlanMonth};
